@@ -239,7 +239,7 @@ Future<String> executeVM(
 
   var codeUnit = CodeUnit(language, code, 'web');
 
-  Object? loadError ;
+  Object? loadError;
   var loadOK = false;
   try {
     loadOK = await vm.loadCodeUnit(codeUnit);
