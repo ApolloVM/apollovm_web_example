@@ -36,11 +36,11 @@ Enjoy 😉
 
 ## Package ApolloVM
 
-ApolloVM is a portable VM (native, JS/Web, Flutter) that can parse, translate and run multiple languages, like Dart, Java, Kotlin and JavaScript.
+ApolloVM is a portable VM (native, JS/Web, Flutter) that can parse, translate and run multiple languages, like Dart, Java and JavaScript.
 
 See the [ApolloVM][pack_apollovm] package for more details.
 
-[pack_apollovm]: https://github.com/ApolloVM/apollovm_dart/issues
+[pack_apollovm]: https://github.com/ApolloVM/apollovm_dart
 
 ## Author
 
