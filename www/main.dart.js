@@ -3572,13 +3572,13 @@ _.a=c
 _.$ti=d},
 br:function br(){},
 wl(){var s,r,q=null,p=document,o=p.querySelector("#apollovmTitle")
-if(o!=null)J.u0(o,"ApolloVM / 0.0.36")
+if(o!=null)J.u0(o,"ApolloVM / 0.0.37")
 o=p.querySelector("#output")
 if(o!=null){s=A.A([],t.lN)
 B.b.C(s,A.rI(new A.hH(),B.al,B.ah,B.aj))
 B.b.C(s,A.rI(q,A.A(["*::style"],t.s),q,q))
 B.b.C(s,A.rC(q))
-J.u2(o,'<textarea id="code" rows="30"></textarea><br>\n<div style="text-align: left; padding: 2px">\n  <ul>\n  \n  <li>Language: \n  <select id="codeLang">\n    <option value="dart" selected>Dart</option>\n    <option value="java11">Java11</option>\n  </select>\n  </li>\n  \n  <li>Entry point: <input id="className" type="text" value="Foo" style="width: 60px"><input id="functionName" type="text" value="main" style="width: 60px"></li>\n  \n  <li>Parameters:</li>\n  <ul>\n  <li>Positional: <input id="positionalParametersJson" type="text" value=\' [ "Sums:" , 10 , 30 , 50 ] \' style="width: 300px"> <i>*JSON</i></li>\n  <li>Named: <input id="namedParametersJson" type="text" value=\'\' style="width: 300px"> <i>*JSON</i></li>\n  </ul>\n  </ul>\n</div>\n<button id="run">RUN</button>\n<div style="background-color: #000; color: #fff; padding: 2px; margin-top: 8px; border-radius: 8px;">\nApolloVM OUTPUT:\n<div id="vmOutputDiv">\n<pre id="vmOutput">\n...\n</pre>\n</div>\n</div>\n  ',new A.fx(s))}r=t.h6.a(p.querySelector("#code"))
+J.u2(o,'<textarea id="code" rows="30"></textarea><br>\n<div style="text-align: left; padding: 2px">\n  <ul>\n  \n  <li>Language: \n  <select id="codeLang">\n    <option value="dart" selected>Dart</option>\n    <option value="java11">Java11</option>\n  </select>\n  </li>\n  \n  <li>Entry point: <input id="className" type="text" value="Foo" style="width: 60px"><input id="functionName" type="text" value="main" style="width: 60px"></li>\n  \n  <li>Parameters:</li>\n  <ul>\n  <li>Positional: <input id="positionalParametersJson" type="text" value=\' [ "Sums:" , 10 , 30 , 50 ] \' style="width: 300px"> <i>*JSON</i></li>\n  <li>Named: <input id="namedParametersJson" type="text" value=\'\' style="width: 300px"> <i>*JSON</i></li>\n  </ul>\n  </ul>\n</div>\n<button id="run">RUN</button>\n<div style="background-color: #000; color: #fff; padding: 2px; margin-top: 8px; border-radius: 8px;">\nApolloVM OUTPUT:\n<div id="vmOutputDiv">\n<pre id="vmOutput" class="vmOutputDivEmpty">\n...\n</pre>\n</div>\n</div>\n  ',new A.fx(s))}r=t.h6.a(p.querySelector("#code"))
 B.ar.sbB(r,"\nclass Foo {\n\n  void main(List<Object> args) {\n    var title = args[0];\n    var a = args[1];\n    var b = args[2] ~/ 2;\n    var c = args[3] * 3;\n    \n    if (c > 120) {\n      c = 120 ;\n    }\n    \n    var str = 'variables> a: $a ; b: $b ; c: $c' ;\n    var sumAB = a + b ;\n    var sumABC = a + b + c;\n    \n    print(str);\n    print(title);\n    print(sumAB);\n    print(sumABC);\n    \n    // Map:\n    var map = <String,int>{\n    'a': a,\n    'b': b,\n    'c': c,\n    };\n    \n    print('Map: $map');\n    print('Map `b`: ${map['b']}');\n  }\n  \n}\n")
 r.setAttribute("language","dart")
 o=t.bz
@@ -3735,6 +3735,9 @@ return A.S($async$pJ,r)},
 jZ(a,b,c){var s,r=t.m8.a(document.querySelector("#vmOutput"))
 B.ap.sbB(r,a)
 s=r.classList
+s.contains("vmOutputDivEmpty").toString
+s.remove("vmOutputDivEmpty")
+s=r.classList
 s.contains("vmOutputDivInfo").toString
 s.remove("vmOutputDivInfo")
 s=r.classList
@@ -3745,57 +3748,59 @@ s.contains("vmOutputDivError").toString
 s.add("vmOutputDivError")}else if(c){s=r.classList
 s.contains("vmOutputDivInfo").toString
 s.add("vmOutputDivInfo")}},
-jX(a,b,c,a0,a1,a2){var s=0,r=A.T(t.N),q,p=2,o,n,m,l,k,j,i,h,g,f,e,d
-var $async$jX=A.U(function(a3,a4){if(a3===1){o=a4
+jX(a,b,a0,a1,a2,a3){var s=0,r=A.T(t.N),q,p=2,o,n,m,l,k,j,i,h,g,f,e,d,c
+var $async$jX=A.U(function(a4,a5){if(a4===1){o=a5
 s=p}while(true)switch(s){case 0:A.dq("language: "+a)
 A.dq("code: <<<\n"+b+"\n>>>")
-i=$.lt+1
-$.lt=i
-n=new A.eR(i,A.ag(t.N,t.bC))
+h=$.lt+1
+$.lt=h
+n=new A.eR(h,A.ag(t.N,t.bC))
 m=new A.eY(a,b,"web")
-l=!1
+l=null
+k=!1
 p=4
 s=7
 return A.r(n.bx(m),$async$jX)
-case 7:l=a4
+case 7:k=a5
 p=2
 s=6
 break
 case 4:p=3
-d=o
-k=A.b1(d)
-j=A.bJ(d)
-i=A.j(k)
+c=o
+j=A.b1(c)
+i=A.bJ(c)
+l=j
+h=A.j(j)
 window.toString
-g=typeof console!="undefined"
-g.toString
-if(g)window.console.error(i)
-i=A.j(j)
+f=typeof console!="undefined"
+f.toString
+if(f)window.console.error(h)
+h=A.j(i)
 window.toString
-g=typeof console!="undefined"
-g.toString
-if(g)window.console.error(i)
+f=typeof console!="undefined"
+f.toString
+if(f)window.console.error(h)
 s=6
 break
 case 3:s=2
 break
-case 6:if(!A.bj(l))throw A.d(A.a_("Can't load source! Language: "+a))
-f=n.iV(a)
-e=new A.ah("")
-f.sj1(new A.py(e))
-a1=B.c.a1(a1)
+case 6:if(!A.bj(k))throw A.d(A.a_("Can't load source! Language: "+a+"\n\n"+A.j(l)))
+e=n.iV(a)
+d=new A.ah("")
+e.sj1(new A.py(d))
 a2=B.c.a1(a2)
-i=a1.length!==0?B.M.fs(0,"[ "+a1+" ]"):[]
-t.g.a(i)
-if(a2.length!==0)g=B.M.fs(0,"{ "+a2+" }")
-else{g=t.z
-g=A.ag(g,g)}t.eO.a(g)
-A.dq("positionalParameters: "+A.j(i))
-A.dq("namedParameters: "+A.j(g))
+a3=B.c.a1(a3)
+h=a2.length!==0?B.M.fs(0,"[ "+a2+" ]"):[]
+t.g.a(h)
+if(a3.length!==0)f=B.M.fs(0,"{ "+a3+" }")
+else{f=t.z
+f=A.ag(f,f)}t.eO.a(f)
+A.dq("positionalParameters: "+A.j(h))
+A.dq("namedParameters: "+A.j(f))
 s=8
-return A.r(f.c0("",c,a0,g,i),$async$jX)
-case 8:i=e.a
-q=i.charCodeAt(0)==0?i:i
+return A.r(e.c0("",a0,a1,f,h),$async$jX)
+case 8:h=d.a
+q=h.charCodeAt(0)==0?h:h
 s=1
 break
 case 1:return A.R(q,r)

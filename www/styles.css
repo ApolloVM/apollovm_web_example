@@ -42,6 +42,7 @@ textarea {
     border-radius: 6px;
     border: 1px solid #666;
     padding: 8px;
+    font-size: 107%;
 }
 
 input, select {
@@ -65,9 +66,19 @@ input, select {
     text-shadow: 2px 2px #333;
 }
 
+#vmOutput {
+    text-align: left;
+    padding: 4px;
+}
+
+.vmOutputDivEmpty {
+    text-align: center !important;
+}
+
 .vmOutputDivInfo {
     background-color: #3d3d36;
     color: #deee00 !important;
+    text-align: center !important;
 }
 
 .vmOutputDivError {
