@@ -13,6 +13,7 @@ dart pub get
 dart pub global run webdev build -o web:www -r
 
 git add www/*
+git add www
 git commit -m "Update live web example"
 git push
 rm -rf .dart_tool
