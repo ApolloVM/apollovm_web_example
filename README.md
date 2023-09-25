@@ -7,6 +7,33 @@
 
 This is a Web example for the [ApolloVM][pack_apollovm] Dart package.
 
+## Live Example
+
+You can see a live demo at:
+
+- https://apollovm.github.io/apollovm_web_example/www/
+
+## Running The Web Example
+
+Get the web example source code:
+```shell
+git clone https://github.com/ApolloVM/apollovm_web_example.git
+```
+
+Build it:
+```shell
+cd ./apollovm_web_example
+dart pub get
+```
+
+Run it:
+```shell
+dart pub global activate webdev
+webdev serve --launch-in-chrome
+```
+
+Enjoy 😉
+
 ## Package ApolloVM
 
 ApolloVM is a portable VM (native, JS/Web, Flutter) that can parse, translate and run multiple languages, like Dart, Java, Kotlin and JavaScript.
@@ -20,6 +47,15 @@ See the [ApolloVM][pack_apollovm] package for more details.
 Graciliano M. Passos: [gmpassos@GitHub][github].
 
 [github]: https://github.com/gmpassos
+
+## Sponsor
+
+Don't be shy, show some love, and become our [GitHub Sponsor][github_sponsors].
+Your support means the world to us, and it keeps the code caffeinated! ☕✨
+
+Thanks a million! 🚀😄
+
+[github_sponsors]: https://github.com/sponsors/gmpassos
 
 ## License
 
