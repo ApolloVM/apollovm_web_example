@@ -72,7 +72,7 @@ void buildUI() {
 <div style="background-color: #000; color: #fff; padding: 2px; margin-top: 8px; border-radius: 8px;">
 ApolloVM OUTPUT:
 <div id="vmOutputDiv">
-<pre id="vmOutput">
+<pre id="vmOutput" class="vmOutputDivEmpty">
 ...
 </pre>
 </div>
@@ -214,6 +214,7 @@ void setVMOutput(String text, {bool error = false, bool info = false}) {
 
   vmOutput.text = text;
 
+  vmOutput.classes.remove('vmOutputDivEmpty');
   vmOutput.classes.remove('vmOutputDivInfo');
   vmOutput.classes.remove('vmOutputDivError');
 
@@ -238,16 +239,18 @@ Future<String> executeVM(
 
   var codeUnit = CodeUnit(language, code, 'web');
 
+  Object? loadError;
   var loadOK = false;
   try {
     loadOK = await vm.loadCodeUnit(codeUnit);
   } catch (e, s) {
+    loadError = e;
     printError('$e');
     printError('$s');
   }
 
   if (!loadOK) {
-    throw StateError("Can't load source! Language: $language");
+    throw StateError("Can't load source! Language: $language\n\n$loadError");
   }
 
   var dartRunner = vm.createRunner(language)!;
