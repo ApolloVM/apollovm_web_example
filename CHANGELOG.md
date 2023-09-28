@@ -1,3 +1,7 @@
+## 1.0.2
+
+- apollovm: ^0.0.41
+
 ## 1.0.1
 
 - Added `compileToWasm`.

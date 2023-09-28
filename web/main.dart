@@ -196,7 +196,7 @@ Future<String?> convertCode(
   }
 
   var codeStorage = vm.generateAllCodeIn(toLanguage);
-  var allSources = codeStorage.writeAllSources();
+  var allSources = await codeStorage.writeAllSources();
 
   var code2 = allSources.toString();
 
