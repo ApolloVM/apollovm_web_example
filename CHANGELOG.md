@@ -1,3 +1,9 @@
+## 1.0.1
+
+- Added `compileToWasm`.
+- Added "Download Wasm" button.
+- apollovm: ^0.0.40
+
 ## 1.0.0
 
 - Initial Web Example version.
