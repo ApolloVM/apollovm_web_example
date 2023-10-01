@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:html' hide MimeType;
 
-import 'package:dom_tools/dom_tools.dart';
 import 'package:apollovm/apollovm.dart';
 import 'package:collection/collection.dart';
+import 'package:dom_tools/dom_tools.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 final initialCodeDart = r'''
@@ -76,16 +76,23 @@ void buildUI() {
   </ul>
 </div>
 
-<button id="run">RUN</button>
+<button id="run">RUN - Interpreted</button>
+<br>
+<div style="padding: 2px 4px 8px 4px"><input type="checkbox" id="wasm-compiled"> &nbsp; <i>Wasm compiled (alpha)</i></div>
 
 <div style="background-color: #000; color: #fff; padding: 2px; margin-top: 8px; border-radius: 8px;">
 ApolloVM OUTPUT:
 <div id="vmOutputDiv">
 <pre id="vmResult" class="vmOutputDivEmpty" style="text-align: left">
+[result]
 </pre>
 <hr>
 <pre id="vmOutput" class="vmOutputDivEmpty">
-...
+[output]
+</pre>
+<hr>
+<pre id="vmExecutedCode" class="vmOutputDivEmpty" style="text-align: left">
+[executed code]
 </pre>
 </div>
 </div>
@@ -107,6 +114,9 @@ ApolloVM OUTPUT:
 
   var runButton = selectRunButton();
   runButton.onClick.listen((evt) => runCode());
+
+  var wasmCompiledCheck = selectWasmCompiledCheckbox();
+  wasmCompiledCheck.onClick.listen((evt) => wasmCompiledChecked());
 }
 
 TextInputElement selectClassName() =>
@@ -129,12 +139,20 @@ ButtonElement selectDownloadWasmButton() =>
 
 ButtonElement selectRunButton() => querySelector('#run') as ButtonElement;
 
+CheckboxInputElement selectWasmCompiledCheckbox() =>
+    querySelector('#wasm-compiled') as CheckboxInputElement;
+
+bool get wasmCompiledCheck => selectWasmCompiledCheckbox().checked ?? false;
+
 TextAreaElement selectCodeTextArea() =>
     querySelector('#code') as TextAreaElement;
 
 PreElement selectVMResult() => querySelector('#vmResult') as PreElement;
 
 PreElement selectVMOutput() => querySelector('#vmOutput') as PreElement;
+
+PreElement selectVMExecutedCode() =>
+    querySelector('#vmExecutedCode') as PreElement;
 
 void changeLanguage() async {
   var codeTextArea = selectCodeTextArea();
@@ -147,6 +165,8 @@ void changeLanguage() async {
   if (currentCodeLanguage == codeLanguage) {
     return;
   }
+
+  resetVMOutputs();
 
   var code = codeTextArea.value ?? '';
 
@@ -181,7 +201,7 @@ Future<String?> convertCode(
 
   var vm = ApolloVM();
 
-  var codeUnit = CodeUnit(fromLanguage, code, 'convert');
+  var codeUnit = SourceCodeUnit(fromLanguage, code, id: 'convert');
 
   var loadOK = false;
   try {
@@ -212,11 +232,16 @@ void downloadWasm() async {
   var codeLanguage =
       selectCodeLanguage().selectedOptions.firstOrNull?.value ?? 'dart';
 
+  resetVMOutputs();
+
   var wasm = await compileToWasm(codeLanguage, code);
 
-  setVMResult(
-      '`$codeLanguage` to Wasm Compilation: ${wasm.ok ? 'OK' : 'FAIL'}');
-  setVMOutput(wasm.output.toString());
+  setVMResult('[not executed]');
+
+  setVMOutput('`$codeLanguage` to Wasm Compilation: ${wasm.ok ? 'OK' : 'FAIL'}',
+      info: true);
+
+  setVMExecutedCode(wasm.output.toString());
 
   var wasmBytes = wasm.output.output();
   var wasmID = DateTime.now().millisecondsSinceEpoch;
@@ -227,22 +252,36 @@ void downloadWasm() async {
   downloadBytes(wasmBytes, mimeType, wasmFileName);
 }
 
+void wasmCompiledChecked() async {
+  var runButton = selectRunButton();
+
+  if (wasmCompiledCheck) {
+    runButton.text = 'RUN - Wasm compiled';
+  } else {
+    runButton.text = 'RUN - Interpreted';
+  }
+}
+
 void runCode() async {
   var className = selectClassName().value ?? '';
   var functionName = selectFunctionName().value ?? '';
   var positionalParametersJson = selectPositionalParametersJson().value ?? '';
   var namedParametersJson = selectNamedParametersJson().value ?? '';
+  var wasmCompiled = wasmCompiledCheck;
 
   var code = selectCodeTextArea().value ?? '';
   var codeLanguage =
       selectCodeLanguage().selectedOptions.firstOrNull?.value ?? 'dart';
 
+  resetVMOutputs();
+
   try {
     var result = await executeVM(codeLanguage, code, className, functionName,
-        positionalParametersJson, namedParametersJson);
+        positionalParametersJson, namedParametersJson, wasmCompiled);
 
     setVMResult(result.result);
     setVMOutput(result.output);
+    setVMExecutedCode(result.executedCode);
   } catch (e, s) {
     printError('$e');
     printError('$s');
@@ -263,6 +302,18 @@ void setVMOutput(String text, {bool error = false, bool info = false}) {
   _setPre(pre, text, error, info);
 }
 
+void setVMExecutedCode(String code) {
+  var pre = selectVMExecutedCode();
+
+  _setPre(pre, code, false, false);
+}
+
+void resetVMOutputs() {
+  _setPre(selectVMResult(), '[result]', false, false);
+  _setPre(selectVMOutput(), '[output]', false, false);
+  _setPre(selectVMExecutedCode(), '[executed code]', false, false);
+}
+
 void _setPre(PreElement pre, String text, bool error, bool info) {
   pre.text = text;
 
@@ -277,13 +328,15 @@ void _setPre(PreElement pre, String text, bool error, bool info) {
   }
 }
 
-Future<({Object? result, String output})> executeVM(
-    String language,
-    String code,
-    String className,
-    String functionName,
-    String positionalParametersJson,
-    String namedParametersJson) async {
+Future<({Object? result, String output, String executedCode})> executeVM(
+  String language,
+  String code,
+  String className,
+  String functionName,
+  String positionalParametersJson,
+  String namedParametersJson,
+  bool wasmCompiled,
+) async {
   print('-----------------------------------------------------');
   print('>> Execute VM:');
   print('language: $language');
@@ -291,7 +344,7 @@ Future<({Object? result, String output})> executeVM(
 
   var vm = ApolloVM();
 
-  var codeUnit = CodeUnit(language, code, 'web');
+  var codeUnit = SourceCodeUnit(language, code, id: 'web');
 
   Object? loadError;
   var loadOK = false;
@@ -307,11 +360,6 @@ Future<({Object? result, String output})> executeVM(
     throw StateError("Can't load source! Language: $language\n\n$loadError");
   }
 
-  var dartRunner = vm.createRunner(language)!;
-
-  var output = StringBuffer();
-  dartRunner.externalPrintFunction = (o) => output.writeln(o);
-
   positionalParametersJson = positionalParametersJson.trim();
   namedParametersJson = namedParametersJson.trim();
 
@@ -326,15 +374,58 @@ Future<({Object? result, String output})> executeVM(
   print('positionalParameters: $positionalParameters');
   print('namedParameters: $namedParameters');
 
+  String executedCode;
+  var output = StringBuffer();
   ASTValue astValue;
-  if (className.isNotEmpty) {
-    astValue = await dartRunner.executeClassMethod('', className, functionName,
-        positionalParameters: positionalParameters,
-        namedParameters: namedParameters);
+
+  if (wasmCompiled) {
+    var storageWasm = vm.generateAllIn<BytesOutput>('wasm');
+    var wasmModules = await storageWasm.allEntries();
+
+    var wasmModule = wasmModules.values.first.entries.first;
+    var wasmOutput = wasmModule.value;
+
+    executedCode = wasmOutput.toString(hex: true);
+    print('Wasm bytes: <<<\n\n$executedCode\n>>>');
+
+    var vmWasm = ApolloVM();
+
+    var wasmCodeUnit = BinaryCodeUnit('wasm', wasmOutput.output(),
+        id: 'test.wasm', namespace: '');
+
+    var wasmLoad = await vmWasm.loadCodeUnit(wasmCodeUnit);
+    if (!wasmLoad) {
+      throw StateError("Can't load compiled Wasm!");
+    }
+
+    var wasmRunner = vmWasm.createRunner('wasm')!;
+
+    // Map the `print` function in the VM:
+    wasmRunner.externalPrintFunction = (o) => output.writeln(o);
+
+    var functionName = selectFunctionName().value ?? '';
+
+    var parameters = [...?positionalParameters, ...?namedParameters?.values];
+
+    astValue = await wasmRunner.executeFunction('', functionName,
+        positionalParameters: parameters);
   } else {
-    astValue = await dartRunner.executeFunction('', functionName,
-        positionalParameters: positionalParameters,
-        namedParameters: namedParameters);
+    executedCode = code;
+
+    var dartRunner = vm.createRunner(language)!;
+
+    dartRunner.externalPrintFunction = (o) => output.writeln(o);
+
+    if (className.isNotEmpty) {
+      astValue = await dartRunner.executeClassMethod(
+          '', className, functionName,
+          positionalParameters: positionalParameters,
+          namedParameters: namedParameters);
+    } else {
+      astValue = await dartRunner.executeFunction('', functionName,
+          positionalParameters: positionalParameters,
+          namedParameters: namedParameters);
+    }
   }
 
   var result = await astValue.getValueNoContext();
@@ -346,7 +437,7 @@ Future<({Object? result, String output})> executeVM(
   print(outputStr);
   print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 
-  return (result: result, output: outputStr);
+  return (result: result, output: outputStr, executedCode: executedCode);
 }
 
 Future<({bool ok, BytesOutput output})> compileToWasm(
@@ -358,7 +449,7 @@ Future<({bool ok, BytesOutput output})> compileToWasm(
 
   var vm = ApolloVM();
 
-  var codeUnit = CodeUnit(language, code, 'web');
+  var codeUnit = SourceCodeUnit(language, code, id: 'web');
 
   Object? loadError;
   var loadOK = false;
@@ -380,6 +471,8 @@ Future<({bool ok, BytesOutput output})> compileToWasm(
   var wasmModule = wasmModules.values.first.entries.first;
   var wasmOutput = wasmModule.value;
 
+  print('Wasm bytes: <<<\n\n${wasmOutput.toString(hex: true)}\n>>>');
+
   return (ok: true, output: wasmOutput);
 }
 
@@ -394,7 +487,4 @@ class AnyUriPolicy implements UriPolicy {
 
 void main() async {
   buildUI();
-  return;
-
-  //= 'ApolloVM VERSION: ${ApolloVM.VERSION}';
 }
