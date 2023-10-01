@@ -4121,7 +4121,7 @@ jA:function jA(a){this.a=a},
 jZ:function jZ(a){this.a=a},
 km:function km(a){this.a=a},
 AE(){var s,r,q,p=null,o="click",n=document,m=n.querySelector("#apollovmTitle")
-if(m!=null)J.y7(m,"ApolloVM / 0.0.42")
+if(m!=null)J.y7(m,"ApolloVM / 0.0.44")
 m=n.querySelector("#output")
 if(m!=null){s=A.w([],t.uk)
 B.a.q(s,A.wA(new A.j9(),B.ax,B.at,B.av))
