@@ -1,3 +1,8 @@
+## 1.0.3
+
+- Add option to run compiled to Wasm.
+- apollovm: ^0.0.42
+
 ## 1.0.2
 
 - apollovm: ^0.0.41

@@ -56,6 +56,16 @@ input, select {
     margin: 1px;
 }
 
+button {
+    padding: 4px 12px;
+    margin: 4px;
+    font-size: 101%;
+    border: 1px solid #000000;
+    border-radius: 6px;
+    background-color: #222222;
+    color: #00dd63;
+}
+
 #vmOutputDiv {
     background-color: #222;
     color: #00ee00;
