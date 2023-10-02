@@ -5,6 +5,7 @@ import 'package:apollovm/apollovm.dart';
 import 'package:collection/collection.dart';
 import 'package:dom_tools/dom_tools.dart';
 import 'package:swiss_knife/swiss_knife.dart';
+import 'package:data_serializer/data_serializer.dart';
 
 final initialCodeDart = r'''
 
@@ -384,6 +385,8 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 
     var wasmModule = wasmModules.values.first.entries.first;
     var wasmOutput = wasmModule.value;
+
+    print('Wasm bytes (HEX): \n${hex.encode(wasmOutput.output())}');
 
     executedCode = wasmOutput.toString(hex: true);
     print('Wasm bytes: <<<\n\n$executedCode\n>>>');
