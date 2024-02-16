@@ -3,10 +3,12 @@
 index.html
 main.dart.js
 packages/$sdk/dev_compiler/amd/require.js
+packages/$sdk/dev_compiler/ddc/ddc_module_loader.js
 packages/$sdk/dev_compiler/web/dart_stack_trace_mapper.js
 packages/_fe_analyzer_shared/src/parser/parser.md
 packages/analyzer/fix_data.yaml
 packages/analyzer/src/summary/format.fbs
+packages/analyzer/src/wolf/README.md
 packages/build_runner/src/server/README.md
 packages/build_runner/src/server/build_updates_client/live_reload_client.js
 packages/build_runner/src/server/graph_viz.html
@@ -259,4 +261,8 @@ packages/intl/src/data/dates/symbols/zu.json
 packages/lints/core.yaml
 packages/lints/recommended.yaml
 packages/resource_portable/resource/file-sample.txt
+packages/wasm_run/assets/browser_wasi_shim.js
+packages/wasm_run/assets/wasm-feature-detect.js
+packages/wasm_run/assets/wasm.worker.js
+packages/web/fix_data.yaml
 styles.css
