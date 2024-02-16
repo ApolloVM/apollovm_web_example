@@ -1,3 +1,16 @@
+## 1.1.0
+
+- sdk: '>=3.3.0 <4.0.0'
+
+- apollovm: ^0.0.51
+- dom_tools: ^2.3.0
+- swiss_knife: ^3.2.0
+- data_serializer: ^1.1.0
+
+- build_runner: ^2.4.8
+- build_web_compilers: ^4.0.9
+- lints: ^3.0.0
+
 ## 1.0.8
 
 - apollovm: ^0.0.49
