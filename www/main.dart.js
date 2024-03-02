@@ -4537,7 +4537,7 @@ jN:function jN(a){this.a=a},
 ka:function ka(a){this.a=a},
 kA:function kA(a){this.a=a},
 BL(){var s,r,q,p=null,o="click",n=document,m=n.querySelector("#apollovmTitle")
-if(m!=null)J.ze(m,"ApolloVM / 0.0.52")
+if(m!=null)J.ze(m,"ApolloVM / 0.0.53")
 m=n.querySelector("#output")
 if(m!=null){s=A.m([],t.uk)
 B.a.t(s,A.xA(new A.jn(),B.az,B.av,B.ax))
@@ -7481,8 +7481,7 @@ return"NoSuchMethodError: method not found: '"+k.b.a+"'\nReceiver: "+m+"\nArgume
 A.i9.prototype={
 i(a){return"Unsupported operation: "+this.a}}
 A.kO.prototype={
-i(a){var s=this.a
-return s!=null?"UnimplementedError: "+s:"UnimplementedError"}}
+i(a){return"UnimplementedError: "+this.a}}
 A.eZ.prototype={
 i(a){return"Bad state: "+this.a}}
 A.jO.prototype={
@@ -14342,9 +14341,9 @@ if(p===0)i.fm(new A.bV(o,n,l,null,!1),b,j,d)
 else i.fn(new A.bD(o,n,m,l,null,!1),b,j,d)}d.K(11,"[OP] if else end")
 return d},
 iK(a,b,c){return this.fn(a,b,0,c)},
-iM(a,b){throw A.c(A.b9(null))},
-iO(a,b){throw A.c(A.b9(null))},
-iQ(a,b){throw A.c(A.b9(null))},
+iM(a,b){throw A.c(A.b9("generateASTClassField"))},
+iO(a,b){throw A.c(A.b9("generateASTExpressionFunctionInvocation"))},
+iQ(a,b){throw A.c(A.b9("generateASTExpressionListLiteral"))},
 iR(a,b,c){var s
 if(c==null)c=A.be(null,null)
 if(b==null)b=A.bR()
@@ -14352,9 +14351,9 @@ s=b.b.gk(0)
 this.fF(a.d,b,c)
 b.S(s+1,"After expression literal value push")
 return c},
-iT(a,b){throw A.c(A.b9(null))},
-iV(a,b){throw A.c(A.b9(null))},
-iW(a,b){throw A.c(A.b9(null))},
+iT(a,b){throw A.c(A.b9("generateASTExpressionLocalFunctionInvocation"))},
+iV(a,b){throw A.c(A.b9("generateASTExpressionMapLiteral"))},
+iW(a,b){throw A.c(A.b9("generateASTExpressionNegation"))},
 kG(a,b,c,d,e,f){var s,r="[OP] convert i32 to i64 signed",q="Convert i32 to i64 signed"
 t.AQ.a(e)
 t.y7.a(f)
@@ -14518,7 +14517,7 @@ if(q!=null&&p!=null){s=p.b
 if(!A.de(s,s))throw A.c(A.F("Setting local variable#"+c+" `"+d+"` with wrong type> localVar:"+s.i(0)+" != stackValue:"+s.i(0)))}r=A.m([33],t.X)
 B.a.I(r,A.bZ(c))
 a.ae(0,t.J.a(r),"[OP] local set: #"+c+" $"+d)},
-j2(a,b){throw A.c(A.b9(null))},
+j2(a,b){throw A.c(A.b9("generateASTExpressionVariableEntryAccess"))},
 fv(a,b,c){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=null,d="Unreachable default return"
 if(c==null)c=A.be(e,e)
 if(b==null)b=A.bR()
@@ -14600,8 +14599,8 @@ return c}else if(a instanceof A.bH){l=(b==null?A.bR():b).aL(0)
 if(l!=null&&!(l.b instanceof A.dx))A.aa(A.F("Returning with pushed element in stack: "+A.k(l)))
 c.K(15,"[OP] return")
 return c}throw A.c(A.L("Can't handle statement: "+a.i(0)))},
-j7(a,b){throw A.c(A.b9(null))},
-j8(a,b){throw A.c(A.b9(null))},
+j7(a,b){throw A.c(A.b9("generateASTStatementForLoop"))},
+j8(a,b){throw A.c(A.b9("generateASTStatementReturnNull"))},
 dH(a,b,c,d){var s,r,q,p,o
 if(c==null)A.bR()
 if(a.q(0,b))return d
@@ -14689,18 +14688,18 @@ else if(a instanceof A.bw)return q.jb(a,c)
 else if(a instanceof A.dy)return q.jc(a,c)
 throw A.c(A.L("Can't generate value: "+a.i(0)))},
 ja(a,b){t.yM.a(a)
-throw A.c(A.b9(null))},
+throw A.c(A.b9("generateASTValueArray"))},
 jb(a,b){t.ge.a(a)
-throw A.c(A.b9(null))},
+throw A.c(A.b9("generateASTValueArray2D"))},
 jc(a,b){t.yI.a(a)
-throw A.c(A.b9(null))},
-jd(a,b){throw A.c(A.b9(null))},
-je(a,b){throw A.c(A.b9(null))},
-jf(a,b){throw A.c(A.b9(null))},
-jh(a,b){throw A.c(A.b9(null))},
-ji(a,b){throw A.c(A.b9(null))},
-jj(a,b){throw A.c(A.b9(null))},
-jl(a,b){throw A.c(A.b9(null))}}
+throw A.c(A.b9("generateASTValueArray3D"))},
+jd(a,b){throw A.c(A.b9("generateASTValueNull"))},
+je(a,b){throw A.c(A.b9("generateASTValueObject"))},
+jf(a,b){throw A.c(A.b9("generateASTValueStatic"))},
+jh(a,b){throw A.c(A.b9("generateASTValueString"))},
+ji(a,b){throw A.c(A.b9("generateASTValueStringConcatenation"))},
+jj(a,b){throw A.c(A.b9("generateASTValueStringExpression"))},
+jl(a,b){throw A.c(A.b9("generateASTValueStringVariable"))}}
 A.oa.prototype={
 $2(a,b){return new A.D(t.F.a(b),a,t.mt)},
 $S:171}
