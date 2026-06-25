@@ -89,6 +89,18 @@ const codeExamples = <CodeExample>[
       '"Sums:", 10, 20, 30'),
   CodeExample(
       'Lua — Class', 'lua', _exLua, 'Foo', 'main', '"Sums:", 10, 20, 30'),
+  // Exception handling (apollovm 0.1.33): try/catch/finally and throw.
+  // Run with b = 0 to take the throwing path, or b = 2 for the normal path.
+  CodeExample('Dart — Exceptions (try/catch/finally)', 'dart', _exDartTryCatch,
+      'Foo', 'main', '10, 0'),
+  CodeExample('Java11 — Exceptions (try/catch/finally)', 'java11',
+      _exJavaTryCatch, 'Foo', 'main', '10, 0'),
+  CodeExample('Kotlin — Exceptions (try/catch/finally)', 'kotlin',
+      _exKotlinTryCatch, 'Foo', 'main', '10, 0'),
+  CodeExample('JavaScript — Exceptions (try/catch/finally)', 'javascript',
+      _exJsTryCatch, 'Foo', 'main', '10, 0'),
+  CodeExample('TypeScript — Exceptions (try/catch/finally)', 'typescript',
+      _exTsTryCatch, 'Foo', 'main', '10, 0'),
 ];
 
 const _exDartFib =
@@ -169,6 +181,118 @@ function Foo:main(title, a, b, c)
   print(sumAB)
   print(sumABC)
 end
+''';
+
+const _exDartTryCatch = r'''class Foo {
+  void main(int a, int b) {
+    // Catch a built-in VM runtime error (division by zero):
+    try {
+      print('a ~/ b = ${a ~/ b}');
+    } catch (e) {
+      print('caught runtime error: $e');
+    } finally {
+      print('division done');
+    }
+
+    // Catch a user-thrown value (typed `on String`); finally always runs:
+    try {
+      if (b == 0) {
+        throw 'b must not be zero';
+      }
+      print('b is fine: $b');
+    } on String catch (msg) {
+      print('caught: $msg');
+    } finally {
+      print('check done');
+    }
+  }
+}
+''';
+
+const _exJavaTryCatch = r'''class Foo {
+   static public void main(int a, int b) {
+     // Catch a built-in VM runtime error (integer division by zero):
+     try {
+       print("a / b = " + (a / b));
+     } catch (Exception e) {
+       print("caught runtime error: " + e);
+     } finally {
+       print("division done");
+     }
+
+     // Catch a user-thrown value (typed); finally always runs:
+     try {
+       if (b == 0) {
+         throw "b must not be zero";
+       }
+       print("b is fine: " + b);
+     } catch (String msg) {
+       print("caught: " + msg);
+     } finally {
+       print("check done");
+     }
+   }
+}
+''';
+
+const _exKotlinTryCatch = r'''class Foo {
+    fun main(a: Int, b: Int) {
+      // Catch a built-in VM runtime error (integer division by zero):
+      try {
+        println("a / b = " + (a / b))
+      } catch (e: Exception) {
+        println("caught runtime error: " + e)
+      } finally {
+        println("division done")
+      }
+
+      // Catch a user-thrown value (typed); finally always runs:
+      try {
+        if (b == 0) {
+          throw "b must not be zero"
+        }
+        println("b is fine: " + b)
+      } catch (e: String) {
+        println("caught: " + e)
+      } finally {
+        println("check done")
+      }
+    }
+}
+''';
+
+// JavaScript division by zero is `Infinity` (not an error), so this example
+// focuses on catching a user `throw`; `finally` always runs.
+const _exJsTryCatch = r'''class Foo {
+  main(a, b) {
+    try {
+      if (b == 0) {
+        throw "b must not be zero";
+      }
+      print("b is fine: " + b);
+    } catch (e) {
+      print("caught: " + e);
+    } finally {
+      print("check done");
+    }
+  }
+}
+''';
+
+const _exTsTryCatch = r'''class Foo {
+  main(a: number, b: number): void {
+    try {
+      if (b == 0) {
+        throw "b must not be zero";
+      }
+      print("b is fine: " + b);
+    } catch (e) {
+      print("caught: " + e);
+    } finally {
+      print("check done");
+    }
+  }
+}
 ''';
 
 void buildUI() {

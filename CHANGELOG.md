@@ -1,3 +1,13 @@
+## 1.2.1
+
+- Updated to ApolloVM 0.1.33 (adds `throw` and `try`/`catch`/`finally` exception
+  handling for Dart, Java, Kotlin, JavaScript and TypeScript).
+- Added "Exceptions (try/catch/finally)" examples to the Example picker for Dart,
+  Java11, Kotlin, JavaScript and TypeScript (run with `b = 0` to take the
+  throwing path); all examples are verified to run.
+
+- apollovm: ^0.1.33
+
 ## 1.2.0
 
 - Updated to ApolloVM 0.1.32 (adds Kotlin, JavaScript, TypeScript and Lua).
