@@ -1,0 +1,30 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dart-lang/setup-dart@v1
+      - name: Dart version
+        run: |
+          dart --version
+          uname -a
+      - name: Install dependencies
+        run: dart pub get
+      - name: dart format
+        run: dart format -o none --set-exit-if-changed .
+      - name: dart analyze
+        # `--fatal-warnings` (not `--fatal-infos`): this app uses `dart:html`,
+        # which is info-level deprecated; that info must not fail the build.
+        run: dart analyze --fatal-warnings .
+      - name: Build web (webdev)
+        run: |
+          dart pub global activate webdev
+          webdev build
