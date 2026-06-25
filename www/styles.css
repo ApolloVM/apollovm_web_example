@@ -1,4 +1,19 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto);
+:root {
+    --bg:          #0d1117;
+    --bg-panel:    #161b22;
+    --bg-elevated: #1c2330;
+    --bg-input:    #0b0f16;
+    --border:      #2a313c;
+    --border-soft: #21262d;
+    --text:        #c9d1d9;
+    --text-muted:  #8b949e;
+    --text-faint:  #5b6675;
+    --accent:      #00dd63;
+    --accent-hi:   #00ff71;
+    --accent-dim:  rgba(0, 221, 99, 0.18);
+    --output:      #3ddc84;
+    --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
+}
 
 html, body {
     width: 100%;
@@ -6,94 +21,225 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
-
-    background: #333;
-    color: #bbb;
+    background: var(--bg);
+    color: var(--text);
 }
 
 #output {
-    padding: 8px 16px;
+    padding: 16px;
+    max-width: 920px;
+    margin: 0 auto;
     text-align: center;
 }
 
 .title {
-    color: #00dd63;
+    color: var(--accent);
+    font-size: 130%;
+    letter-spacing: 0.5px;
 }
 
 a {
-    color: #00dd63;
+    color: var(--accent);
     text-decoration: none;
 }
 
 a:hover {
-    color: #00ff71;
+    color: var(--accent-hi);
     text-decoration: underline;
 }
 
 hr {
-    border-color: #666;
+    border: none;
+    border-top: 1px solid var(--border-soft);
 }
 
-textarea {
-    background-color: #222;
-    color: #ddd;
-    width: calc( 100% - 20px );
-    margin-top: 8px;
-    border-radius: 6px;
-    border: 1px solid #666;
-    padding: 8px;
-    font-size: 107%;
+/* ---- Toolbar (example selector) ---- */
+
+.toolbar {
+    text-align: left;
+    padding: 4px 2px;
+    margin-top: 4px;
 }
+
+.toolbar label {
+    color: var(--text-muted);
+    font-size: 95%;
+}
+
+.toolbar select {
+    min-width: 260px;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* ---- Code editor (gutter + textarea) ---- */
+
+.editor {
+    display: flex;
+    align-items: stretch;
+    margin-top: 8px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) inset;
+    text-align: left;
+}
+
+.editor .gutter,
+.editor textarea {
+    margin: 0;
+    padding: 10px 0;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    border: none;
+    -moz-tab-size: 2;
+    tab-size: 2;
+}
+
+.editor .gutter {
+    flex: 0 0 auto;
+    min-width: 3.2em;
+    padding-left: 8px;
+    padding-right: 10px;
+    text-align: right;
+    color: var(--text-faint);
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    white-space: pre;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.editor textarea {
+    flex: 1 1 auto;
+    padding-left: 12px;
+    padding-right: 12px;
+    color: var(--text);
+    background-color: transparent;
+    white-space: pre;
+    overflow: auto;
+    resize: vertical;
+    outline: none;
+}
+
+.editor:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+/* ---- Form controls ---- */
 
 input, select {
-    background: #222;
-    color: #00dd63;
-    border-radius: 4px;
+    background: var(--bg-input);
+    color: var(--accent);
+    border-radius: 5px;
     box-shadow: none;
     outline: none;
-    border: 1px solid #666;
-    padding: 2px;
+    border: 1px solid var(--border);
+    padding: 4px 6px;
     margin: 1px;
+    font-family: var(--mono);
+    font-size: 90%;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-dim);
 }
 
 button {
-    padding: 4px 12px;
+    padding: 7px 16px;
     margin: 4px;
-    font-size: 101%;
-    border: 1px solid #000000;
+    font-size: 100%;
+    font-weight: 500;
+    border: 1px solid var(--border);
     border-radius: 6px;
-    background-color: #222222;
-    color: #00dd63;
+    background-color: var(--bg-elevated);
+    color: var(--accent);
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 
+button:hover {
+    border-color: var(--accent);
+    color: var(--accent-hi);
+    background-color: #232c3a;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+#run {
+    background-color: var(--accent);
+    color: #04130a;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+
+#run:hover {
+    background-color: var(--accent-hi);
+    color: #04130a;
+}
+
+ul {
+    line-height: 1.7;
+}
+
+/* ---- VM output ---- */
+
 #vmOutputDiv {
-    background-color: #222;
-    color: #00ee00;
-    padding: 2px;
+    background-color: var(--bg-input);
+    color: var(--output);
+    padding: 8px;
     margin: 4px;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border-soft);
     min-height: 120px;
-    text-shadow: 2px 2px #333;
+}
+
+#vmOutputDiv pre {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 4px 0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background-color: var(--bg);
+    max-height: 320px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#vmResult {
+    color: var(--accent-hi);
 }
 
 #vmOutput {
     text-align: left;
-    padding: 4px;
+    color: var(--output);
+}
+
+#vmExecutedCode {
+    color: var(--text-muted);
 }
 
 .vmOutputDivEmpty {
     text-align: center !important;
+    color: var(--text-faint) !important;
 }
 
 .vmOutputDivInfo {
-    background-color: #3d3d36;
-    color: #deee00 !important;
+    background-color: #1d2a14 !important;
+    color: #d6e85a !important;
     text-align: center !important;
 }
 
 .vmOutputDivError {
-    background-color: #3d3636;
-    color: #ff0000 !important;
+    background-color: #2a1717 !important;
+    color: #ff6b6b !important;
 }
-
-

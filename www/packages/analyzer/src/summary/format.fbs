@@ -8,46 +8,8 @@
 // or "pkg/analyzer/tool/generate_files" for the analyzer package IDL/sources.
 
 
-/// Enum of declaration kinds in available files.
-enum AvailableDeclarationKind : byte {
-  CLASS,
-
-  CLASS_TYPE_ALIAS,
-
-  CONSTRUCTOR,
-
-  ENUM,
-
-  ENUM_CONSTANT,
-
-  EXTENSION,
-
-  FIELD,
-
-  FUNCTION,
-
-  FUNCTION_TYPE_ALIAS,
-
-  GETTER,
-
-  METHOD,
-
-  MIXIN,
-
-  SETTER,
-
-  TYPE_ALIAS,
-
-  VARIABLE
-}
-
 /// Enum used to indicate the kind of an index relation.
 enum IndexRelationKind : byte {
-  /// Left: class.
-  ///   Is ancestor of (is extended or implemented, directly or indirectly).
-  /// Right: other class declaration.
-  IS_ANCESTOR_OF,
-
   /// Left: class.
   ///   Is extended by.
   /// Right: other class declaration.
@@ -80,15 +42,36 @@ enum IndexRelationKind : byte {
   IS_INVOKED_BY_ENUM_CONSTANT_WITHOUT_ARGUMENTS,
 
   /// Left: any element.
+  ///   Is invoked by a dot shorthand constructor invocation.
+  /// Right: location.
+  IS_INVOKED_BY_DOT_SHORTHANDS_CONSTRUCTOR,
+
+  /// Left: any element.
   ///   Is referenced (and not invoked, read/written) at.
   /// Right: location.
   IS_REFERENCED_BY,
+
+  /// Left: a pattern field.
+  ///  Is referenced at.
+  /// Right: location.
+  IS_REFERENCED_BY_PATTERN_FIELD,
 
   /// Left: a constructor.
   ///   Is referenced by a constructor tear-off at, which is special because
   ///   the name of the constructor is required (`new` for unnamed).
   /// Right: location.
   IS_REFERENCED_BY_CONSTRUCTOR_TEAR_OFF,
+
+  /// Left: a constructor.
+  ///   Is referenced by a constructor tear-off at, which is special because
+  ///   the name of the constructor is required (`new` for unnamed).
+  /// Right: location.
+  IS_REFERENCED_BY_DOT_SHORTHAND_CONSTRUCTOR_TEAR_OFF,
+
+  /// Left: a parameter.
+  ///   Is referenced by a named argument.
+  /// Right: named argument.
+  IS_REFERENCED_BY_NAMED_ARGUMENT,
 
   /// Left: unresolved member name.
   ///   Is read at.
@@ -106,7 +89,7 @@ enum IndexRelationKind : byte {
   IS_WRITTEN_BY
 }
 
-/// When we need to reference a synthetic element in [PackageIndex] we use a
+/// When we need to reference a synthetic element in PackageIndex we use a
 /// value of this enum to specify which kind of the synthetic element we
 /// actually reference.
 enum IndexSyntheticElementKind : byte {
@@ -180,12 +163,12 @@ table AnalysisDriverResolvedUnit {
 /// Information about a subtype of one or more classes.
 table AnalysisDriverSubtype {
   /// The names of defined instance members.
-  /// They are indexes into [AnalysisDriverUnitError.strings] list.
+  /// They are indexes into [AnalysisDriverUnitIndex.strings] list.
   /// The list is sorted in ascending order.
   members:[uint] (id: 1);
 
   /// The name of the class.
-  /// It is an index into [AnalysisDriverUnitError.strings] list.
+  /// It is an index into [AnalysisDriverUnitIndex.strings] list.
   name:uint (id: 0);
 }
 
@@ -243,6 +226,22 @@ table AnalysisDriverUnitIndex {
   /// the index into [unitLibraryUris] and [unitUnitUris] for the library
   /// specific unit where the element is declared.
   elementUnits:[uint] (id: 5);
+
+  /// Support for indexing `part` and `part of` directives.
+  ///
+  /// This is the index into [unitLibraryUris] and [unitUnitUris].
+  /// This is the library fragment referenced by the directive.
+  libFragmentRefTargets:[uint] (id: 21);
+
+  /// Support for indexing `part` and `part of` directives.
+  ///
+  /// The offset of the URI in the directive.
+  libFragmentRefUriLengths:[uint] (id: 23);
+
+  /// Support for indexing `part` and `part of` directives.
+  ///
+  /// The offset of the URI in the directive.
+  libFragmentRefUriOffsets:[uint] (id: 22);
 
   /// Identifier of the null string in [strings].
   nullStringId:uint (id: 1);
@@ -308,108 +307,6 @@ table AnalysisDriverUnitIndex {
   usedNames:[uint] (id: 14);
 }
 
-/// Information about a single declaration.
-table AvailableDeclaration {
-  children:[AvailableDeclaration] (id: 0);
-
-  codeLength:uint (id: 1);
-
-  codeOffset:uint (id: 2);
-
-  defaultArgumentListString:string (id: 3);
-
-  defaultArgumentListTextRanges:[uint] (id: 4);
-
-  docComplete:string (id: 5);
-
-  docSummary:string (id: 6);
-
-  fieldMask:uint (id: 7);
-
-  isAbstract:bool (id: 8);
-
-  isConst:bool (id: 9);
-
-  isDeprecated:bool (id: 10);
-
-  isFinal:bool (id: 11);
-
-  isStatic:bool (id: 12);
-
-  /// The kind of the declaration.
-  kind:AvailableDeclarationKind (id: 13);
-
-  locationOffset:uint (id: 14);
-
-  locationStartColumn:uint (id: 15);
-
-  locationStartLine:uint (id: 16);
-
-  /// The first part of the declaration name, usually the only one, for example
-  /// the name of a class like `MyClass`, or a function like `myFunction`.
-  name:string (id: 17);
-
-  parameterNames:[string] (id: 18);
-
-  parameters:string (id: 19);
-
-  parameterTypes:[string] (id: 20);
-
-  /// The partial list of relevance tags.  Not every declaration has one (for
-  /// example, function do not currently), and not every declaration has to
-  /// store one (for classes it can be computed when we know the library that
-  /// includes this file).
-  relevanceTags:[string] (id: 21);
-
-  requiredParameterCount:uint (id: 22);
-
-  returnType:string (id: 23);
-
-  typeParameters:string (id: 24);
-}
-
-/// Information about an available, even if not yet imported file.
-table AvailableFile {
-  /// Declarations of the file.
-  declarations:[AvailableDeclaration] (id: 0);
-
-  /// The Dartdoc directives in the file.
-  directiveInfo:DirectiveInfo (id: 1);
-
-  /// Exports directives of the file.
-  exports:[AvailableFileExport] (id: 2);
-
-  /// Is `true` if this file is a library.
-  isLibrary:bool (id: 3);
-
-  /// Is `true` if this file is a library, and it is deprecated.
-  isLibraryDeprecated:bool (id: 4);
-
-  /// Offsets of the first character of each line in the source code.
-  lineStarts:[uint] (id: 5);
-
-  /// URIs of `part` directives.
-  parts:[string] (id: 6);
-}
-
-/// Information about an export directive.
-table AvailableFileExport {
-  /// Combinators contained in this export directive.
-  combinators:[AvailableFileExportCombinator] (id: 1);
-
-  /// URI of the exported library.
-  uri:string (id: 0);
-}
-
-/// Information about a `show` or `hide` combinator in an export directive.
-table AvailableFileExportCombinator {
-  /// List of names which are hidden.  Empty if this is a `show` combinator.
-  hides:[string] (id: 1);
-
-  /// List of names which are shown.  Empty if this is a `hide` combinator.
-  shows:[string] (id: 0);
-}
-
 /// Errors for a single unit.
 table CiderUnitErrors {
   errors:[AnalysisDriverUnitError] (id: 0);
@@ -431,15 +328,6 @@ table DiagnosticMessage {
 
   /// The URL of the message, if any.
   url:string (id: 4);
-}
-
-/// Information about the Dartdoc directives in an [AvailableFile].
-table DirectiveInfo {
-  /// The names of the defined templates.
-  templateNames:[string] (id: 0);
-
-  /// The values of the defined templates.
-  templateValues:[string] (id: 1);
 }
 
 root_type AnalysisDriverResolvedUnit;
