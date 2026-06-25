@@ -1,3 +1,11 @@
+## 1.2.2
+
+- Updated to ApolloVM 0.1.34 (compiles `throw` and `try`/`catch`/`finally`
+  exception handling to WebAssembly, on top of the interpreted support added in
+  0.1.33).
+
+- apollovm: ^0.1.34
+
 ## 1.2.1
 
 - Updated to ApolloVM 0.1.33 (adds `throw` and `try`/`catch`/`finally` exception
