@@ -1,3 +1,17 @@
+## 1.2.0
+
+- Updated to ApolloVM 0.1.32 (adds Kotlin, JavaScript, TypeScript and Lua).
+- Language selector now offers Dart, Java11, Kotlin, JavaScript, TypeScript and Lua.
+- Added an "Example" picker with ready-to-run snippets for every language
+  (including a Wasm-compilable Dart example); all examples are verified to run.
+- New line-numbered code editor: gutter, scroll sync and Tab/Shift+Tab indentation.
+- Improved dark theme: JetBrains Mono, refined palette, focus/hover states.
+- Wasm-compiled run accepts a class-method entry point (via `allowClassMethod`),
+  with a clear message when the entry point isn't present in the compiled module.
+
+- apollovm: ^0.1.32
+- dom_tools: ^3.0.0
+
 ## 1.1.2
 
 - apollovm: ^0.0.53
