@@ -189,6 +189,94 @@ ul {
     line-height: 1.7;
 }
 
+/* ---- Transpile (convert to all languages) ---- */
+
+.conversionsPanel {
+    text-align: left;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 8px;
+    margin: 4px;
+}
+
+.conversionsPanel.hidden {
+    display: none;
+}
+
+.conversionsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.conversionsTitle {
+    color: var(--text-muted);
+    font-size: 90%;
+}
+
+.conversionsClose {
+    padding: 2px 8px;
+    margin: 0;
+    font-size: 90%;
+    line-height: 1;
+    color: var(--text-muted);
+}
+
+.conversionsClose:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    background-color: #2a1717;
+}
+
+.conversionTabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.conversionTabs .conv-from {
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 85%;
+    margin-right: 4px;
+}
+
+.conv-tab {
+    padding: 4px 10px;
+    margin: 0;
+    font-size: 85%;
+    font-family: var(--mono);
+}
+
+.conv-tab-active {
+    background-color: var(--accent);
+    color: #04130a;
+    border-color: var(--accent);
+}
+
+.conv-tab-active:hover {
+    background-color: var(--accent-hi);
+    color: #04130a;
+}
+
+.conversionOutput {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background-color: var(--bg);
+    color: var(--output);
+    max-height: 360px;
+    overflow: auto;
+    white-space: pre;
+}
+
 /* ---- VM output ---- */
 
 #vmOutputDiv {
