@@ -1,3 +1,60 @@
+## 1.4.0
+
+- Updated to ApolloVM 0.1.37, which adds C# language support and lambda/anonymous
+  function parsing for Java, Kotlin and Lua (plus Wasm fixes for host-import call
+  indices and closure capture-by-reference).
+- Added C# to the language selectors (example category and run language) and to
+  the "Convert to all languages" transpilation targets.
+- Added "Example" picker entries (all verified to run):
+  - "C# — Class", "C# — Conditional (a > b ? a : b)" and
+    "C# — Exceptions (try/catch/finally)".
+  - "Java11 — Lambdas", "Kotlin — Lambdas" and "Lua — Lambdas": anonymous
+    functions stored in variables and invoked — these now parse in 0.1.37 (they
+    were previously interpreter-unsupported and omitted from the lambdas group).
+
+- apollovm: ^0.1.37
+
+## 1.3.0
+
+- Updated to ApolloVM 0.1.36, which adds Python language support (0.1.35) and
+  conditional/ternary expressions plus anonymous functions (lambdas/closures)
+  (0.1.36).
+- Language selector now offers Python (Dart, Java11, Kotlin, JavaScript,
+  TypeScript, Lua and Python).
+- Added "Example" picker entries (all verified to run):
+  - "Python — Class": a class with a method, idiomatic snake_case and `self`.
+  - "Conditional (ternary)" for Dart, Java11, Kotlin, JavaScript, TypeScript and
+    Python, each using its native idiom (`?:`, Kotlin `if`/`else` expression,
+    Python `a if c else b`). Run with `40, 130`.
+  - "Lambdas (closures)" for Dart, JavaScript, TypeScript and Python: function
+    values stored in variables and invoked. Run with `5`.
+  - "Dart — Async/await (Future)": a class whose `async` methods `await` one
+    another (run with `5`), and a top-level `async` function returning a
+    `Future<int>` whose awaited value lands in the "result" panel (run with
+    `10, 20`). Currently only Dart's async/await parses in ApolloVM.
+- The example picker is now two linked selectors: a "Language" selector that
+  filters a "Example" selector to that language's snippets (the redundant
+  `<Language> — ` name prefix is dropped). Switching language loads that
+  language's first example.
+- Added a "Wasm" category to the example Language selector with extra
+  Wasm-compatible examples (Fibonacci, Factorial, GCD, Power, Sum 1..N, Collatz
+  steps, Prime check, and a single-class instance method). Selecting a Wasm
+  example enables the "Wasm compiled" run mode automatically; all are verified
+  end-to-end in the browser via the Wasm-compiled path (including `print`
+  marshalling from the module and a class instantiated inside the entry point).
+- New "Convert to all languages" button: transpiles the current code into every
+  other supported language at once (Dart, Java11, Kotlin, JavaScript,
+  TypeScript, Lua, Python) and shows the results in a tabbed panel — making
+  ApolloVM's cross-language code generation a first-class, one-click feature
+  (the source is parsed once and generated for each target).
+- Migrated the web UI from the deprecated `dart:html` to `package:web` +
+  `dart:js_interop` (DOM access via `document.querySelector`, events via
+  `addEventListener`, `innerHTML`/`textContent`/`classList`). Verified end-to-end
+  in a headless browser (UI builds and RUN executes the VM).
+
+- apollovm: ^0.1.36
+- web: ^1.1.0
+
 ## 1.2.2
 
 - Updated to ApolloVM 0.1.34 (compiles `throw` and `try`/`catch`/`finally`
