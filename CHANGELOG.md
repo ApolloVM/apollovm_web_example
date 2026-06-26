@@ -1,3 +1,17 @@
+## 1.5.1
+
+- Refactored the playground: split the monolithic `web/main.dart` into a
+  `part`-based library under `web/src/`:
+  - `code_examples.dart`: `CodeExample` data + category helpers.
+  - `ui_builder.dart`: `buildUI()` — HTML template + event wiring.
+  - `dom.dart`: `_listen()` + DOM `selectX()` helpers.
+  - `code_editor.dart`: line-numbered code editor.
+  - `vm.dart`: ApolloVM execute / compile / convert.
+  - `actions.dart`: UI action handlers + output panel.
+- Removed the unused `dart:js_interop` import and the IDE module file
+  `apollovm_web_example.iml`.
+- No functional changes.
+
 ## 1.5.0
 
 - Updated to ApolloVM 0.1.40, folding in 0.1.38 and 0.1.39:
