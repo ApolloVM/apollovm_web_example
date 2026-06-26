@@ -1,3 +1,30 @@
+## 1.5.0
+
+- Updated to ApolloVM 0.1.40, folding in 0.1.38 and 0.1.39:
+  - 0.1.38: `switch`/`case`, `do`/`while`, `break`/`continue`, bitwise operators,
+    C# lambda parsing and enum declarations.
+  - 0.1.39: enum runtime value access and generic classes (Box<T>).
+  - 0.1.40: Wasm now compiles `switch`/`case`, `do`/`while` and the bitwise
+    operators; Kotlin/Lua gain bitwise operators; Kotlin member visibility.
+- Added "Example" picker entries (all verified to run — interpreted via ApolloVM,
+  Wasm examples executed end-to-end in the browser):
+  - "C# — Lambdas": anonymous functions bound to a `Func` delegate.
+  - "Switch/case" for Dart, Java11, JavaScript, TypeScript and C#, "When (switch)"
+    for Kotlin and "Match/case" for Python (each mapped to the language's idiom).
+    Run with `2`.
+  - "Do/while loop" for Dart and Kotlin, and "Repeat/until loop" for Lua. Run
+    with `3`.
+  - "Bitwise" for Dart, Java11, C# (`& | ^ << >> ~`), Kotlin (`and/or/xor/shl/shr`)
+    and Lua (`& | ~ << >>`). Run with `12, 10` (Lua uses literals).
+  - "Enum (ordinal value)" for Dart, Java11, Kotlin and Python, and
+    "Enum (explicit values)" for C# — an enum entry resolves to its value.
+  - "Generics (Box<T>)" for Dart, Java11, Kotlin, TypeScript and C#: a generic
+    class instantiated with a type argument. Run with `10`.
+  - Wasm: "Switch/case (n % 3)", "Bit count (& >>)" and "Do/while sum 1..N",
+    exercising the new 0.1.40 Wasm control-flow / bitwise support.
+
+- apollovm: ^0.1.40
+
 ## 1.4.0
 
 - Updated to ApolloVM 0.1.37, which adds C# language support and lambda/anonymous
