@@ -146,6 +146,66 @@ const codeExamples = <CodeExample>[
   CodeExample(
       'Kotlin — Lambdas', 'kotlin', _exKotlinLambda, 'Foo', 'main', '5'),
   CodeExample('Lua — Lambdas', 'lua', _exLuaLambda, 'Foo', 'main', '5'),
+  // C# lambda parsing (apollovm 0.1.38): `n => n * 2` bound to a `Func`
+  // delegate.
+  CodeExample('C# — Lambdas', 'csharp', _exCsLambda, 'Foo', 'main', '5'),
+  // switch / case (apollovm 0.1.38). C-style fall-through for Dart/Java/C#/JS/TS;
+  // mapped to Kotlin `when` and Python `match`. Run with n = 2.
+  CodeExample('Dart — Switch/case', 'dart', _exDartSwitch, 'Foo', 'main', '2'),
+  CodeExample(
+      'Java11 — Switch/case', 'java11', _exJavaSwitch, 'Foo', 'main', '2'),
+  CodeExample(
+      'Kotlin — When (switch)', 'kotlin', _exKotlinWhen, 'Foo', 'main', '2'),
+  CodeExample('JavaScript — Switch/case', 'javascript', _exJsSwitch, 'Foo',
+      'main', '2'),
+  CodeExample('TypeScript — Switch/case', 'typescript', _exTsSwitch, 'Foo',
+      'main', '2'),
+  CodeExample(
+      'Python — Match/case', 'python', _exPythonMatch, 'Foo', 'main', '2'),
+  CodeExample('C# — Switch/case', 'csharp', _exCsSwitch, 'Foo', 'main', '2'),
+  // do/while and Lua's `repeat ... until` (apollovm 0.1.38). Run with n = 3.
+  CodeExample(
+      'Dart — Do/while loop', 'dart', _exDartDoWhile, 'Foo', 'main', '3'),
+  CodeExample(
+      'Kotlin — Do/while loop', 'kotlin', _exKotlinDoWhile, 'Foo', 'main', '3'),
+  CodeExample(
+      'Lua — Repeat/until loop', 'lua', _exLuaRepeat, 'Foo', 'main', '3'),
+  // Bitwise operators (apollovm 0.1.38; Kotlin/Lua added 0.1.40). Run with
+  // a = 12, b = 10 (Lua uses literals, no parameters).
+  CodeExample('Dart — Bitwise (& | ^ << >> ~)', 'dart', _exDartBitwise, 'Foo',
+      'main', '12, 10'),
+  CodeExample('Java11 — Bitwise (& | ^ << >> ~)', 'java11', _exJavaBitwise,
+      'Foo', 'main', '12, 10'),
+  CodeExample('Kotlin — Bitwise (and/or/xor/shl/shr)', 'kotlin',
+      _exKotlinBitwise, 'Foo', 'main', '12, 10'),
+  CodeExample(
+      'Lua — Bitwise (& | ~ << >>)', 'lua', _exLuaBitwise, 'Foo', 'main', ''),
+  CodeExample('C# — Bitwise (& | ^ << >> ~)', 'csharp', _exCsBitwise, 'Foo',
+      'main', '12, 10'),
+  // enum with runtime value access (apollovm 0.1.38 declarations, 0.1.39 value
+  // access): an entry resolves to its explicit value (C#) or ordinal index.
+  CodeExample(
+      'Dart — Enum (ordinal value)', 'dart', _exDartEnum, 'Foo', 'main', ''),
+  CodeExample('Java11 — Enum (ordinal value)', 'java11', _exJavaEnum, 'Foo',
+      'main', ''),
+  CodeExample('Kotlin — Enum (ordinal value)', 'kotlin', _exKotlinEnum, 'Foo',
+      'main', ''),
+  CodeExample('Python — Enum (ordinal value)', 'python', _exPythonEnum, 'Foo',
+      'main', ''),
+  CodeExample(
+      'C# — Enum (explicit values)', 'csharp', _exCsEnum, 'Foo', 'main', ''),
+  // Generic classes (apollovm 0.1.39): `Box<T>` declared, instantiated and
+  // used. Run with x = 10.
+  CodeExample(
+      'Dart — Generics (Box<T>)', 'dart', _exDartGenerics, 'Foo', 'main', '10'),
+  CodeExample('Java11 — Generics (Box<T>)', 'java11', _exJavaGenerics, 'Foo',
+      'main', '10'),
+  CodeExample('Kotlin — Generics (Box<T>)', 'kotlin', _exKotlinGenerics, 'Foo',
+      'main', '10'),
+  CodeExample('TypeScript — Generics (Box<T>)', 'typescript', _exTsGenerics,
+      'Foo', 'main', '10'),
+  CodeExample(
+      'C# — Generics (Box<T>)', 'csharp', _exCsGenerics, 'Foo', 'main', '10'),
   // async/await (interpreted). Only Dart's async/await currently parses in
   // ApolloVM.
   CodeExample(
@@ -175,6 +235,17 @@ const codeExamples = <CodeExample>[
       wasm: true),
   CodeExample(
       'Wasm — Class instance method', 'dart', _exWasmClass, '', 'run', '5',
+      wasm: true),
+  // Wasm control flow + bitwise (apollovm 0.1.40): `switch`/`case`, `do`/`while`
+  // and the bitwise operators now compile to and run on Wasm.
+  CodeExample(
+      'Wasm — Switch/case (n % 3)', 'dart', _exWasmSwitch, '', 'classify', '7',
+      wasm: true),
+  CodeExample(
+      'Wasm — Bit count (& >>)', 'dart', _exWasmBitCount, '', 'bitCount', '13',
+      wasm: true),
+  CodeExample(
+      'Wasm — Do/while sum 1..N', 'dart', _exWasmDoWhile, '', 'sumTo', '5',
       wasm: true),
 ];
 
@@ -663,6 +734,398 @@ function Foo:main(x)
   local inc = function(n) return n + 1 end
   print("twice: " .. twice(x) .. " ; inc: " .. inc(x))
 end
+''';
+
+// C# lambda parsing (apollovm 0.1.38): anonymous functions bound to `Func`
+// delegates and invoked.
+const _exCsLambda = r'''class Foo {
+  public void main(int x) {
+    Func twice = n => n * 2;
+    Func inc = n => n + 1;
+    print("twice: " + twice(x) + " ; inc: " + inc(x));
+  }
+}
+''';
+
+// switch / case (apollovm 0.1.38): C-style fall-through (`break` ends a case,
+// `default` runs when nothing matches).
+const _exDartSwitch = r'''class Foo {
+  void main(int n) {
+    switch (n) {
+      case 1:
+        print('one');
+        break;
+      case 2:
+        print('two');
+        break;
+      default:
+        print('many');
+    }
+  }
+}
+''';
+
+const _exJavaSwitch = r'''class Foo {
+   static public void main(int n) {
+     switch (n) {
+       case 1:
+         print("one");
+         break;
+       case 2:
+         print("two");
+         break;
+       default:
+         print("many");
+     }
+   }
+}
+''';
+
+// Kotlin maps `switch` to `when (e) { v -> … ; else -> … }` (no fall-through).
+const _exKotlinWhen = r'''class Foo {
+    fun main(n: Int) {
+      when (n) {
+        1 -> println("one")
+        2 -> println("two")
+        else -> println("many")
+      }
+    }
+}
+''';
+
+const _exJsSwitch = r'''class Foo {
+  main(n) {
+    switch (n) {
+      case 1:
+        print("one");
+        break;
+      case 2:
+        print("two");
+        break;
+      default:
+        print("many");
+    }
+  }
+}
+''';
+
+const _exTsSwitch = r'''class Foo {
+  main(n: number): void {
+    switch (n) {
+      case 1:
+        print("one");
+        break;
+      case 2:
+        print("two");
+        break;
+      default:
+        print("many");
+    }
+  }
+}
+''';
+
+// Python maps `switch` to `match`/`case` (`case _:` is the default).
+const _exPythonMatch = r'''class Foo:
+    def main(self, n):
+        match n:
+            case 1:
+                print("one")
+            case 2:
+                print("two")
+            case _:
+                print("many")
+''';
+
+const _exCsSwitch = r'''class Foo {
+  public void main(int n) {
+    switch (n) {
+      case 1:
+        print("one");
+        break;
+      case 2:
+        print("two");
+        break;
+      default:
+        print("many");
+    }
+  }
+}
+''';
+
+// do/while loop (apollovm 0.1.38): the body always runs at least once.
+const _exDartDoWhile = r'''class Foo {
+  void main(int n) {
+    var i = 0;
+    do {
+      print('i: $i');
+      i = i + 1;
+    } while (i < n);
+  }
+}
+''';
+
+const _exKotlinDoWhile = r'''class Foo {
+    fun main(n: Int) {
+      var i = 0
+      do {
+        println("i: " + i)
+        i = i + 1
+      } while (i < n)
+    }
+}
+''';
+
+// Lua has no `do`/`while`; ApolloVM maps it to `repeat … until <cond>` (the
+// condition is the negation of a do-while's continue condition).
+const _exLuaRepeat = r'''Foo = {}
+Foo.__index = Foo
+
+function Foo:main(n)
+  local i = 0
+  repeat
+    print("i: " .. i)
+    i = i + 1
+  until i >= n
+end
+''';
+
+// Bitwise operators (apollovm 0.1.38; Kotlin/Lua added 0.1.40).
+const _exDartBitwise = r'''class Foo {
+  void main(int a, int b) {
+    print('and: ${a & b}');
+    print('or: ${a | b}');
+    print('xor: ${a ^ b}');
+    print('shl: ${a << 1}');
+    print('shr: ${a >> 1}');
+    print('not: ${~a}');
+  }
+}
+''';
+
+const _exJavaBitwise = r'''class Foo {
+   static public void main(int a, int b) {
+     print("and: " + (a & b));
+     print("or: " + (a | b));
+     print("xor: " + (a ^ b));
+     print("shl: " + (a << 1));
+     print("shr: " + (a >> 1));
+     print("not: " + (~a));
+   }
+}
+''';
+
+// Kotlin's bitwise are infix functions: `and`/`or`/`xor`/`shl`/`shr`.
+const _exKotlinBitwise = r'''class Foo {
+    fun main(a: Int, b: Int) {
+      println("and: " + (a and b))
+      println("or: " + (a or b))
+      println("xor: " + (a xor b))
+      println("shl: " + (a shl 1))
+      println("shr: " + (a shr 1))
+    }
+}
+''';
+
+// Lua bitwise: `&` `|` `~` (xor) `<<` `>>` and unary `~` (complement), using
+// local literals (the operands must be integers).
+const _exLuaBitwise = r'''Foo = {}
+Foo.__index = Foo
+
+function Foo:main()
+  local a = 12
+  local b = 10
+  print("and: " .. (a & b))
+  print("or: " .. (a | b))
+  print("xor: " .. (a ~ b))
+  print("shl: " .. (a << 1))
+  print("shr: " .. (a >> 1))
+  print("not: " .. (~a))
+end
+''';
+
+const _exCsBitwise = r'''class Foo {
+  public void main(int a, int b) {
+    print("and: " + (a & b));
+    print("or: " + (a | b));
+    print("xor: " + (a ^ b));
+    print("shl: " + (a << 1));
+    print("shr: " + (a >> 1));
+    print("not: " + (~a));
+  }
+}
+''';
+
+// enum with runtime value access (apollovm 0.1.39): an enum entry used where a
+// value is expected resolves to its ordinal index (Dart/Java/Kotlin/Python) or
+// its explicit value (C#).
+const _exDartEnum = r'''enum Color { red, green, blue }
+
+class Foo {
+  void main() {
+    int green = Color.green;
+    int blue = Color.blue;
+    print('green: $green ; blue: $blue');
+  }
+}
+''';
+
+const _exJavaEnum = r'''enum Color { red, green, blue }
+
+class Foo {
+  static public void main() {
+    int green = Color.green;
+    int blue = Color.blue;
+    print("green: " + green + " ; blue: " + blue);
+  }
+}
+''';
+
+const _exKotlinEnum = r'''enum class Color { red, green, blue }
+
+class Foo {
+    fun main() {
+      val green: Int = Color.green
+      val blue: Int = Color.blue
+      println("green: " + green + " ; blue: " + blue)
+    }
+}
+''';
+
+const _exPythonEnum = r'''from enum import Enum
+
+class Color(Enum):
+    red = 0
+    green = 1
+    blue = 2
+
+class Foo:
+    def main(self):
+        green = Color.green
+        blue = Color.blue
+        print(f"green: {green} ; blue: {blue}")
+''';
+
+const _exCsEnum = r'''enum Level { Low = 1, Medium = 5, High = 10 }
+
+class Foo {
+  public void main() {
+    int x = Level.Medium;
+    int y = Level.High;
+    print("Medium: " + x + " ; High: " + y);
+  }
+}
+''';
+
+// Generic classes (apollovm 0.1.39): a `Box<T>` declared, instantiated with a
+// type argument and read back.
+const _exDartGenerics = r'''class Box<T> {
+  T value;
+  Box(this.value);
+}
+
+class Foo {
+  void main(int x) {
+    var b = Box<int>(x);
+    print('box: ${b.value}');
+  }
+}
+''';
+
+const _exJavaGenerics = r'''class Box<T> {
+  T value;
+  Box(T value) {
+    this.value = value;
+  }
+}
+
+class Foo {
+  static public void main(int x) {
+    Box<Integer> b = new Box<Integer>(x);
+    print("box: " + b.value);
+  }
+}
+''';
+
+const _exKotlinGenerics = r'''class Box<T> {
+  var value: T
+  constructor(value: T) {
+    this.value = value
+  }
+}
+
+class Foo {
+    fun main(x: Int) {
+      val b = Box<Int>(x)
+      println("box: " + b.value)
+    }
+}
+''';
+
+const _exTsGenerics = r'''class Box<T> {
+  value: T;
+  constructor(value: T) {
+    this.value = value;
+  }
+}
+
+class Foo {
+  main(x: number): void {
+    let b: Box<number> = new Box<number>(x);
+    print("box: " + b.value);
+  }
+}
+''';
+
+const _exCsGenerics = r'''class Box<T> {
+  T value;
+  Box(T value) {
+    this.value = value;
+  }
+}
+
+class Foo {
+  public void main(int x) {
+    Box<int> b = new Box<int>(x);
+    print("box: " + b.value);
+  }
+}
+''';
+
+// Wasm control flow + bitwise (apollovm 0.1.40): `switch`/`case`, `do`/`while`
+// and the bitwise operators compile to and run on Wasm. Each returns an int
+// shown in the OUTPUT "result" panel.
+const _exWasmSwitch = r'''int classify(int n) {
+  switch (n % 3) {
+    case 0:
+      return 100;
+    case 1:
+      return 200;
+    default:
+      return 300;
+  }
+}
+''';
+
+const _exWasmBitCount = r'''int bitCount(int n) {
+  var count = 0;
+  while (n != 0) {
+    count = count + (n & 1);
+    n = n >> 1;
+  }
+  return count;
+}
+''';
+
+const _exWasmDoWhile = r'''int sumTo(int n) {
+  var sum = 0;
+  var i = 1;
+  do {
+    sum = sum + i;
+    i = i + 1;
+  } while (i <= n);
+  return sum;
+}
 ''';
 
 /// Adds [handler] for DOM events of [type] on [target] (replaces dart:html's
