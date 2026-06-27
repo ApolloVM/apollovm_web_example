@@ -1,3 +1,15 @@
+## 1.8.0
+
+- Updated to ApolloVM 0.1.44, which fixes rich-enum field/method reads in a
+  `print` / string-interpolation context on Wasm (e.g. `print(p.gravity)` /
+  `print('${p.mult(2)}')`) — previously these produced garbage values because
+  the enum-entry initializer baked its constructor call index before the
+  `print`/`double_to_str` host imports shifted the function indices.
+- Added a "Wasm — Rich enum (field in print)" example: it prints an entry's
+  `gravity`, `name`/`index` and a method result, and returns `mars.index`
+  (verified to compile to and run on Wasm).
+- apollovm: ^0.1.44
+
 ## 1.7.0
 
 - Updated to ApolloVM 0.1.43, which closes several Dart → WebAssembly backend
