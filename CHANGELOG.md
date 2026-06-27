@@ -1,3 +1,48 @@
+## 1.6.0
+
+- Updated to ApolloVM 0.1.42, folding in 0.1.41:
+  - 0.1.41: rich enums — each enum entry is a cached `const` class instance
+    (identity `==`) carrying `index` and `name`, with `EnumName.values`; Dart
+    enhanced enums (constructor args, fields, methods) and explicit-value
+    entries (`.value`) are supported, including in Wasm.
+  - 0.1.42: named / keyword arguments for function, method and constructor
+    calls (Dart `foo(a: 1)`, Kotlin `foo(a = 1)`, C# `foo(a: 1)`, Python
+    `foo(a=1)`); default values for optional and named parameters; and a new
+    `apollovm compile` CLI command targeting WebAssembly. Named arguments and
+    defaults are also handled by the on-the-fly Wasm compiler.
+- Adapted the playground examples to ApolloVM 0.1.42's stricter entry-point
+  rule (only a `static` class method or a top-level function can run without a
+  class instance):
+  - Dart/Java/C# examples now declare the entry method `static`.
+  - Kotlin/JavaScript/TypeScript/Lua/Python examples use a top-level `main(...)`
+    function as the entry point (instantiating the demo class where needed).
+- Updated the enum examples to the 0.1.41 rich-enum model: an enum entry is a
+  class instance, so members are read via a variable (e.g. `var e =
+  Planet.earth; e.gravity`) rather than assigning the entry to an `int`. The
+  Dart/Java/Kotlin enum examples now show an entry field (`gravity`) plus
+  `index`/`name`; C# shows the explicit `value`.
+- Added "Example" picker entries for the new 0.1.42 features (all verified to
+  run via ApolloVM):
+  - "Named arguments" for Dart and C# — a call binds arguments by name, so the
+    call-site order is free.
+  - "Default parameters" for Dart and C# — an omitted argument uses the
+    parameter's declared default.
+- apollovm: ^0.1.42
+
+## 1.5.1
+
+- Refactored the playground: split the monolithic `web/main.dart` into a
+  `part`-based library under `web/src/`:
+  - `code_examples.dart`: `CodeExample` data + category helpers.
+  - `ui_builder.dart`: `buildUI()` — HTML template + event wiring.
+  - `dom.dart`: `_listen()` + DOM `selectX()` helpers.
+  - `code_editor.dart`: line-numbered code editor.
+  - `vm.dart`: ApolloVM execute / compile / convert.
+  - `actions.dart`: UI action handlers + output panel.
+- Removed the unused `dart:js_interop` import and the IDE module file
+  `apollovm_web_example.iml`.
+- No functional changes.
+
 ## 1.5.0
 
 - Updated to ApolloVM 0.1.40, folding in 0.1.38 and 0.1.39:
