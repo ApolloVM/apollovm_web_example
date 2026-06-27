@@ -1,3 +1,18 @@
+## 1.9.0
+
+- Updated to ApolloVM 0.1.45, which closes more Dart → WebAssembly backend gaps:
+  - `Map`/`List` → `String` coercion in `print(...)` / interpolation (renders
+    Dart's `{k: v, …}` / `[e, …]` form).
+  - Arithmetic and comparison on boxed `Object`/`dynamic` operands (e.g.
+    `args[1] ~/ 2` from a `List<Object>`), unboxed to a concrete number first.
+  - Anonymous functions stored in a `var` and called by name.
+- Added "Wasm" examples for the newly-supported features (verified to compile to
+  and run on Wasm):
+  - "Maps & boxed args": builds a `<String,int>` map from boxed `List<Object>`
+    elements and prints it.
+  - "Lambdas": a `var`-stored closure invoked by name.
+- apollovm: ^0.1.45
+
 ## 1.8.0
 
 - Updated to ApolloVM 0.1.44, which fixes rich-enum field/method reads in a

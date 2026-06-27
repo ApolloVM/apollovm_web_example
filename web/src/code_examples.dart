@@ -272,6 +272,15 @@ const codeExamples = <CodeExample>[
   CodeExample(
       'Wasm — Rich enum (field in print)', 'dart', _exWasmEnum, '', 'run', '',
       wasm: true),
+  // Wasm Map/List → String coercion + boxed `List<Object>` arithmetic (apollovm
+  // 0.1.45): `'$map'` renders `{k: v, …}` and boxed elements (`args[1] ~/ 2`)
+  // are unboxed before the operation. Run with `[ 10, 30, 5 ]`.
+  CodeExample('Wasm — Maps & boxed args', 'dart', _exWasmMaps, '', 'run',
+      '[ 10, 30, 5 ]',
+      wasm: true),
+  // Wasm lambdas stored in a `var` and called by name (apollovm 0.1.45).
+  CodeExample('Wasm — Lambdas', 'dart', _exWasmLambda, '', 'run', '5',
+      wasm: true),
 ];
 
 const _exDartFib =
@@ -1261,6 +1270,31 @@ int run() {
   print('mars.name: ${mars.name} ; mars.index: ${mars.index}');
   print('earth.mult(2): ${earth.mult(2)}');
   return mars.index;
+}
+''';
+
+// Wasm Map/List string coercion + boxed arithmetic (apollovm 0.1.45): `args` is
+// a `List<Object>`, so its elements are boxed; they are unboxed before `~/`/`*`
+// and when stored into the typed `<String,int>` map, whose `toString` renders
+// the Dart `{k: v, …}` form. Returns a + b + c (= 40 for `[10, 30, 5]`).
+const _exWasmMaps = r'''int run(List<Object> args) {
+  var a = args[0];
+  var b = args[1] ~/ 2;
+  var c = args[2] * 3;
+  var map = <String, int>{'a': a, 'b': b, 'c': c};
+  print('map: $map');
+  return a + b + c;
+}
+''';
+
+// Wasm lambdas (apollovm 0.1.45): anonymous functions stored in a `var` and
+// invoked by name now compile (the return type is inferred from the body).
+// Returns twice(x) + inc(x).
+const _exWasmLambda = r'''int run(int x) {
+  var twice = (int n) => n * 2;
+  var inc = (int n) => n + 1;
+  print('twice: ${twice(x)} ; inc: ${inc(x)}');
+  return twice(x) + inc(x);
 }
 ''';
 
