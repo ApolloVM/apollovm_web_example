@@ -267,6 +267,11 @@ const codeExamples = <CodeExample>[
   CodeExample('Wasm — Default parameters (class method)', 'dart',
       _exWasmDefaultArgs, 'Calc', 'run', '',
       wasm: true),
+  // Wasm rich-enum field/method reads in a `print` context (apollovm 0.1.44):
+  // `print(p.gravity)` / `print('${p.mult(2)}')` now produce correct values.
+  CodeExample(
+      'Wasm — Rich enum (field in print)', 'dart', _exWasmEnum, '', 'run', '',
+      wasm: true),
 ];
 
 const _exDartFib =
@@ -1230,6 +1235,32 @@ const _exWasmDefaultArgs = r'''class Calc {
   static int run() {
     return box(5);
   }
+}
+''';
+
+// Wasm rich enum (apollovm 0.1.44): reading a rich-enum entry's field/method
+// through `print(...)` / string interpolation now yields correct values. Prints
+// gravity, name/index and a method result, and returns `mars.index` (= 1).
+const _exWasmEnum = r'''enum Planet {
+  earth(9.8),
+  mars(3.7);
+
+  final double gravity;
+
+  const Planet(this.gravity);
+
+  double mult(double m) {
+    return gravity * m;
+  }
+}
+
+int run() {
+  var earth = Planet.earth;
+  var mars = Planet.mars;
+  print('earth.gravity: ${earth.gravity}');
+  print('mars.name: ${mars.name} ; mars.index: ${mars.index}');
+  print('earth.mult(2): ${earth.mult(2)}');
+  return mars.index;
 }
 ''';
 
