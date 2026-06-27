@@ -10,6 +10,23 @@
     `foo(a=1)`); default values for optional and named parameters; and a new
     `apollovm compile` CLI command targeting WebAssembly. Named arguments and
     defaults are also handled by the on-the-fly Wasm compiler.
+- Adapted the playground examples to ApolloVM 0.1.42's stricter entry-point
+  rule (only a `static` class method or a top-level function can run without a
+  class instance):
+  - Dart/Java/C# examples now declare the entry method `static`.
+  - Kotlin/JavaScript/TypeScript/Lua/Python examples use a top-level `main(...)`
+    function as the entry point (instantiating the demo class where needed).
+- Updated the enum examples to the 0.1.41 rich-enum model: an enum entry is a
+  class instance, so members are read via a variable (e.g. `var e =
+  Planet.earth; e.gravity`) rather than assigning the entry to an `int`. The
+  Dart/Java/Kotlin enum examples now show an entry field (`gravity`) plus
+  `index`/`name`; C# shows the explicit `value`.
+- Added "Example" picker entries for the new 0.1.42 features (all verified to
+  run via ApolloVM):
+  - "Named arguments" for Dart and C# — a call binds arguments by name, so the
+    call-site order is free.
+  - "Default parameters" for Dart and C# — an omitted argument uses the
+    parameter's declared default.
 - apollovm: ^0.1.42
 
 ## 1.5.1

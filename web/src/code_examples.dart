@@ -4,36 +4,36 @@ const initialCodeDart = r'''
 
 class Foo {
 
-  void main(List<Object> args) {
+  static void main(List<Object> args) {
     var title = args[0];
     var a = args[1];
     var b = args[2] ~/ 2;
     var c = args[3] * 3;
-    
+
     if (c > 120) {
       c = 120 ;
     }
-    
+
     var str = 'variables> a: $a ; b: $b ; c: $c' ;
     var sumAB = a + b ;
     var sumABC = a + b + c;
-    
+
     print(str);
     print(title);
     print(sumAB);
     print(sumABC);
-    
+
     // Map:
     var map = <String,int>{
     'a': a,
     'b': b,
     'c': c,
     };
-    
+
     print('Map: $map');
     print('Map `b`: ${map['b']}');
   }
-  
+
 }
 ''';
 
@@ -46,6 +46,13 @@ final initialNamedParameters = '';
 /// `[ ... ]` before decoding), so a single-array entry point like Dart's
 /// `main(List<Object> args)` uses `'[ "Sums:", 10, 30, 50 ]'`, while a
 /// multi-arg entry point uses `'"Sums:", 10, 20, 30'`.
+///
+/// ApolloVM 0.1.42 made the entry-point convention stricter: only a `static`
+/// class method (or a top-level function) can run without a class instance.
+/// So Dart/Java/C# examples mark the entry method `static` and keep
+/// `className: 'Foo'`, while Kotlin/JavaScript/TypeScript/Lua/Python — which
+/// have no static-class-method form the parser accepts — use a top-level
+/// `main(...)` function instead (`className: ''`).
 class CodeExample {
   final String name;
   final String language;
@@ -79,17 +86,16 @@ const codeExamples = <CodeExample>[
       'fibonacci', '10'),
   CodeExample('Java11 — Class', 'java11', _exJava, 'Foo', 'main',
       '[ "Sums:", 10, 20, 30 ]'),
-  CodeExample('Kotlin — Class', 'kotlin', _exKotlin, 'Foo', 'main',
-      '"Sums:", 10, 20, 30'),
-  CodeExample('JavaScript — Class', 'javascript', _exJs, 'Foo', 'main',
-      '"Sums:", 10, 20, 30'),
-  CodeExample('TypeScript — Class', 'typescript', _exTs, 'Foo', 'main',
-      '"Sums:", 10, 20, 30'),
   CodeExample(
-      'Lua — Class', 'lua', _exLua, 'Foo', 'main', '"Sums:", 10, 20, 30'),
-  // Python language support (apollovm 0.1.35).
-  CodeExample('Python — Class', 'python', _exPython, 'Foo', 'main',
+      'Kotlin — Class', 'kotlin', _exKotlin, '', 'main', '"Sums:", 10, 20, 30'),
+  CodeExample('JavaScript — Class', 'javascript', _exJs, '', 'main',
       '"Sums:", 10, 20, 30'),
+  CodeExample('TypeScript — Class', 'typescript', _exTs, '', 'main',
+      '"Sums:", 10, 20, 30'),
+  CodeExample('Lua — Class', 'lua', _exLua, '', 'main', '"Sums:", 10, 20, 30'),
+  // Python language support (apollovm 0.1.35).
+  CodeExample(
+      'Python — Class', 'python', _exPython, '', 'main', '"Sums:", 10, 20, 30'),
   // C# language support (apollovm 0.1.37).
   CodeExample(
       'C# — Class', 'csharp', _exCs, 'Foo', 'main', '"Sums:", 10, 20, 30'),
@@ -100,11 +106,11 @@ const codeExamples = <CodeExample>[
   CodeExample('Java11 — Exceptions (try/catch/finally)', 'java11',
       _exJavaTryCatch, 'Foo', 'main', '10, 0'),
   CodeExample('Kotlin — Exceptions (try/catch/finally)', 'kotlin',
-      _exKotlinTryCatch, 'Foo', 'main', '10, 0'),
+      _exKotlinTryCatch, '', 'main', '10, 0'),
   CodeExample('JavaScript — Exceptions (try/catch/finally)', 'javascript',
-      _exJsTryCatch, 'Foo', 'main', '10, 0'),
+      _exJsTryCatch, '', 'main', '10, 0'),
   CodeExample('TypeScript — Exceptions (try/catch/finally)', 'typescript',
-      _exTsTryCatch, 'Foo', 'main', '10, 0'),
+      _exTsTryCatch, '', 'main', '10, 0'),
   CodeExample('C# — Exceptions (try/catch/finally)', 'csharp', _exCsTryCatch,
       'Foo', 'main', '10, 0'),
   // Conditional / ternary expressions (apollovm 0.1.36). Each language uses its
@@ -114,29 +120,28 @@ const codeExamples = <CodeExample>[
   CodeExample('Java11 — Conditional (a > b ? a : b)', 'java11', _exJavaTernary,
       'Foo', 'main', '40, 130'),
   CodeExample('Kotlin — Conditional (if/else expression)', 'kotlin',
-      _exKotlinTernary, 'Foo', 'main', '40, 130'),
+      _exKotlinTernary, '', 'main', '40, 130'),
   CodeExample('JavaScript — Conditional (a > b ? a : b)', 'javascript',
-      _exJsTernary, 'Foo', 'main', '40, 130'),
+      _exJsTernary, '', 'main', '40, 130'),
   CodeExample('TypeScript — Conditional (a > b ? a : b)', 'typescript',
-      _exTsTernary, 'Foo', 'main', '40, 130'),
+      _exTsTernary, '', 'main', '40, 130'),
   CodeExample('Python — Conditional (a if c else b)', 'python',
-      _exPythonTernary, 'Foo', 'main', '40, 130'),
+      _exPythonTernary, '', 'main', '40, 130'),
   CodeExample('C# — Conditional (a > b ? a : b)', 'csharp', _exCsTernary, 'Foo',
       'main', '40, 130'),
   // Anonymous functions / lambdas / closures (apollovm 0.1.36, plus Java/Kotlin/
   // Lua lambda parsing in 0.1.37).
   CodeExample(
       'Dart — Lambdas (closures)', 'dart', _exDartLambda, 'Foo', 'main', '5'),
-  CodeExample('JavaScript — Lambdas (closures)', 'javascript', _exJsLambda,
-      'Foo', 'main', '5'),
-  CodeExample('TypeScript — Lambdas (closures)', 'typescript', _exTsLambda,
-      'Foo', 'main', '5'),
-  CodeExample('Python — Lambdas (closures)', 'python', _exPythonLambda, 'Foo',
+  CodeExample('JavaScript — Lambdas (closures)', 'javascript', _exJsLambda, '',
+      'main', '5'),
+  CodeExample('TypeScript — Lambdas (closures)', 'typescript', _exTsLambda, '',
+      'main', '5'),
+  CodeExample('Python — Lambdas (closures)', 'python', _exPythonLambda, '',
       'main', '5'),
   CodeExample('Java11 — Lambdas', 'java11', _exJavaLambda, 'Foo', 'main', '5'),
-  CodeExample(
-      'Kotlin — Lambdas', 'kotlin', _exKotlinLambda, 'Foo', 'main', '5'),
-  CodeExample('Lua — Lambdas', 'lua', _exLuaLambda, 'Foo', 'main', '5'),
+  CodeExample('Kotlin — Lambdas', 'kotlin', _exKotlinLambda, '', 'main', '5'),
+  CodeExample('Lua — Lambdas', 'lua', _exLuaLambda, '', 'main', '5'),
   // C# lambda parsing (apollovm 0.1.38): `n => n * 2` bound to a `Func`
   // delegate.
   CodeExample('C# — Lambdas', 'csharp', _exCsLambda, 'Foo', 'main', '5'),
@@ -146,21 +151,19 @@ const codeExamples = <CodeExample>[
   CodeExample(
       'Java11 — Switch/case', 'java11', _exJavaSwitch, 'Foo', 'main', '2'),
   CodeExample(
-      'Kotlin — When (switch)', 'kotlin', _exKotlinWhen, 'Foo', 'main', '2'),
-  CodeExample('JavaScript — Switch/case', 'javascript', _exJsSwitch, 'Foo',
-      'main', '2'),
-  CodeExample('TypeScript — Switch/case', 'typescript', _exTsSwitch, 'Foo',
-      'main', '2'),
+      'Kotlin — When (switch)', 'kotlin', _exKotlinWhen, '', 'main', '2'),
   CodeExample(
-      'Python — Match/case', 'python', _exPythonMatch, 'Foo', 'main', '2'),
+      'JavaScript — Switch/case', 'javascript', _exJsSwitch, '', 'main', '2'),
+  CodeExample(
+      'TypeScript — Switch/case', 'typescript', _exTsSwitch, '', 'main', '2'),
+  CodeExample('Python — Match/case', 'python', _exPythonMatch, '', 'main', '2'),
   CodeExample('C# — Switch/case', 'csharp', _exCsSwitch, 'Foo', 'main', '2'),
   // do/while and Lua's `repeat ... until` (apollovm 0.1.38). Run with n = 3.
   CodeExample(
       'Dart — Do/while loop', 'dart', _exDartDoWhile, 'Foo', 'main', '3'),
   CodeExample(
-      'Kotlin — Do/while loop', 'kotlin', _exKotlinDoWhile, 'Foo', 'main', '3'),
-  CodeExample(
-      'Lua — Repeat/until loop', 'lua', _exLuaRepeat, 'Foo', 'main', '3'),
+      'Kotlin — Do/while loop', 'kotlin', _exKotlinDoWhile, '', 'main', '3'),
+  CodeExample('Lua — Repeat/until loop', 'lua', _exLuaRepeat, '', 'main', '3'),
   // Bitwise operators (apollovm 0.1.38; Kotlin/Lua added 0.1.40). Run with
   // a = 12, b = 10 (Lua uses literals, no parameters).
   CodeExample('Dart — Bitwise (& | ^ << >> ~)', 'dart', _exDartBitwise, 'Foo',
@@ -168,21 +171,38 @@ const codeExamples = <CodeExample>[
   CodeExample('Java11 — Bitwise (& | ^ << >> ~)', 'java11', _exJavaBitwise,
       'Foo', 'main', '12, 10'),
   CodeExample('Kotlin — Bitwise (and/or/xor/shl/shr)', 'kotlin',
-      _exKotlinBitwise, 'Foo', 'main', '12, 10'),
+      _exKotlinBitwise, '', 'main', '12, 10'),
   CodeExample(
-      'Lua — Bitwise (& | ~ << >>)', 'lua', _exLuaBitwise, 'Foo', 'main', ''),
+      'Lua — Bitwise (& | ~ << >>)', 'lua', _exLuaBitwise, '', 'main', ''),
   CodeExample('C# — Bitwise (& | ^ << >> ~)', 'csharp', _exCsBitwise, 'Foo',
       'main', '12, 10'),
-  // enum with runtime value access (apollovm 0.1.38 declarations, 0.1.39 value
-  // access): an entry resolves to its explicit value (C#) or ordinal index.
+  // Named / keyword arguments (apollovm 0.1.42): a call binds arguments by name,
+  // so the call-site order is free. Native in Dart and C# (Java has no
+  // named-argument concept). Run with no parameters.
   CodeExample(
-      'Dart — Enum (ordinal value)', 'dart', _exDartEnum, 'Foo', 'main', ''),
-  CodeExample('Java11 — Enum (ordinal value)', 'java11', _exJavaEnum, 'Foo',
+      'Dart — Named arguments', 'dart', _exDartNamedArgs, 'Foo', 'main', ''),
+  CodeExample(
+      'C# — Named arguments', 'csharp', _exCsNamedArgs, 'Foo', 'main', ''),
+  // Default values for optional / named parameters (apollovm 0.1.42): an omitted
+  // argument uses the parameter's declared default. Run with no parameters.
+  CodeExample('Dart — Default parameters', 'dart', _exDartDefaultArgs, 'Foo',
       'main', ''),
-  CodeExample('Kotlin — Enum (ordinal value)', 'kotlin', _exKotlinEnum, 'Foo',
-      'main', ''),
-  CodeExample('Python — Enum (ordinal value)', 'python', _exPythonEnum, 'Foo',
-      'main', ''),
+  CodeExample(
+      'C# — Default parameters', 'csharp', _exCsDefaultArgs, 'Foo', 'main', ''),
+  // Rich enums (apollovm 0.1.41): an enum entry is a cached `const` class
+  // instance carrying `index` (ordinal) and `name`; Dart/Java/Kotlin parse
+  // entry constructor arguments + members, so an entry can hold a field
+  // (`gravity`). C# enums expose an explicit `value`; Python entries carry
+  // `index`/`name`. Access members via a variable (`var e = Planet.earth;
+  // e.gravity`). Run with no parameters.
+  CodeExample('Dart — Rich enum (field + index/name)', 'dart', _exDartEnum,
+      'Foo', 'main', ''),
+  CodeExample(
+      'Java11 — Rich enum (field)', 'java11', _exJavaEnum, 'Foo', 'main', ''),
+  CodeExample(
+      'Kotlin — Rich enum (field)', 'kotlin', _exKotlinEnum, '', 'main', ''),
+  CodeExample(
+      'Python — Enum (index/name)', 'python', _exPythonEnum, '', 'main', ''),
   CodeExample(
       'C# — Enum (explicit values)', 'csharp', _exCsEnum, 'Foo', 'main', ''),
   // Generic classes (apollovm 0.1.39): `Box<T>` declared, instantiated and
@@ -191,10 +211,10 @@ const codeExamples = <CodeExample>[
       'Dart — Generics (Box<T>)', 'dart', _exDartGenerics, 'Foo', 'main', '10'),
   CodeExample('Java11 — Generics (Box<T>)', 'java11', _exJavaGenerics, 'Foo',
       'main', '10'),
-  CodeExample('Kotlin — Generics (Box<T>)', 'kotlin', _exKotlinGenerics, 'Foo',
+  CodeExample('Kotlin — Generics (Box<T>)', 'kotlin', _exKotlinGenerics, '',
       'main', '10'),
-  CodeExample('TypeScript — Generics (Box<T>)', 'typescript', _exTsGenerics,
-      'Foo', 'main', '10'),
+  CodeExample('TypeScript — Generics (Box<T>)', 'typescript', _exTsGenerics, '',
+      'main', '10'),
   CodeExample(
       'C# — Generics (Box<T>)', 'csharp', _exCsGenerics, 'Foo', 'main', '10'),
   // async/await (interpreted). Only Dart's async/await currently parses in
@@ -275,8 +295,10 @@ const _exJava = r'''class Foo {
 }
 ''';
 
+// Kotlin's entry point is a top-level `main` function; it instantiates the
+// class and calls the (non-static) method on the instance.
 const _exKotlin = r'''class Foo {
-    fun main(title: String, a: Int, b: Int, c: Int) {
+    fun run(title: String, a: Int, b: Int, c: Int) {
       val sumAB = a + b
       val sumABC = a + b + c
       println(title)
@@ -284,10 +306,15 @@ const _exKotlin = r'''class Foo {
       println(sumABC)
     }
 }
+
+fun main(title: String, a: Int, b: Int, c: Int) {
+  val foo = Foo()
+  foo.run(title, a, b, c)
+}
 ''';
 
 const _exJs = r'''class Foo {
-  main(title, a, b, c) {
+  run(title, a, b, c) {
     let sumAB = a + b;
     let sumABC = a + b + c;
     print(title);
@@ -295,10 +322,15 @@ const _exJs = r'''class Foo {
     print(sumABC);
   }
 }
+
+function main(title, a, b, c) {
+  let foo = new Foo();
+  foo.run(title, a, b, c);
+}
 ''';
 
 const _exTs = r'''class Foo {
-  main(title: string, a: number, b: number, c: number): void {
+  run(title: string, a: number, b: number, c: number): void {
     let sumAB: number = a + b;
     let sumABC: number = a + b + c;
     print(title);
@@ -306,12 +338,14 @@ const _exTs = r'''class Foo {
     print(sumABC);
   }
 }
+
+function main(title: string, a: number, b: number, c: number): void {
+  let foo: Foo = new Foo();
+  foo.run(title, a, b, c);
+}
 ''';
 
-const _exLua = r'''Foo = {}
-Foo.__index = Foo
-
-function Foo:main(title, a, b, c)
+const _exLua = r'''function main(title, a, b, c)
   local sumAB = a + b
   local sumABC = a + b + c
   print(title)
@@ -321,7 +355,7 @@ end
 ''';
 
 const _exDartTryCatch = r'''class Foo {
-  void main(int a, int b) {
+  static void main(int a, int b) {
     // Catch a built-in VM runtime error (division by zero):
     try {
       print('a ~/ b = ${a ~/ b}');
@@ -372,81 +406,80 @@ const _exJavaTryCatch = r'''class Foo {
 }
 ''';
 
-const _exKotlinTryCatch = r'''class Foo {
-    fun main(a: Int, b: Int) {
-      // Catch a built-in VM runtime error (integer division by zero):
-      try {
-        println("a / b = " + (a / b))
-      } catch (e: Exception) {
-        println("caught runtime error: " + e)
-      } finally {
-        println("division done")
-      }
+const _exKotlinTryCatch = r'''fun main(a: Int, b: Int) {
+  // Catch a built-in VM runtime error (integer division by zero):
+  try {
+    println("a / b = " + (a / b))
+  } catch (e: Exception) {
+    println("caught runtime error: " + e)
+  } finally {
+    println("division done")
+  }
 
-      // Catch a user-thrown value (typed); finally always runs:
-      try {
-        if (b == 0) {
-          throw "b must not be zero"
-        }
-        println("b is fine: " + b)
-      } catch (e: String) {
-        println("caught: " + e)
-      } finally {
-        println("check done")
-      }
+  // Catch a user-thrown value (typed); finally always runs:
+  try {
+    if (b == 0) {
+      throw "b must not be zero"
     }
+    println("b is fine: " + b)
+  } catch (e: String) {
+    println("caught: " + e)
+  } finally {
+    println("check done")
+  }
 }
 ''';
 
 // JavaScript division by zero is `Infinity` (not an error), so this example
 // focuses on catching a user `throw`; `finally` always runs.
-const _exJsTryCatch = r'''class Foo {
-  main(a, b) {
-    try {
-      if (b == 0) {
-        throw "b must not be zero";
-      }
-      print("b is fine: " + b);
-    } catch (e) {
-      print("caught: " + e);
-    } finally {
-      print("check done");
+const _exJsTryCatch = r'''function main(a, b) {
+  try {
+    if (b == 0) {
+      throw "b must not be zero";
     }
+    print("b is fine: " + b);
+  } catch (e) {
+    print("caught: " + e);
+  } finally {
+    print("check done");
   }
 }
 ''';
 
-const _exTsTryCatch = r'''class Foo {
-  main(a: number, b: number): void {
-    try {
-      if (b == 0) {
-        throw "b must not be zero";
-      }
-      print("b is fine: " + b);
-    } catch (e) {
-      print("caught: " + e);
-    } finally {
-      print("check done");
+const _exTsTryCatch = r'''function main(a: number, b: number): void {
+  try {
+    if (b == 0) {
+      throw "b must not be zero";
     }
+    print("b is fine: " + b);
+  } catch (e) {
+    print("caught: " + e);
+  } finally {
+    print("check done");
   }
 }
 ''';
 
 // Python support (apollovm 0.1.35): a class with a method, PEP-484 type hints
-// optional. Uses `self` and idiomatic snake_case.
+// optional. Uses `self` and idiomatic snake_case; a top-level `main` is the
+// entry point and runs the method on an instance.
 const _exPython = r'''class Foo:
-    def main(self, title, a, b, c):
+    def run(self, title, a, b, c):
         sum_ab = a + b
         sum_abc = a + b + c
         print(title)
         print(sum_ab)
         print(sum_abc)
+
+def main(title, a, b, c):
+    foo = Foo()
+    foo.run(title, a, b, c)
 ''';
 
 // Conditional / ternary expressions (apollovm 0.1.36). Only the selected branch
 // is evaluated.
 const _exDartTernary = r'''class Foo {
-  void main(int a, int b) {
+  static void main(int a, int b) {
     var max = a > b ? a : b;
     var label = max > 100 ? 'big' : 'small';
     print('max: $max ($label)');
@@ -463,44 +496,37 @@ const _exJavaTernary = r'''class Foo {
 }
 ''';
 
-const _exKotlinTernary = r'''class Foo {
-    fun main(a: Int, b: Int) {
-      val max = if (a > b) a else b
-      val label = if (max > 100) "big" else "small"
-      println("max: " + max + " (" + label + ")")
-    }
+const _exKotlinTernary = r'''fun main(a: Int, b: Int) {
+  val max = if (a > b) a else b
+  val label = if (max > 100) "big" else "small"
+  println("max: " + max + " (" + label + ")")
 }
 ''';
 
-const _exJsTernary = r'''class Foo {
-  main(a, b) {
-    let max = a > b ? a : b;
-    let label = max > 100 ? "big" : "small";
-    print("max: " + max + " (" + label + ")");
-  }
+const _exJsTernary = r'''function main(a, b) {
+  let max = a > b ? a : b;
+  let label = max > 100 ? "big" : "small";
+  print("max: " + max + " (" + label + ")");
 }
 ''';
 
-const _exTsTernary = r'''class Foo {
-  main(a: number, b: number): void {
-    let max: number = a > b ? a : b;
-    let label: string = max > 100 ? "big" : "small";
-    print("max: " + max + " (" + label + ")");
-  }
+const _exTsTernary = r'''function main(a: number, b: number): void {
+  let max: number = a > b ? a : b;
+  let label: string = max > 100 ? "big" : "small";
+  print("max: " + max + " (" + label + ")");
 }
 ''';
 
-const _exPythonTernary = r'''class Foo:
-    def main(self, a, b):
-        max = a if a > b else b
-        label = "big" if max > 100 else "small"
-        print(f"max: {max} ({label})")
+const _exPythonTernary = r'''def main(a, b):
+    max = a if a > b else b
+    label = "big" if max > 100 else "small"
+    print(f"max: {max} ({label})")
 ''';
 
 // Anonymous functions / lambdas / closures (apollovm 0.1.36): function values
 // stored in variables and invoked dynamically.
 const _exDartLambda = r'''class Foo {
-  void main(int x) {
+  static void main(int x) {
     var twice = (int n) => n * 2;
     var inc = (int n) => n + 1;
     print('twice: ${twice(x)} ; inc: ${inc(x)}');
@@ -508,44 +534,39 @@ const _exDartLambda = r'''class Foo {
 }
 ''';
 
-const _exJsLambda = r'''class Foo {
-  main(x) {
-    let twice = (n) => n * 2;
-    let inc = (n) => n + 1;
-    print("twice: " + twice(x) + " ; inc: " + inc(x));
-  }
+const _exJsLambda = r'''function main(x) {
+  let twice = (n) => n * 2;
+  let inc = (n) => n + 1;
+  print("twice: " + twice(x) + " ; inc: " + inc(x));
 }
 ''';
 
-const _exTsLambda = r'''class Foo {
-  main(x: number): void {
-    let twice = (n: number) => n * 2;
-    let inc = (n: number) => n + 1;
-    print("twice: " + twice(x) + " ; inc: " + inc(x));
-  }
+const _exTsLambda = r'''function main(x: number): void {
+  let twice = (n: number) => n * 2;
+  let inc = (n: number) => n + 1;
+  print("twice: " + twice(x) + " ; inc: " + inc(x));
 }
 ''';
 
-const _exPythonLambda = r'''class Foo:
-    def main(self, x):
-        twice = lambda n: n * 2
-        inc = lambda n: n + 1
-        print(twice(x))
-        print(inc(x))
+const _exPythonLambda = r'''def main(x):
+    twice = lambda n: n * 2
+    inc = lambda n: n + 1
+    print(twice(x))
+    print(inc(x))
 ''';
 
 // async/await (interpreted): `await` on calls to other `async` methods that
 // return a `Future`.
 const _exDartAsync = r'''class Foo {
-  Future<int> doubleIt(int n) async {
+  static Future<int> doubleIt(int n) async {
     return n * 2;
   }
 
-  Future<int> increment(int n) async {
+  static Future<int> increment(int n) async {
     return n + 1;
   }
 
-  Future<void> main(int x) async {
+  static Future<void> main(int x) async {
     var doubled = await doubleIt(x);
     var result = await increment(doubled);
     print('doubled: $doubled');
@@ -662,7 +683,7 @@ int run(int x) {
 // C# language support (apollovm 0.1.37): a class with a method, idiomatic
 // modifiers and `print` (the VM's print function).
 const _exCs = r'''class Foo {
-  public void main(string title, int a, int b, int c) {
+  public static void main(string title, int a, int b, int c) {
     int sumAB = a + b;
     int sumABC = a + b + c;
     print(title);
@@ -673,7 +694,7 @@ const _exCs = r'''class Foo {
 ''';
 
 const _exCsTernary = r'''class Foo {
-  public void main(int a, int b) {
+  public static void main(int a, int b) {
     int max = a > b ? a : b;
     string label = max > 100 ? "big" : "small";
     print("max: " + max + " (" + label + ")");
@@ -682,7 +703,7 @@ const _exCsTernary = r'''class Foo {
 ''';
 
 const _exCsTryCatch = r'''class Foo {
-  public void main(int a, int b) {
+  public static void main(int a, int b) {
     try {
       if (b == 0) {
         throw "b must not be zero";
@@ -708,19 +729,14 @@ const _exJavaLambda = r'''class Foo {
 }
 ''';
 
-const _exKotlinLambda = r'''class Foo {
-    fun main(x: Int) {
-      val twice = { n: Int -> n * 2 }
-      val inc = { n: Int -> n + 1 }
-      println("twice: " + twice(x) + " ; inc: " + inc(x))
-    }
+const _exKotlinLambda = r'''fun main(x: Int) {
+  val twice = { n: Int -> n * 2 }
+  val inc = { n: Int -> n + 1 }
+  println("twice: " + twice(x) + " ; inc: " + inc(x))
 }
 ''';
 
-const _exLuaLambda = r'''Foo = {}
-Foo.__index = Foo
-
-function Foo:main(x)
+const _exLuaLambda = r'''function main(x)
   local twice = function(n) return n * 2 end
   local inc = function(n) return n + 1 end
   print("twice: " .. twice(x) .. " ; inc: " .. inc(x))
@@ -730,7 +746,7 @@ end
 // C# lambda parsing (apollovm 0.1.38): anonymous functions bound to `Func`
 // delegates and invoked.
 const _exCsLambda = r'''class Foo {
-  public void main(int x) {
+  public static void main(int x) {
     Func twice = n => n * 2;
     Func inc = n => n + 1;
     print("twice: " + twice(x) + " ; inc: " + inc(x));
@@ -741,7 +757,7 @@ const _exCsLambda = r'''class Foo {
 // switch / case (apollovm 0.1.38): C-style fall-through (`break` ends a case,
 // `default` runs when nothing matches).
 const _exDartSwitch = r'''class Foo {
-  void main(int n) {
+  static void main(int n) {
     switch (n) {
       case 1:
         print('one');
@@ -773,63 +789,56 @@ const _exJavaSwitch = r'''class Foo {
 ''';
 
 // Kotlin maps `switch` to `when (e) { v -> … ; else -> … }` (no fall-through).
-const _exKotlinWhen = r'''class Foo {
-    fun main(n: Int) {
-      when (n) {
-        1 -> println("one")
-        2 -> println("two")
-        else -> println("many")
-      }
-    }
-}
-''';
-
-const _exJsSwitch = r'''class Foo {
-  main(n) {
-    switch (n) {
-      case 1:
-        print("one");
-        break;
-      case 2:
-        print("two");
-        break;
-      default:
-        print("many");
-    }
+const _exKotlinWhen = r'''fun main(n: Int) {
+  when (n) {
+    1 -> println("one")
+    2 -> println("two")
+    else -> println("many")
   }
 }
 ''';
 
-const _exTsSwitch = r'''class Foo {
-  main(n: number): void {
-    switch (n) {
-      case 1:
-        print("one");
-        break;
-      case 2:
-        print("two");
-        break;
-      default:
-        print("many");
-    }
+const _exJsSwitch = r'''function main(n) {
+  switch (n) {
+    case 1:
+      print("one");
+      break;
+    case 2:
+      print("two");
+      break;
+    default:
+      print("many");
+  }
+}
+''';
+
+const _exTsSwitch = r'''function main(n: number): void {
+  switch (n) {
+    case 1:
+      print("one");
+      break;
+    case 2:
+      print("two");
+      break;
+    default:
+      print("many");
   }
 }
 ''';
 
 // Python maps `switch` to `match`/`case` (`case _:` is the default).
-const _exPythonMatch = r'''class Foo:
-    def main(self, n):
-        match n:
-            case 1:
-                print("one")
-            case 2:
-                print("two")
-            case _:
-                print("many")
+const _exPythonMatch = r'''def main(n):
+    match n:
+        case 1:
+            print("one")
+        case 2:
+            print("two")
+        case _:
+            print("many")
 ''';
 
 const _exCsSwitch = r'''class Foo {
-  public void main(int n) {
+  public static void main(int n) {
     switch (n) {
       case 1:
         print("one");
@@ -846,7 +855,7 @@ const _exCsSwitch = r'''class Foo {
 
 // do/while loop (apollovm 0.1.38): the body always runs at least once.
 const _exDartDoWhile = r'''class Foo {
-  void main(int n) {
+  static void main(int n) {
     var i = 0;
     do {
       print('i: $i');
@@ -856,23 +865,18 @@ const _exDartDoWhile = r'''class Foo {
 }
 ''';
 
-const _exKotlinDoWhile = r'''class Foo {
-    fun main(n: Int) {
-      var i = 0
-      do {
-        println("i: " + i)
-        i = i + 1
-      } while (i < n)
-    }
+const _exKotlinDoWhile = r'''fun main(n: Int) {
+  var i = 0
+  do {
+    println("i: " + i)
+    i = i + 1
+  } while (i < n)
 }
 ''';
 
 // Lua has no `do`/`while`; ApolloVM maps it to `repeat … until <cond>` (the
 // condition is the negation of a do-while's continue condition).
-const _exLuaRepeat = r'''Foo = {}
-Foo.__index = Foo
-
-function Foo:main(n)
+const _exLuaRepeat = r'''function main(n)
   local i = 0
   repeat
     print("i: " .. i)
@@ -883,7 +887,7 @@ end
 
 // Bitwise operators (apollovm 0.1.38; Kotlin/Lua added 0.1.40).
 const _exDartBitwise = r'''class Foo {
-  void main(int a, int b) {
+  static void main(int a, int b) {
     print('and: ${a & b}');
     print('or: ${a | b}');
     print('xor: ${a ^ b}');
@@ -907,23 +911,18 @@ const _exJavaBitwise = r'''class Foo {
 ''';
 
 // Kotlin's bitwise are infix functions: `and`/`or`/`xor`/`shl`/`shr`.
-const _exKotlinBitwise = r'''class Foo {
-    fun main(a: Int, b: Int) {
-      println("and: " + (a and b))
-      println("or: " + (a or b))
-      println("xor: " + (a xor b))
-      println("shl: " + (a shl 1))
-      println("shr: " + (a shr 1))
-    }
+const _exKotlinBitwise = r'''fun main(a: Int, b: Int) {
+  println("and: " + (a and b))
+  println("or: " + (a or b))
+  println("xor: " + (a xor b))
+  println("shl: " + (a shl 1))
+  println("shr: " + (a shr 1))
 }
 ''';
 
 // Lua bitwise: `&` `|` `~` (xor) `<<` `>>` and unary `~` (complement), using
 // local literals (the operands must be integers).
-const _exLuaBitwise = r'''Foo = {}
-Foo.__index = Foo
-
-function Foo:main()
+const _exLuaBitwise = r'''function main()
   local a = 12
   local b = 10
   print("and: " .. (a & b))
@@ -936,7 +935,7 @@ end
 ''';
 
 const _exCsBitwise = r'''class Foo {
-  public void main(int a, int b) {
+  public static void main(int a, int b) {
     print("and: " + (a & b));
     print("or: " + (a | b));
     print("xor: " + (a ^ b));
@@ -947,63 +946,138 @@ const _exCsBitwise = r'''class Foo {
 }
 ''';
 
-// enum with runtime value access (apollovm 0.1.39): an enum entry used where a
-// value is expected resolves to its ordinal index (Dart/Java/Kotlin/Python) or
-// its explicit value (C#).
-const _exDartEnum = r'''enum Color { red, green, blue }
+// Named / keyword arguments (apollovm 0.1.42): `area(...)` is called with its
+// arguments bound by name, so the order at the call site is free.
+const _exDartNamedArgs = r'''class Foo {
+  static int area({int w, int h}) {
+    return w * h;
+  }
 
-class Foo {
-  void main() {
-    int green = Color.green;
-    int blue = Color.blue;
-    print('green: $green ; blue: $blue');
+  static void main() {
+    print('area(w: 4, h: 3): ${area(w: 4, h: 3)}');
+    print('area(h: 3, w: 4): ${area(h: 3, w: 4)}');
   }
 }
 ''';
 
-const _exJavaEnum = r'''enum Color { red, green, blue }
+const _exCsNamedArgs = r'''class Foo {
+  public static int area(int w, int h) {
+    return w * h;
+  }
+
+  public static void main() {
+    print("area(w: 4, h: 3): " + area(w: 4, h: 3));
+    print("area(h: 3, w: 4): " + area(h: 3, w: 4));
+  }
+}
+''';
+
+// Default values for optional / named parameters (apollovm 0.1.42): an omitted
+// argument falls back to the parameter's declared default.
+const _exDartDefaultArgs = r'''class Foo {
+  static int area({int w = 2, int h = 3}) {
+    return w * h;
+  }
+
+  static void main() {
+    print('area(): ${area()}');
+    print('area(w: 5): ${area(w: 5)}');
+    print('area(w: 5, h: 4): ${area(w: 5, h: 4)}');
+  }
+}
+''';
+
+const _exCsDefaultArgs = r'''class Foo {
+  public static int area(int w = 2, int h = 3) {
+    return w * h;
+  }
+
+  public static void main() {
+    print("area(): " + area());
+    print("area(w: 5): " + area(w: 5));
+  }
+}
+''';
+
+// Rich enums (apollovm 0.1.41): an enum entry is a cached `const` class instance
+// carrying `index` (ordinal) and `name`. Dart enhanced enums allow entry
+// constructor arguments + members, so `Planet.earth` holds a `gravity` field.
+// Members are read via a variable (a direct `Planet.earth.gravity` chain on the
+// entry literal does not parse).
+const _exDartEnum = r'''enum Planet {
+  earth(9.8),
+  mars(3.7);
+
+  final double gravity;
+  const Planet(this.gravity);
+}
+
+class Foo {
+  static void main() {
+    var earth = Planet.earth;
+    var mars = Planet.mars;
+    print('earth.gravity: ${earth.gravity}');
+    print('mars.index: ${mars.index} ; mars.name: ${mars.name}');
+  }
+}
+''';
+
+const _exJavaEnum = r'''enum Planet {
+  earth(9.8),
+  mars(3.7);
+
+  final double gravity;
+  Planet(double gravity) {
+    this.gravity = gravity;
+  }
+}
 
 class Foo {
   static public void main() {
-    int green = Color.green;
-    int blue = Color.blue;
-    print("green: " + green + " ; blue: " + blue);
+    var earth = Planet.earth;
+    var mars = Planet.mars;
+    print("earth.gravity: " + earth.gravity);
+    print("mars.index: " + mars.index + " ; mars.name: " + mars.name);
   }
 }
 ''';
 
-const _exKotlinEnum = r'''enum class Color { red, green, blue }
+const _exKotlinEnum = r'''enum class Planet(val gravity: Double) {
+  earth(9.8),
+  mars(3.7)
+}
 
-class Foo {
-    fun main() {
-      val green: Int = Color.green
-      val blue: Int = Color.blue
-      println("green: " + green + " ; blue: " + blue)
-    }
+fun main() {
+  val earth = Planet.earth
+  val mars = Planet.mars
+  println("earth.gravity: " + earth.gravity)
+  println("mars.index: " + mars.index + " ; mars.name: " + mars.name)
 }
 ''';
 
-const _exPythonEnum = r'''from enum import Enum
-
-class Color(Enum):
+// Python enums (apollovm 0.1.41): `class Color(Enum)` with explicit values; each
+// entry carries `index`/`name`. (The `from enum import Enum` line is implicit in
+// ApolloVM and is omitted.)
+const _exPythonEnum = r'''class Color(Enum):
     red = 0
     green = 1
     blue = 2
 
-class Foo:
-    def main(self):
-        green = Color.green
-        blue = Color.blue
-        print(f"green: {green} ; blue: {blue}")
+def main():
+    green = Color.green
+    blue = Color.blue
+    print(f"green.index: {green.index} ; blue.name: {blue.name}")
 ''';
 
+// C# enums expose an entry's explicit value via `.value` (read through a
+// variable).
 const _exCsEnum = r'''enum Level { Low = 1, Medium = 5, High = 10 }
 
 class Foo {
-  public void main() {
-    int x = Level.Medium;
-    int y = Level.High;
-    print("Medium: " + x + " ; High: " + y);
+  public static void main() {
+    var medium = Level.Medium;
+    var high = Level.High;
+    print("Medium.value: " + medium.value + " ; High.value: " + high.value);
   }
 }
 ''';
@@ -1016,7 +1090,7 @@ const _exDartGenerics = r'''class Box<T> {
 }
 
 class Foo {
-  void main(int x) {
+  static void main(int x) {
     var b = Box<int>(x);
     print('box: ${b.value}');
   }
@@ -1045,11 +1119,9 @@ const _exKotlinGenerics = r'''class Box<T> {
   }
 }
 
-class Foo {
-    fun main(x: Int) {
-      val b = Box<Int>(x)
-      println("box: " + b.value)
-    }
+fun main(x: Int) {
+  val b = Box<Int>(x)
+  println("box: " + b.value)
 }
 ''';
 
@@ -1060,11 +1132,9 @@ const _exTsGenerics = r'''class Box<T> {
   }
 }
 
-class Foo {
-  main(x: number): void {
-    let b: Box<number> = new Box<number>(x);
-    print("box: " + b.value);
-  }
+function main(x: number): void {
+  let b: Box<number> = new Box<number>(x);
+  print("box: " + b.value);
 }
 ''';
 
@@ -1076,7 +1146,7 @@ const _exCsGenerics = r'''class Box<T> {
 }
 
 class Foo {
-  public void main(int x) {
+  public static void main(int x) {
     Box<int> b = new Box<int>(x);
     print("box: " + b.value);
   }
