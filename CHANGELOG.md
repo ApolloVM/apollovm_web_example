@@ -1,3 +1,22 @@
+## 1.7.0
+
+- Updated to ApolloVM 0.1.43, which closes several Dart → WebAssembly backend
+  gaps: unqualified sibling `static` class-method calls (including with named
+  arguments and omitted default parameters), `String + <number>` concatenation,
+  `switch` on a `String`/`enum` scrutinee, rich-enum methods taking an
+  enum-typed parameter, C#/TypeScript explicit-value enum `.value`, and typed
+  catch-all clauses.
+- Added two "Wasm" examples exercising the 0.1.43 class-method fix (both
+  verified to compile to and run on Wasm):
+  - "Named arguments (class method)": a method calls a sibling `static` method
+    with named arguments.
+  - "Default parameters (class method)": a call omits an optional parameter,
+    which falls back to its declared default.
+- Expanded the "Dart — Rich enum" example to show entry methods: `mult(double)`
+  and `ratio(Planet)` (an enum-typed parameter), alongside `gravity`,
+  `index` and `name`.
+- apollovm: ^0.1.43
+
 ## 1.6.0
 
 - Updated to ApolloVM 0.1.42, folding in 0.1.41:
