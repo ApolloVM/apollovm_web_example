@@ -1,3 +1,17 @@
+## 1.6.0
+
+- Updated to ApolloVM 0.1.42, folding in 0.1.41:
+  - 0.1.41: rich enums — each enum entry is a cached `const` class instance
+    (identity `==`) carrying `index` and `name`, with `EnumName.values`; Dart
+    enhanced enums (constructor args, fields, methods) and explicit-value
+    entries (`.value`) are supported, including in Wasm.
+  - 0.1.42: named / keyword arguments for function, method and constructor
+    calls (Dart `foo(a: 1)`, Kotlin `foo(a = 1)`, C# `foo(a: 1)`, Python
+    `foo(a=1)`); default values for optional and named parameters; and a new
+    `apollovm compile` CLI command targeting WebAssembly. Named arguments and
+    defaults are also handled by the on-the-fly Wasm compiler.
+- apollovm: ^0.1.42
+
 ## 1.5.1
 
 - Refactored the playground: split the monolithic `web/main.dart` into a
