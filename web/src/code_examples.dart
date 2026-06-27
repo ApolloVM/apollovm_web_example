@@ -195,8 +195,8 @@ const codeExamples = <CodeExample>[
   // (`gravity`). C# enums expose an explicit `value`; Python entries carry
   // `index`/`name`. Access members via a variable (`var e = Planet.earth;
   // e.gravity`). Run with no parameters.
-  CodeExample('Dart — Rich enum (field + index/name)', 'dart', _exDartEnum,
-      'Foo', 'main', ''),
+  CodeExample('Dart — Rich enum (fields & methods)', 'dart', _exDartEnum, 'Foo',
+      'main', ''),
   CodeExample(
       'Java11 — Rich enum (field)', 'java11', _exJavaEnum, 'Foo', 'main', ''),
   CodeExample(
@@ -257,6 +257,15 @@ const codeExamples = <CodeExample>[
       wasm: true),
   CodeExample(
       'Wasm — Do/while sum 1..N', 'dart', _exWasmDoWhile, '', 'sumTo', '5',
+      wasm: true),
+  // Wasm class-method calls (apollovm 0.1.43): a class method calling a sibling
+  // `static` method now resolves in the Wasm function index table, including
+  // with named arguments and omitted default parameters.
+  CodeExample('Wasm — Named arguments (class method)', 'dart', _exWasmNamedArgs,
+      'Calc', 'run', '',
+      wasm: true),
+  CodeExample('Wasm — Default parameters (class method)', 'dart',
+      _exWasmDefaultArgs, 'Calc', 'run', '',
       wasm: true),
 ];
 
@@ -1009,7 +1018,12 @@ const _exDartEnum = r'''enum Planet {
   mars(3.7);
 
   final double gravity;
+
   const Planet(this.gravity);
+
+  double mult(double m) => gravity * m ;
+
+  double ratio(Planet p) => gravity / p.gravity ;
 }
 
 class Foo {
@@ -1018,6 +1032,9 @@ class Foo {
     var mars = Planet.mars;
     print('earth.gravity: ${earth.gravity}');
     print('mars.index: ${mars.index} ; mars.name: ${mars.name}');
+    print('earth.mult(2): ${earth.mult(2)}');
+    print('mars.mult(2): ${earth.mult(2)}');
+    print('earth / mars: ${earth.ratio(mars)}');
   }
 }
 ''';
@@ -1186,6 +1203,33 @@ const _exWasmDoWhile = r'''int sumTo(int n) {
     i = i + 1;
   } while (i <= n);
   return sum;
+}
+''';
+
+// Wasm class-method calls (apollovm 0.1.43): `run` calls the sibling `static`
+// method `area` by bare name with named arguments — this now resolves in the
+// Wasm function index table. Returns 4 * 3 = 12.
+const _exWasmNamedArgs = r'''class Calc {
+  static int area(int w, int h) {
+    return w * h;
+  }
+
+  static int run() {
+    return area(h: 3, w: 4);
+  }
+}
+''';
+
+// Wasm default parameters (apollovm 0.1.43): `run` calls `box(5)`, omitting the
+// optional `h`, which falls back to its default of 3. Returns 5 * 3 = 15.
+const _exWasmDefaultArgs = r'''class Calc {
+  static int box(int w, [int h = 3]) {
+    return w * h;
+  }
+
+  static int run() {
+    return box(5);
+  }
 }
 ''';
 
