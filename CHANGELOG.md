@@ -1,3 +1,39 @@
+## 1.10.0
+
+- Updated to ApolloVM 0.1.47, folding in 0.1.46. Together these bring broad
+  Dart → WebAssembly coverage across all languages:
+  - 0.1.46: `num` (TypeScript/JavaScript `number`) support; `switch` on a boxed
+    scrutinee; scalar `Object`/`dynamic` entry-point parameters are now
+    marshalled (fixing the JavaScript/Lua/Python examples that previously saw
+    all arguments as `0`); anonymous functions with untyped parameters; and
+    generic `Box<T>` (Dart/Java/Kotlin/C#/TypeScript).
+  - 0.1.47: `/` on integer operands is truncating integer division in
+    Java/Kotlin/C# (Dart keeps `~/`); integer division by zero raises a
+    catchable exception matching the interpreter.
+  - With this, every "Example" picker entry except `Dart — Async/await (Future)`
+    compiles to and runs on Wasm (verified across all eight languages).
+- Added "Wasm" examples for the newly-supported features (verified to compile to
+  and run on Wasm):
+  - "Generics (Box<T>)": a value flows through a generic `T` field and is
+    unboxed for arithmetic.
+  - "Integer division (by zero)": `~/` by zero raises a catchable exception.
+- apollovm: ^0.1.47
+
+## 1.9.0
+
+- Updated to ApolloVM 0.1.45, which closes more Dart → WebAssembly backend gaps:
+  - `Map`/`List` → `String` coercion in `print(...)` / interpolation (renders
+    Dart's `{k: v, …}` / `[e, …]` form).
+  - Arithmetic and comparison on boxed `Object`/`dynamic` operands (e.g.
+    `args[1] ~/ 2` from a `List<Object>`), unboxed to a concrete number first.
+  - Anonymous functions stored in a `var` and called by name.
+- Added "Wasm" examples for the newly-supported features (verified to compile to
+  and run on Wasm):
+  - "Maps & boxed args": builds a `<String,int>` map from boxed `List<Object>`
+    elements and prints it.
+  - "Lambdas": a `var`-stored closure invoked by name.
+- apollovm: ^0.1.45
+
 ## 1.8.0
 
 - Updated to ApolloVM 0.1.44, which fixes rich-enum field/method reads in a
