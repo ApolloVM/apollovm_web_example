@@ -281,6 +281,18 @@ const codeExamples = <CodeExample>[
   // Wasm lambdas stored in a `var` and called by name (apollovm 0.1.45).
   CodeExample('Wasm — Lambdas', 'dart', _exWasmLambda, '', 'run', '5',
       wasm: true),
+  // Wasm generic class `Box<T>` (apollovm 0.1.46): a value flows through a
+  // generic `T` field (a boxed `Object`) and is unboxed for arithmetic. Returns
+  // a.value + b.value.
+  CodeExample(
+      'Wasm — Generics (Box<T>)', 'dart', _exWasmGenerics, '', 'run', '7',
+      wasm: true),
+  // Wasm integer division by zero (apollovm 0.1.47): `~/` raises a catchable
+  // exception (and integer `/` in Java/Kotlin/C# truncates). Run with `10, 0`
+  // to take the caught path (returns -1), or `10, 3` for the normal path (3).
+  CodeExample('Wasm — Integer division (by zero)', 'dart', _exWasmIntDiv, '',
+      'run', '10, 0',
+      wasm: true),
 ];
 
 const _exDartFib =
@@ -1295,6 +1307,38 @@ const _exWasmLambda = r'''int run(int x) {
   var inc = (int n) => n + 1;
   print('twice: ${twice(x)} ; inc: ${inc(x)}');
   return twice(x) + inc(x);
+}
+''';
+
+// Wasm generics (apollovm 0.1.46): a `Box<T>` field holds a value as a boxed
+// `Object`; reading two of them and adding unboxes each operand. Returns
+// a.value + b.value (= 2x + 1).
+const _exWasmGenerics = r'''class Box<T> {
+  T value;
+  Box(this.value);
+}
+
+int run(int x) {
+  var a = Box<int>(x);
+  var b = Box<int>(x + 1);
+  print('a=${a.value} b=${b.value}');
+  return a.value + b.value;
+}
+''';
+
+// Wasm integer division by zero (apollovm 0.1.47): `~/` by zero raises a
+// catchable exception whose message matches the interpreter; the `print` of the
+// quotient is skipped because an exception is pending. Returns -1 on the caught
+// path (b == 0), or the quotient otherwise.
+const _exWasmIntDiv = r'''int run(int a, int b) {
+  try {
+    var q = a ~/ b;
+    print('q = $q');
+    return q;
+  } catch (e) {
+    print('caught: $e');
+    return -1;
+  }
 }
 ''';
 
