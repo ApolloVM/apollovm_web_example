@@ -1,3 +1,21 @@
+## 1.11.0
+
+- Updated to ApolloVM 1.3.0 (from 0.1.47), the package's first stable 1.x line.
+  The versions folded in are additive — the core `package:apollovm/apollovm.dart`
+  API this playground uses is unchanged, so no example code changed:
+  - 0.1.48: the `apollovm` CLI's `run` now executes `.wasm` binaries through the
+    Wasm runtime (`apollovm run foo.wasm`), closing the `compile` → `run` loop;
+    `.wasm` maps to the `wasm` language.
+  - 1.2.0 / 1.2.1: a Dart-first **Language Server Protocol** server ships as a
+    separate library `package:apollovm/apollovm_lsp.dart` (diagnostics, symbols,
+    hover, definition, references, rename, completion), runnable over stdio via
+    `apollovm lsp` or embedded/web with no `dart:io`.
+  - 1.3.0: LSP `documentHighlight` and `prepareRename` server features, plus a
+    new `LspClient` (and `LspClient.inProcess()`) that drives the server in a
+    single isolate.
+- Verified: `dart analyze` is clean and the web build compiles against 1.3.0.
+- apollovm: ^1.3.0
+
 ## 1.10.0
 
 - Updated to ApolloVM 0.1.47, folding in 0.1.46. Together these bring broad
