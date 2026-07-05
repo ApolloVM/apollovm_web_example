@@ -1,2 +1,0 @@
-import { WASI, Fd, File, Directory, OpenFile, OpenDirectory, PreopenDirectory, strace } from "https://cdn.jsdelivr.net/npm/@bjorn3/browser_wasi_shim@0.2.9/dist/index.min.js";
-window.browser_wasi_shim = { WASI, Fd, File, Directory, OpenFile, OpenDirectory, PreopenDirectory, strace };
