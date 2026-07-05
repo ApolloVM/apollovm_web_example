@@ -1,0 +1,114 @@
+name: Deploy to GitHub Pages
+
+# The github-pages environment only permits deploys from the default branch (not
+# release tags), so we deploy from `main` rather than the release tag. To keep
+# deploys release-gated (not on every merge), the `gate` job only proceeds when
+# the pubspec version changed in the push — i.e. a release bump landed — or when
+# the workflow is run manually.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow the workflow to publish to Pages via OIDC.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer deploy supersedes an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy: ${{ steps.check.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - id: check
+        name: Deploy only on a version bump (or manual run)
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Manual run — deploying."
+          elif git diff HEAD^ HEAD -- pubspec.yaml | grep -qE '^\+version:'; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Version bump detected — deploying."
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "No version bump — skipping deploy."
+          fi
+
+  build:
+    needs: gate
+    if: needs.gate.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
+      - name: Build (webdev, dart2js release)
+        run: |
+          dart pub global activate webdev
+          webdev build
+      # dart2js silently skips an entrypoint whose transitive graph imports an
+      # unsupported SDK library, emitting no JS. Never deploy that broken bundle.
+      - name: Verify the dart2js bundle was produced
+        run: |
+          f=build/main.dart.js
+          test -f "$f" || { echo "::error::dart2js produced no $f — the entrypoint was silently skipped (an unsupported SDK import in the transitive graph?)"; exit 1; }
+          size=$(wc -c < "$f")
+          echo "main.dart.js: $size bytes"
+          [ "$size" -gt 100000 ] || { echo "::error::$f is only $size bytes — suspiciously small for a release build"; exit 1; }
+
+      # The CSP is injected into the *built* index.html only — not the source —
+      # so `webdev serve` (DDC, which needs 'unsafe-eval') keeps working in
+      # development while the deployed dart2js build runs under a strict policy.
+      # This app pulls its font from Google Fonts, so the stylesheet origin
+      # (fonts.googleapis.com) is allowed in style-src and the font origin
+      # (fonts.gstatic.com) in font-src; everything else is 'self'.
+      - name: Inject Content-Security-Policy
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          csp = (
+              "default-src 'self'; base-uri 'self'; object-src 'none'; "
+              "frame-ancestors 'none'; script-src 'self'; "
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+              "img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; "
+              "connect-src 'self'; manifest-src 'self'; worker-src 'self'"
+          )
+          tag = '<meta http-equiv="Content-Security-Policy" content="%s">' % csp
+          p = pathlib.Path("build/index.html")
+          html = p.read_text()
+          assert "<head>" in html, "no <head> in built index.html"
+          assert "Content-Security-Policy" not in html, "CSP already present"
+          p.write_text(html.replace("<head>", "<head>\n    " + tag, 1))
+          print("CSP injected")
+          PY
+
+      # GitHub Pages runs Jekyll by default, which drops files (e.g. anything
+      # under a `packages/` dir); disable it so the build is served byte-for-byte.
+      - name: Disable Jekyll
+        run: touch build/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
