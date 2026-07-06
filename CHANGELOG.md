@@ -1,3 +1,23 @@
+## 1.14.0
+
+- **Bottom dock: minimize.** Added a minimize button beside the existing
+  maximize toggle. It collapses the dock (Problems / Output / Result /
+  Translation) down to just its tab bar, giving the editor the maximum vertical
+  space; clicking it again — or Maximize, or dragging the splitter — restores it.
+  The minimize and maximize toggles are mutually exclusive and stay in sync.
+- **Outline: click to jump, click again to select.** The first click on an
+  Outline entry moves the caret to the symbol's name (as before); clicking the
+  same entry again selects the element's whole text in the editor. For methods
+  this now includes the body (see the ApolloVM 1.6.0 note below).
+- Updated to **ApolloVM 1.6.0**, which powers the LSP improvements:
+  - `documentSymbol` ranges now span a member's whole body, so selecting a
+    method from the Outline selects the entire method, not just its signature.
+  - Completion on `this.` / `super.` proposes the enclosing type's members
+    (fields and methods, with their real kinds), and completions keep their
+    proper kinds even while the buffer does not parse.
+- Verified: `dart analyze` is clean and the release build compiles against 1.6.0.
+- apollovm: ^1.6.0
+
 ## 1.13.1
 
 - Apply `dart format` to the new IDE sources (`web/src/lsp.dart`,
