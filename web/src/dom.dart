@@ -99,6 +99,9 @@ HTMLElement selectBottomDock() =>
 HTMLButtonElement selectBottomMaximize() =>
     document.querySelector('#bottomMaximize') as HTMLButtonElement;
 
+HTMLButtonElement selectBottomMinimize() =>
+    document.querySelector('#bottomMinimize') as HTMLButtonElement;
+
 HTMLPreElement selectVMResult() =>
     document.querySelector('#vmResult') as HTMLPreElement;
 

@@ -186,18 +186,35 @@ Future<void> _refreshOutline(String uri) async {
     _renderSymbol(s, 0, buf);
   }
   outline.innerHTML = buf.toString().toJS;
+  _lastOutlineSymIdx = -1;
 
   var nodes = outline.querySelectorAll('.outline-row');
   for (var i = 0; i < nodes.length; i++) {
     var row = nodes.item(i) as HTMLElement;
     var idx = int.parse(row.getAttribute('data-sym') ?? '0');
-    _listen(row, 'click',
-        (_) => jumpToPosition(_flatSymbols[idx].selectionRange.start));
+    _listen(row, 'click', (_) => _onOutlineRowClick(idx));
+  }
+}
+
+/// Handles an outline row click: the first click on a symbol moves the caret to
+/// its name; clicking the same symbol again selects the whole element's text.
+void _onOutlineRowClick(int idx) {
+  var symbol = _flatSymbols[idx];
+  if (_lastOutlineSymIdx == idx) {
+    selectRange(symbol.range);
+    _lastOutlineSymIdx = -1; // Next click jumps again (toggle).
+  } else {
+    jumpToPosition(symbol.selectionRange.start);
+    _lastOutlineSymIdx = idx;
   }
 }
 
 /// Flattened symbols, indexed by the `data-sym` attribute on each outline row.
 List<DocumentSymbol> _flatSymbols = [];
+
+/// The outline row most recently clicked (for the move-then-select toggle),
+/// or `-1` if the next click should move the caret.
+int _lastOutlineSymIdx = -1;
 
 void _renderSymbol(DocumentSymbol s, int depth, StringBuffer buf) {
   var idx = _flatSymbols.length;

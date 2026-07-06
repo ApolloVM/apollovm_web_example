@@ -161,6 +161,27 @@ void jumpToPosition(Position pos) {
   updateCursorStatus();
 }
 
+/// Selects the text spanning [range] in the editor and scrolls its start into
+/// view.
+void selectRange(Range range) {
+  var ta = selectCodeTextArea();
+  ta.focus();
+
+  var starts = _lineStarts(ta.value);
+  var length = ta.value.length;
+  var start = _offsetOfPosition(starts, length, range.start);
+  var end = _offsetOfPosition(starts, length, range.end);
+  ta.selectionStart = start;
+  ta.selectionEnd = end;
+
+  var lineHeight = _lineHeight(ta);
+  var target = range.start.line * lineHeight - ta.clientHeight / 3;
+  ta.scrollTop = target < 0 ? 0.0 : target;
+
+  _syncScroll();
+  updateCursorStatus();
+}
+
 // ---- Hover tooltip ----
 
 void showHoverTip(String html, num clientX, num clientY) {

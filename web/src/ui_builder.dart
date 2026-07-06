@@ -92,6 +92,7 @@ void buildUI() {
         <button class="btab" data-panel="result">Result</button>
         <button class="btab" data-panel="translation">Translation</button>
         <span class="bottom-tabs-spacer"></span>
+        <button class="bottom-max" id="bottomMinimize" title="Minimize panel (more space for code)">▁</button>
         <button class="bottom-max" id="bottomMaximize" title="Maximize / restore panel">▴</button>
       </div>
       <div class="bottom-body">
@@ -181,10 +182,11 @@ void buildUI() {
 }
 
 bool _bottomMaximized = false;
+bool _bottomMinimized = false;
 double _bottomRestoreHeight = 230;
 
 /// Wires the draggable splitter above the bottom dock (drag to resize) and the
-/// maximize/restore toggle in the dock's tab bar.
+/// minimize/maximize/restore toggles in the dock's tab bar.
 void setupBottomResizer() {
   var resizer = selectBottomResizer();
   var dock = selectBottomDock();
@@ -199,6 +201,25 @@ void setupBottomResizer() {
     if (h < 90) return 90;
     if (h > mx) return mx;
     return h;
+  }
+
+  // Restores the dock to its last non-collapsed, non-maximized height and
+  // syncs the toggle buttons/glyphs to the current state.
+  void applyState(double? heightPx) {
+    var minBtn = selectBottomMinimize();
+    var maxBtn = selectBottomMaximize();
+    dock.classList.toggle('bottom-collapsed', _bottomMinimized);
+    resizer.style.display = _bottomMinimized ? 'none' : '';
+    if (_bottomMinimized) {
+      dock.style.height = '';
+    } else if (heightPx != null) {
+      dock.style.height = '${heightPx}px';
+    }
+    minBtn.textContent = _bottomMinimized ? '▔' : '▁';
+    minBtn.title = _bottomMinimized
+        ? 'Restore panel'
+        : 'Minimize panel (more space for code)';
+    maxBtn.textContent = _bottomMaximized ? '▾' : '▴';
   }
 
   _listen(resizer, 'mousedown', (event) {
@@ -217,7 +238,8 @@ void setupBottomResizer() {
     var h = clampHeight(startH + (startY - m.clientY)); // drag up = taller
     dock.style.height = '${h}px';
     _bottomMaximized = false;
-    selectBottomMaximize().textContent = '▴';
+    _bottomMinimized = false;
+    applyState(null);
   });
 
   _listen(document, 'mouseup', (_) {
@@ -227,17 +249,33 @@ void setupBottomResizer() {
     document.body?.style.userSelect = '';
   });
 
-  _listen(selectBottomMaximize(), 'click', (_) {
-    var btn = selectBottomMaximize();
-    if (_bottomMaximized) {
-      dock.style.height = '${_bottomRestoreHeight}px';
-      _bottomMaximized = false;
-      btn.textContent = '▴';
+  _listen(selectBottomMinimize(), 'click', (_) {
+    if (_bottomMinimized) {
+      // Restore to the remembered height.
+      _bottomMinimized = false;
+      applyState(_bottomRestoreHeight);
     } else {
-      _bottomRestoreHeight = dock.getBoundingClientRect().height;
-      dock.style.height = '${maxHeight()}px';
+      // Collapse the dock to just its tab bar for maximum coding space.
+      if (!_bottomMaximized) {
+        _bottomRestoreHeight = dock.getBoundingClientRect().height;
+      }
+      _bottomMinimized = true;
+      _bottomMaximized = false;
+      applyState(null);
+    }
+  });
+
+  _listen(selectBottomMaximize(), 'click', (_) {
+    if (_bottomMaximized) {
+      _bottomMaximized = false;
+      applyState(_bottomRestoreHeight);
+    } else {
+      if (!_bottomMinimized) {
+        _bottomRestoreHeight = dock.getBoundingClientRect().height;
+      }
       _bottomMaximized = true;
-      btn.textContent = '▾';
+      _bottomMinimized = false;
+      applyState(maxHeight());
     }
   });
 }

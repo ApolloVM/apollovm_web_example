@@ -388,6 +388,13 @@ a:hover { color: var(--accent-hi); }
     min-height: 80px;
     background: var(--bg-panel);
 }
+.bottom.bottom-collapsed {
+    height: auto;
+    min-height: 0;
+}
+.bottom.bottom-collapsed .bottom-body { display: none; }
+.bottom.bottom-collapsed .bottom-tabs { border-bottom: none; }
+
 .bottom-tabs {
     display: flex;
     align-items: stretch;
