@@ -1,3 +1,9 @@
+## 1.12.1
+
+- Docs: fix the live demo URL — the playground is served at the site root
+  (`https://apollovm.github.io/apollovm_web_example/`), not the old `/www/`
+  path.
+
 ## 1.12.0
 
 - Updated to ApolloVM 1.4.1 (from 1.3.0), folding in 1.4.0. This is a
