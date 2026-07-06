@@ -11,7 +11,7 @@ This is a Web example for the [ApolloVM][pack_apollovm] Dart package.
 
 You can see a live demo at:
 
-- https://apollovm.github.io/apollovm_web_example/www/
+- https://apollovm.github.io/apollovm_web_example/
 
 ## Running The Web Example
 
