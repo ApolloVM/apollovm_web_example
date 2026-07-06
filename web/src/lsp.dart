@@ -102,7 +102,9 @@ void _setDiagnostics(List<Diagnostic> diags) {
       var s = a.severity.compareTo(b.severity);
       if (s != 0) return s;
       var l = a.range.start.line.compareTo(b.range.start.line);
-      return l != 0 ? l : a.range.start.character.compareTo(b.range.start.character);
+      return l != 0
+          ? l
+          : a.range.start.character.compareTo(b.range.start.character);
     });
 
   renderDiagnosticsOverlay(); // squiggles (code_editor.dart)
@@ -174,8 +176,7 @@ Future<void> _refreshOutline(String uri) async {
 
   var outline = selectOutline();
   if (symbols.isEmpty) {
-    outline.innerHTML =
-        '<div class="outline-empty">No symbols.</div>'.toJS;
+    outline.innerHTML = '<div class="outline-empty">No symbols.</div>'.toJS;
     return;
   }
 
@@ -190,8 +191,8 @@ Future<void> _refreshOutline(String uri) async {
   for (var i = 0; i < nodes.length; i++) {
     var row = nodes.item(i) as HTMLElement;
     var idx = int.parse(row.getAttribute('data-sym') ?? '0');
-    _listen(
-        row, 'click', (_) => jumpToPosition(_flatSymbols[idx].selectionRange.start));
+    _listen(row, 'click',
+        (_) => jumpToPosition(_flatSymbols[idx].selectionRange.start));
   }
 }
 

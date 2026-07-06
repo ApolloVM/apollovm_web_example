@@ -64,10 +64,9 @@ Future<void> _doCompletion(bool explicit) async {
 
   CompletionList list;
   try {
-    list = await lsp
-        .completion(_currentUri, pos)
-        .timeout(const Duration(seconds: 3),
-            onTimeout: () => const CompletionList());
+    list = await lsp.completion(_currentUri, pos).timeout(
+        const Duration(seconds: 3),
+        onTimeout: () => const CompletionList());
   } catch (_) {
     hideCompletionPopup();
     return;
@@ -219,8 +218,9 @@ void acceptCompletion() {
   var text = ta.value;
   var caret = ta.selectionStart.toInt();
 
-  ta.value =
-      text.substring(0, _completionWordStart) + item.label + text.substring(caret);
+  ta.value = text.substring(0, _completionWordStart) +
+      item.label +
+      text.substring(caret);
   var newCaret = _completionWordStart + item.label.length;
   ta.selectionStart = newCaret;
   ta.selectionEnd = newCaret;

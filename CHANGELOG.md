@@ -1,3 +1,9 @@
+## 1.13.1
+
+- Apply `dart format` to the new IDE sources (`web/src/lsp.dart`,
+  `highlight.dart`, `completion.dart`) — fixes the failing formatting check in CI
+  for 1.13.0. No functional changes.
+
 ## 1.13.0
 
 - **Reworked the playground into an IDE-like layout** (VS Code / IntelliJ style)

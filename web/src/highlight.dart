@@ -77,7 +77,8 @@ final Map<String, _LangSyntax> _langSyntaxes = {
         'break continue new delete typeof instanceof in of this class extends super '
         'import export from as try catch finally throw async await yield null '
         'undefined true false void static get set'),
-    types: _words('Object Array String Number Boolean Map Set Promise Math JSON'),
+    types:
+        _words('Object Array String Number Boolean Map Set Promise Math JSON'),
   ),
   'typescript': _LangSyntax(
     backtick: true,
@@ -138,7 +139,8 @@ bool _isDigit(String c) => c.compareTo('0') >= 0 && c.compareTo('9') <= 0;
 bool _isIdentStart(String c) =>
     (c.compareTo('a') >= 0 && c.compareTo('z') <= 0) ||
     (c.compareTo('A') >= 0 && c.compareTo('Z') <= 0) ||
-    c == '_' || c == r'$';
+    c == '_' ||
+    c == r'$';
 bool _isIdentPart(String c) => _isIdentStart(c) || _isDigit(c);
 bool _isUpper(String c) => c.compareTo('A') >= 0 && c.compareTo('Z') <= 0;
 
@@ -179,8 +181,7 @@ String highlightCode(String code, String language) {
     }
 
     // Line comment.
-    var lineComment =
-        lang.lineComments.firstWhere(at, orElse: () => '');
+    var lineComment = lang.lineComments.firstWhere(at, orElse: () => '');
     if (lineComment.isNotEmpty) {
       var end = code.indexOf('\n', i);
       var stop = end < 0 ? n : end;
@@ -251,7 +252,8 @@ String highlightCode(String code, String language) {
       String cls;
       if (lang.keywords.contains(word)) {
         cls = 'tok-keyword';
-      } else if (lang.types.contains(word) || (word.length > 1 && _isUpper(c))) {
+      } else if (lang.types.contains(word) ||
+          (word.length > 1 && _isUpper(c))) {
         cls = 'tok-type';
       } else if (isCall) {
         cls = 'tok-func';
