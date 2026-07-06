@@ -1,3 +1,32 @@
+## 1.13.0
+
+- **Reworked the playground into an IDE-like layout** (VS Code / IntelliJ style)
+  driven by ApolloVM's in-process Language Server (`LspService` from
+  `package:apollovm/apollovm_lsp.dart`) — everything runs client-side, no backend:
+  - **Title bar** (brand + Examples pickers), an **Outline** sidebar fed by LSP
+    document symbols (click to jump) with the **Language** selector, a
+    **Run Configuration** box at the sidebar bottom (Run + Wasm toggle, entry
+    point / parameters, Download Wasm), the editor, a resizable/maximizable
+    bottom dock (**Problems / Output / Result / Translation**), and a status bar
+    (cursor Ln/Col, error/warning counts, run mode, version).
+  - **Live diagnostics**: red/yellow squiggles under the code, gutter markers, a
+    Problems list (click to jump) and status-bar counts, re-analyzed as you type.
+  - **Hover** info, **document-symbol Outline**, and **code completion** (a popup
+    at the caret; ↑/↓ to move, Enter/Tab to accept, Esc to dismiss,
+    Ctrl/Cmd+Space to trigger).
+  - **Per-language syntax highlighting** (keywords, types, strings, numbers,
+    functions, comments) rendered under the editable text, switching with the
+    selected language.
+  - The **Translation** panel holds the transpile control and per-language tabs.
+- Updated to **ApolloVM 1.5.0**, which powers the new editor features:
+  - Completion now surfaces in-scope identifiers (local variables/parameters) and
+    keeps working while the buffer does not parse — so the completion popup is
+    useful mid-edit, not just keyword-only.
+  - Parse-error diagnostics locate a missing `;` on the offending line (Dart/
+    Java/C#) instead of defaulting to the top of the file.
+- Verified: `dart analyze` is clean and the release build compiles against 1.5.0.
+- apollovm: ^1.5.0
+
 ## 1.12.1
 
 - Docs: fix the live demo URL — the playground is served at the site root

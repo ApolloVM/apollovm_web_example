@@ -1,8 +1,11 @@
 import 'dart:convert';
 
-import 'package:web/web.dart' hide MimeType;
+// `Range` (DOM) and `SymbolKind` (ApolloVM core) are hidden so the LSP
+// protocol's `Range`/`SymbolKind` (from `apollovm_lsp.dart`) win.
+import 'package:web/web.dart' hide MimeType, Range;
 
-import 'package:apollovm/apollovm.dart';
+import 'package:apollovm/apollovm.dart' hide SymbolKind;
+import 'package:apollovm/apollovm_lsp.dart';
 import 'package:collection/collection.dart';
 import 'package:dom_tools/dom_tools.dart';
 import 'package:swiss_knife/swiss_knife.dart';
@@ -15,6 +18,9 @@ part 'src/dom.dart'; // _listen() + DOM `selectX()` helpers.
 part 'src/code_editor.dart'; // Line-numbered code editor.
 part 'src/vm.dart'; // ApolloVM execute / compile / convert.
 part 'src/actions.dart'; // UI action handlers + output panel.
+part 'src/lsp.dart'; // In-process LSP: diagnostics, outline, hover.
+part 'src/highlight.dart'; // Per-language syntax highlighting.
+part 'src/completion.dart'; // LSP-driven code completion popup.
 
 void main() async {
   buildUI();

@@ -32,14 +32,8 @@ HTMLButtonElement selectDownloadWasmButton() =>
 HTMLButtonElement selectRunButton() =>
     document.querySelector('#run') as HTMLButtonElement;
 
-HTMLButtonElement selectConvertButton() =>
-    document.querySelector('#convert') as HTMLButtonElement;
-
-HTMLDivElement selectConversionsPanel() =>
-    document.querySelector('#conversionsPanel') as HTMLDivElement;
-
-HTMLButtonElement selectConversionsClose() =>
-    document.querySelector('#conversionsClose') as HTMLButtonElement;
+HTMLButtonElement selectTranslateButton() =>
+    document.querySelector('#translate-btn') as HTMLButtonElement;
 
 HTMLDivElement selectConversionTabs() =>
     document.querySelector('#conversionTabs') as HTMLDivElement;
@@ -57,6 +51,53 @@ HTMLTextAreaElement selectCodeTextArea() =>
 
 HTMLDivElement selectCodeGutter() =>
     document.querySelector('#codeGutter') as HTMLDivElement;
+
+HTMLPreElement selectCodeHighlight() =>
+    document.querySelector('#codeHighlight') as HTMLPreElement;
+
+HTMLPreElement selectCodeSyntax() =>
+    document.querySelector('#codeSyntax') as HTMLPreElement;
+
+HTMLElement selectFileName() =>
+    document.querySelector('#fileName') as HTMLElement;
+
+// ---- LSP panels ----
+
+HTMLDivElement selectOutline() =>
+    document.querySelector('#outline') as HTMLDivElement;
+
+HTMLDivElement selectProblemsList() =>
+    document.querySelector('#problemsList') as HTMLDivElement;
+
+HTMLElement selectProblemsBadge() =>
+    document.querySelector('#problemsBadge') as HTMLElement;
+
+HTMLElement selectStatusCursor() =>
+    document.querySelector('#sbCursor') as HTMLElement;
+
+HTMLElement selectStatusErrors() =>
+    document.querySelector('#sbErrors') as HTMLElement;
+
+HTMLElement selectStatusWarnings() =>
+    document.querySelector('#sbWarnings') as HTMLElement;
+
+HTMLElement selectStatusMode() =>
+    document.querySelector('#sbMode') as HTMLElement;
+
+HTMLDivElement selectHoverTip() =>
+    document.querySelector('#hoverTip') as HTMLDivElement;
+
+HTMLDivElement selectCompletionPopup() =>
+    document.querySelector('#completionPopup') as HTMLDivElement;
+
+HTMLDivElement selectBottomResizer() =>
+    document.querySelector('#bottomResizer') as HTMLDivElement;
+
+HTMLElement selectBottomDock() =>
+    document.querySelector('#bottomDock') as HTMLElement;
+
+HTMLButtonElement selectBottomMaximize() =>
+    document.querySelector('#bottomMaximize') as HTMLButtonElement;
 
 HTMLPreElement selectVMResult() =>
     document.querySelector('#vmResult') as HTMLPreElement;

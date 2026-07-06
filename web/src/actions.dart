@@ -9,6 +9,7 @@ void loadExample(int index) {
 
   selectCodeTextArea().setAttribute('language', ex.language);
   setCodeEditorText(ex.code);
+  selectFileName().textContent = fileNameForLanguage(ex.language);
 
   selectClassName().value = ex.className;
   selectFunctionName().value = ex.functionName;
@@ -21,6 +22,8 @@ void loadExample(int index) {
 
   hideConversions();
   resetVMOutputs();
+  switchBottomPanel('problems');
+  runLspAnalysis();
 }
 
 void changeLanguage() async {
@@ -60,6 +63,11 @@ void changeLanguage() async {
 
     setVMOutput('$e', error: true);
   }
+
+  selectFileName().textContent = fileNameForLanguage(
+      codeTextArea.getAttribute('language') ?? codeLanguage);
+  switchBottomPanel('output');
+  runLspAnalysis();
 }
 
 void downloadWasm() async {
@@ -90,9 +98,11 @@ void wasmCompiledChecked() async {
   var runButton = selectRunButton();
 
   if (wasmCompiledCheck) {
-    runButton.textContent = 'RUN - Wasm compiled';
+    runButton.textContent = '▶ Run · Wasm';
+    selectStatusMode().textContent = 'Wasm compiled';
   } else {
-    runButton.textContent = 'RUN - Interpreted';
+    runButton.textContent = '▶ Run';
+    selectStatusMode().textContent = 'Interpreted';
   }
 }
 
@@ -107,6 +117,8 @@ void runCode() async {
   var codeLanguage = selectCodeLanguage().value;
 
   resetVMOutputs();
+
+  switchBottomPanel('output');
 
   try {
     var result = await executeVM(codeLanguage, code, className, functionName,
@@ -133,8 +145,9 @@ void runConvert() async {
   var fromLanguage = selectCodeTextArea().getAttribute('language') ??
       selectCodeLanguage().value;
 
-  selectConversionsPanel().classList.remove('hidden');
+  switchBottomPanel('translation');
   selectConversionTabs().textContent = '';
+  selectConversionOutput().classList.remove('muted');
   selectConversionOutput().textContent = 'Transpiling…';
 
   try {
@@ -172,6 +185,7 @@ void showConversions(String fromLanguage, Map<String, String> results) {
 
 /// Shows the conversion for [language] and marks its tab active.
 void showConversion(String language) {
+  selectConversionOutput().classList.remove('muted');
   selectConversionOutput().textContent = _conversions[language] ?? '';
 
   var tabNodes = selectConversionTabs().querySelectorAll('.conv-tab');
@@ -185,9 +199,15 @@ void showConversion(String language) {
   }
 }
 
-/// Hides the conversions panel (e.g. after loading a new example or switching
+/// Clears the Transpiled panel (e.g. after loading a new example or switching
 /// language, when the shown conversions would be stale).
-void hideConversions() => selectConversionsPanel().classList.add('hidden');
+void hideConversions() {
+  _conversions = {};
+  selectConversionTabs().textContent = '';
+  selectConversionOutput().classList.add('muted');
+  selectConversionOutput().textContent =
+      'Use ⇄ Transpile to convert to every supported language.';
+}
 
 void setVMResult(Object? result, {bool error = false, bool info = false}) {
   var pre = selectVMResult();
