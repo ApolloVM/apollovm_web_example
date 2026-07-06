@@ -1,3 +1,10 @@
+## 1.14.2
+
+- Updated to **ApolloVM 1.6.2**: the Outline now fully selects methods with an
+  expression body (`=> expr;`) — for both classes and enums — instead of just
+  their signature.
+- apollovm: ^1.6.2
+
 ## 1.14.1
 
 - Updated to **ApolloVM 1.6.1**: the Outline now handles members declared after
