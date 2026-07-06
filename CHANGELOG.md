@@ -1,3 +1,20 @@
+## 1.12.0
+
+- Updated to ApolloVM 1.4.1 (from 1.3.0), folding in 1.4.0. This is a
+  tooling/API release — the core `package:apollovm/apollovm.dart` surface this
+  playground uses is unchanged, so no example code changed:
+  - 1.4.0: the MCP server now exposes ApolloVM's LSP features as `apollovm.lsp.*`
+    tools (diagnostics, symbols, hover, definition, references, completion,
+    workspace-symbol search), so an AI agent can inspect code like an editor;
+    plus a new in-process `LspService` in `package:apollovm/apollovm_lsp.dart`
+    (no socket/handshake, `dart:io`-free).
+  - 1.4.1: the MCP server and all its tools are now web-compatible —
+    `package:apollovm/apollovm_mcp.dart` is free of `dart:io`/`dart:isolate`, so
+    they compile and run under dart2js/DDC (the `dart:io`-only stdio/HTTP
+    transports and CLI moved to `package:apollovm/apollovm_mcp_io.dart`).
+- Verified: `dart analyze` is clean and the web build compiles against 1.4.1.
+- apollovm: ^1.4.1
+
 ## 1.11.0
 
 - Updated to ApolloVM 1.3.0 (from 0.1.47), the package's first stable 1.x line.
