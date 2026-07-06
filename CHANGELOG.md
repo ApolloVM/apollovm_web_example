@@ -1,3 +1,11 @@
+## 1.14.1
+
+- Updated to **ApolloVM 1.6.1**: the Outline now handles members declared after
+  an enum's constant list — selecting an enum method includes its body, and enum
+  constructors/fields are recognized (previously they were mis-parsed as enum
+  constants). Class members were already handled correctly.
+- apollovm: ^1.6.1
+
 ## 1.14.0
 
 - **Bottom dock: minimize.** Added a minimize button beside the existing
