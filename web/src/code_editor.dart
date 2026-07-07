@@ -63,6 +63,9 @@ void updateCodeGutter() {
 
   var lineCount = '\n'.allMatches(codeTextArea.value).length + 1;
 
+  // Recompute the git change bars (added/modified/deleted) for the open file.
+  computeGitDiffMarkers();
+
   // Worst (lowest severity number) diagnostic per line.
   var lineSev = <int, int>{};
   for (var d in _diagnostics) {
@@ -75,7 +78,23 @@ void updateCodeGutter() {
   for (var i = 0; i < lineCount; i++) {
     var cls = 'gln';
     if (lineSev.containsKey(i)) cls += ' ${_severityClass(lineSev[i]!)}';
-    buf.write('<div class="$cls">${i + 1}</div>');
+
+    // Git change markers (small vertical bar at the editor's left border).
+    var marks = '';
+    var git = _gitLineStatus[i];
+    if (git == 'added') {
+      marks = '<i class="gbar gbar-added"></i>';
+    } else if (git == 'modified') {
+      marks = '<i class="gbar gbar-modified"></i>';
+    }
+    if (_gitDeletionsAbove.contains(i)) {
+      marks += '<i class="gtri gtri-above"></i>';
+    }
+    if (_gitDeletionAtEnd && i == lineCount - 1) {
+      marks += '<i class="gtri gtri-below"></i>';
+    }
+
+    buf.write('<div class="$cls">${i + 1}$marks</div>');
   }
   gutter.innerHTML = buf.toString().toJS;
   gutter.scrollTop = codeTextArea.scrollTop;
