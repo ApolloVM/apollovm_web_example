@@ -6,6 +6,7 @@ import 'package:web/web.dart' hide MimeType, Range;
 
 import 'package:apollovm/apollovm.dart' hide SymbolKind;
 import 'package:apollovm/apollovm_lsp.dart';
+import 'package:apollovm/apollovm_repository.dart';
 import 'package:collection/collection.dart';
 import 'package:dom_tools/dom_tools.dart';
 import 'package:swiss_knife/swiss_knife.dart';
@@ -21,6 +22,7 @@ part 'src/actions.dart'; // UI action handlers + output panel.
 part 'src/lsp.dart'; // In-process LSP: diagnostics, outline, hover.
 part 'src/highlight.dart'; // Per-language syntax highlighting.
 part 'src/completion.dart'; // LSP-driven code completion popup.
+part 'src/repository.dart'; // Remote repository: file tree, edit/save, git.
 
 void main() async {
   buildUI();

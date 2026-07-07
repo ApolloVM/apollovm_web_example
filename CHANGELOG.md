@@ -1,3 +1,23 @@
+## 1.15.0
+
+### Remote repository support — open, edit and version-control a real project
+
+- **Connect to a repository server** (`host:port`) served by ApolloVM 1.8.0's
+  `tool/repository_server.dart`, via the new `RemoteRepositoryAdapter`. The
+  connection `host:port` is remembered across reloads (localStorage).
+- **File tree explorer**: browse the served project, expand directories, and open
+  files into the editor with syntax highlighting + the in-process language server.
+- **Edit & save**: write changes back to the server (Save button / `Ctrl`+`S`).
+- **Source Control panel**: `git status` of the working tree, per-file `git diff`
+  in a new bottom-dock **Diff** tab, and stage-all + **commit**.
+- **Editor git change bar**: VS Code-style per-line markers at the gutter's edge —
+  green (added), blue (modified), red triangle (deleted) — diffed live against
+  `HEAD` as you type.
+- **Sidebar tabs**: the **Repository** and **Outline** panels now share one column
+  as selectable tabs (Repository first); Run Configuration lives inside the
+  Outline tab.
+- Updated to **ApolloVM 1.8.0**.
+
 ## 1.14.3
 
 - Updated to **ApolloVM 1.6.3**: the Outline now fully selects body-less

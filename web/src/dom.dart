@@ -110,3 +110,41 @@ HTMLPreElement selectVMOutput() =>
 
 HTMLPreElement selectVMExecutedCode() =>
     document.querySelector('#vmExecutedCode') as HTMLPreElement;
+
+// ---- Repository (remote workspace) ----
+
+HTMLElement selectRepoPanel() =>
+    document.querySelector('#repoPanel') as HTMLElement;
+
+HTMLInputElement selectRepoHost() =>
+    document.querySelector('#repoHost') as HTMLInputElement;
+
+HTMLInputElement selectRepoPort() =>
+    document.querySelector('#repoPort') as HTMLInputElement;
+
+HTMLButtonElement selectRepoConnectButton() =>
+    document.querySelector('#repoConnect') as HTMLButtonElement;
+
+HTMLElement selectRepoStatus() =>
+    document.querySelector('#repoStatus') as HTMLElement;
+
+HTMLDivElement selectRepoTree() =>
+    document.querySelector('#repoTree') as HTMLDivElement;
+
+HTMLButtonElement selectRepoSaveButton() =>
+    document.querySelector('#repoSave') as HTMLButtonElement;
+
+HTMLDivElement selectRepoGit() =>
+    document.querySelector('#repoGit') as HTMLDivElement;
+
+HTMLButtonElement selectRepoRefreshButton() =>
+    document.querySelector('#repoRefresh') as HTMLButtonElement;
+
+HTMLInputElement selectRepoCommitMsg() =>
+    document.querySelector('#repoCommitMsg') as HTMLInputElement;
+
+HTMLButtonElement selectRepoCommitButton() =>
+    document.querySelector('#repoCommit') as HTMLButtonElement;
+
+HTMLPreElement selectRepoDiff() =>
+    document.querySelector('#repoDiff') as HTMLPreElement;

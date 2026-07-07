@@ -5,6 +5,10 @@ part of '../main.dart';
 void loadExample(int index) {
   var ex = codeExamples[index];
 
+  // Detach from any open repository file (no git change bars for examples).
+  _openRepoPath = '';
+  clearGitGutter();
+
   selectCodeLanguage().value = ex.language;
 
   selectCodeTextArea().setAttribute('language', ex.language);
@@ -36,6 +40,10 @@ void changeLanguage() async {
   if (currentCodeLanguage == codeLanguage) {
     return;
   }
+
+  // The transpiled buffer is no longer the open repository file.
+  _openRepoPath = '';
+  clearGitGutter();
 
   hideConversions();
   resetVMOutputs();

@@ -26,39 +26,69 @@ void buildUI() {
 
 <div class="ide-body">
   <aside class="sidebar">
-    <div class="panel-head">
-      Outline
-      <span class="panel-head-tag">LSP</span>
+    <div class="side-tabs">
+      <button class="side-tab side-tab-active" data-side="repo">Repository</button>
+      <button class="side-tab" data-side="outline">Outline</button>
     </div>
-    <div class="outline-lang">
-      <span class="outline-lang-label">Language</span>
-      <select id="codeLang" title="Source language">
-        <option value="dart" selected>Dart</option>
-        <option value="java11">Java 11</option>
-        <option value="kotlin">Kotlin</option>
-        <option value="javascript">JavaScript</option>
-        <option value="typescript">TypeScript</option>
-        <option value="lua">Lua</option>
-        <option value="python">Python</option>
-        <option value="csharp">C#</option>
-      </select>
-    </div>
-    <div id="outline" class="outline"><div class="outline-empty">No symbols.</div></div>
 
-    <div class="panel-head panel-head-bottom">Run Configuration</div>
-    <div class="runcfg">
-      <div class="runcfg-actions">
-        <button id="run" class="btn-run" title="Run the code (Interpreted or Wasm)">▶&nbsp; Run</button>
-        <label class="tb-check" title="Compile to WebAssembly and run that (alpha)">
-          <input type="checkbox" id="wasm-compiled"> Wasm
-        </label>
+    <div class="side-panel" id="outlinePanel" data-side-panel="outline">
+      <div class="outline-lang">
+        <span class="outline-lang-label">Language</span>
+        <select id="codeLang" title="Source language">
+          <option value="dart" selected>Dart</option>
+          <option value="java11">Java 11</option>
+          <option value="kotlin">Kotlin</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="lua">Lua</option>
+          <option value="python">Python</option>
+          <option value="csharp">C#</option>
+        </select>
       </div>
-      <label>Class<input id="className" type="text" value="Foo" spellcheck="false"></label>
-      <label>Function<input id="functionName" type="text" value="main" spellcheck="false"></label>
-      <label>Positional<input id="positionalParametersJson" type="text" value='$initialPositionalParameters' spellcheck="false"></label>
-      <label>Named<input id="namedParametersJson" type="text" value='$initialNamedParameters' spellcheck="false"></label>
-      <div class="runcfg-hint">Parameters are JSON.</div>
-      <button id="download-wasm" class="btn runcfg-download" title="Compile to a .wasm module and download it">⤓&nbsp; Download Wasm</button>
+      <div id="outline" class="outline"><div class="outline-empty">No symbols.</div></div>
+
+      <div class="panel-head panel-head-bottom">Run Configuration</div>
+      <div class="runcfg">
+        <div class="runcfg-actions">
+          <button id="run" class="btn-run" title="Run the code (Interpreted or Wasm)">▶&nbsp; Run</button>
+          <label class="tb-check" title="Compile to WebAssembly and run that (alpha)">
+            <input type="checkbox" id="wasm-compiled"> Wasm
+          </label>
+        </div>
+        <label>Class<input id="className" type="text" value="Foo" spellcheck="false"></label>
+        <label>Function<input id="functionName" type="text" value="main" spellcheck="false"></label>
+        <label>Positional<input id="positionalParametersJson" type="text" value='$initialPositionalParameters' spellcheck="false"></label>
+        <label>Named<input id="namedParametersJson" type="text" value='$initialNamedParameters' spellcheck="false"></label>
+        <div class="runcfg-hint">Parameters are JSON.</div>
+        <button id="download-wasm" class="btn runcfg-download" title="Compile to a .wasm module and download it">⤓&nbsp; Download Wasm</button>
+      </div>
+    </div>
+
+    <div class="side-panel side-panel-active" id="repoPanel" data-side-panel="repo">
+      <div class="repo-conn">
+        <div class="repo-conn-row">
+          <input id="repoHost" type="text" placeholder="host" value="127.0.0.1" spellcheck="false" autocomplete="off">
+          <input id="repoPort" class="repo-port" type="text" placeholder="port" value="8090" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="repo-conn-row">
+          <button id="repoConnect" class="btn" title="Connect to a repository server (dart run tool/repository_server.dart)">Connect</button>
+          <button id="repoSave" class="btn" title="Save the open file to the server (Ctrl/Cmd+S)">⤓ Save</button>
+        </div>
+        <div id="repoStatus" class="repo-status">Not connected.</div>
+      </div>
+
+      <div class="panel-head panel-head-bottom">Files</div>
+      <div id="repoTree" class="tree"><div class="tree-empty">Not connected to a repository.</div></div>
+
+      <div class="panel-head panel-head-bottom">
+        Source Control
+        <button id="repoRefresh" class="btn-mini" title="Refresh git status">⟳</button>
+      </div>
+      <div id="repoGit" class="git-list"><div class="tree-empty">Not connected.</div></div>
+      <div class="repo-commit">
+        <input id="repoCommitMsg" type="text" placeholder="Commit message" spellcheck="false" autocomplete="off">
+        <button id="repoCommit" class="btn" title="Stage all changes and commit">Commit</button>
+      </div>
     </div>
   </aside>
 
@@ -91,6 +121,7 @@ void buildUI() {
         <button class="btab" data-panel="output">Output</button>
         <button class="btab" data-panel="result">Result</button>
         <button class="btab" data-panel="translation">Translation</button>
+        <button class="btab" data-panel="diff">Diff</button>
         <span class="bottom-tabs-spacer"></span>
         <button class="bottom-max" id="bottomMinimize" title="Minimize panel (more space for code)">▁</button>
         <button class="bottom-max" id="bottomMaximize" title="Maximize / restore panel">▴</button>
@@ -115,6 +146,9 @@ void buildUI() {
           </div>
           <div id="conversionTabs" class="conversionTabs"></div>
           <pre id="conversionOutput" class="term muted">Click “Translate to all languages” to transpile the current code.</pre>
+        </div>
+        <div class="bpanel" id="panel-diff">
+          <pre id="repoDiff" class="term muted">Select a changed file in Source Control to see its diff.</pre>
         </div>
       </div>
     </section>
@@ -142,6 +176,7 @@ void buildUI() {
 
   setupCodeEditor();
   setupBottomResizer();
+  setupRepository();
   populateExampleSelect(exampleCategories().first);
   loadExample(0);
 
@@ -178,6 +213,30 @@ void buildUI() {
     var tab = btabs.item(i) as HTMLElement;
     var panel = tab.getAttribute('data-panel') ?? '';
     _listen(tab, 'click', (evt) => switchBottomPanel(panel));
+  }
+
+  // Sidebar tab switching (Outline / Repository share the same space).
+  var sideTabs = document.querySelectorAll('.side-tab');
+  for (var i = 0; i < sideTabs.length; i++) {
+    var tab = sideTabs.item(i) as HTMLElement;
+    var side = tab.getAttribute('data-side') ?? '';
+    _listen(tab, 'click', (evt) => switchSidePanel(side));
+  }
+}
+
+/// Activates the sidebar panel [name] (`outline` or `repo`) and its tab.
+void switchSidePanel(String name) {
+  var tabs = document.querySelectorAll('.side-tab');
+  for (var i = 0; i < tabs.length; i++) {
+    var tab = tabs.item(i) as HTMLElement;
+    tab.classList
+        .toggle('side-tab-active', tab.getAttribute('data-side') == name);
+  }
+  var panels = document.querySelectorAll('.side-panel');
+  for (var i = 0; i < panels.length; i++) {
+    var panel = panels.item(i) as HTMLElement;
+    var active = panel.getAttribute('data-side-panel') == name;
+    panel.classList.toggle('side-panel-active', active);
   }
 }
 
