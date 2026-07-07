@@ -1,6 +1,6 @@
 name: apollovm_web_example
 description: Web example for the ApolloVM Dart package.
-version: 1.15.0
+version: 1.15.1
 homepage: https://github.com/ApolloVM/apollovm_web_example
 publish_to: none
 

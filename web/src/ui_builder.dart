@@ -27,11 +27,11 @@ void buildUI() {
 <div class="ide-body">
   <aside class="sidebar">
     <div class="side-tabs">
-      <button class="side-tab side-tab-active" data-side="repo">Repository</button>
-      <button class="side-tab" data-side="outline">Outline</button>
+      <button class="side-tab" data-side="repo">Repository</button>
+      <button class="side-tab side-tab-active" data-side="outline">Outline</button>
     </div>
 
-    <div class="side-panel" id="outlinePanel" data-side-panel="outline">
+    <div class="side-panel side-panel-active" id="outlinePanel" data-side-panel="outline">
       <div class="outline-lang">
         <span class="outline-lang-label">Language</span>
         <select id="codeLang" title="Source language">
@@ -64,7 +64,7 @@ void buildUI() {
       </div>
     </div>
 
-    <div class="side-panel side-panel-active" id="repoPanel" data-side-panel="repo">
+    <div class="side-panel" id="repoPanel" data-side-panel="repo">
       <div class="repo-conn">
         <div class="repo-conn-row">
           <input id="repoHost" type="text" placeholder="host" value="127.0.0.1" spellcheck="false" autocomplete="off">

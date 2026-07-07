@@ -1,3 +1,7 @@
+## 1.15.1
+
+- Make the Outline panel the default active panel during initialization.
+
 ## 1.15.0
 
 ### Remote repository support — open, edit and version-control a real project
