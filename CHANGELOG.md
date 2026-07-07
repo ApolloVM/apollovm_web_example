@@ -1,3 +1,10 @@
+## 1.14.3
+
+- Updated to **ApolloVM 1.6.3**: the Outline now fully selects body-less
+  constructors (and abstract methods) — including their parameters/signature —
+  for both classes and enums.
+- apollovm: ^1.6.3
+
 ## 1.14.2
 
 - Updated to **ApolloVM 1.6.2**: the Outline now fully selects methods with an
