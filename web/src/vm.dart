@@ -246,6 +246,10 @@ String unsupportedSyntaxDetail(UnsupportedSyntaxError e) {
 /// Source languages ApolloVM can both parse and generate. These are the
 /// transpilation targets for the "Convert to all languages" feature. Wasm is a
 /// binary compile target (offered via "Download Wasm"), not a source target.
+///
+/// `go` is a transpile target only: apollovm 1.9.1 made Dart -> Go -> parse ->
+/// run work end to end, but the LSP reports no symbols for a `.go` buffer, so Go
+/// is not offered as an editor language.
 const conversionLanguages = <String>[
   'dart',
   'java11',
@@ -255,6 +259,7 @@ const conversionLanguages = <String>[
   'lua',
   'python',
   'csharp',
+  'go',
 ];
 
 /// Transpiles [code] (parsed as [fromLanguage]) to every other language in
