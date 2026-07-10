@@ -1,3 +1,19 @@
+## 1.17.0
+
+### Go as a transpile target (apollovm 1.9.1)
+
+- Updated to `apollovm: ^1.9.1`, a bug-fix release whose coverage pass fixed the
+  Go generator and grammar: **Dart → Go → parse → run** now works end to end.
+- **`Go` is now a tab in the Transpile panel.** Of the 84 bundled examples, 80
+  generate Go; the 4 extension examples report `UNSUPPORTED`, since Go has no
+  extension construct. Go is a transpile target only — the LSP reports no
+  symbols for a `.go` buffer, so it is not offered as an editor language.
+- Also fixed upstream, and exercised by the existing examples: a Dart map
+  literal transpiled to Java 11 emits `new HashMap<>(){{ ... }}`, which the Java
+  grammar used to crash on — so a Dart map example now survives a round trip
+  through Java. And `String.length` / `isEmpty` / `isNotEmpty` and the `sign` of
+  `int`/`double` work as getters, not only as method calls.
+
 ## 1.16.0
 
 ### Extensions — add methods and getters to an existing type (apollovm 1.9.0)

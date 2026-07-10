@@ -1942,6 +1942,7 @@ const _exampleLanguageLabels = <String, String>{
   'lua': 'Lua',
   'python': 'Python',
   'csharp': 'C#',
+  'go': 'Go',
   'wasm': 'Wasm',
 };
 
