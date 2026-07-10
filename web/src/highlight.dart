@@ -37,74 +37,86 @@ final Map<String, _LangSyntax> _langSyntaxes = {
   'dart': _LangSyntax(
     triple: true,
     keywords: _words(
-        'abstract as assert async await break case catch class const continue '
-        'covariant default deferred do dynamic else enum export extends extension '
-        'external factory false final finally for get hide if implements import in '
-        'interface is late library mixin new null on operator part required rethrow '
-        'return set show static super switch sync this throw true try typedef var '
-        'void while with yield Function'),
+      'abstract as assert async await break case catch class const continue '
+      'covariant default deferred do dynamic else enum export extends extension '
+      'external factory false final finally for get hide if implements import in '
+      'interface is late library mixin new null on operator part required rethrow '
+      'return set show static super switch sync this throw true try typedef var '
+      'void while with yield Function',
+    ),
     types: _words(
-        'int double num String bool Object List Map Set Iterable Future Stream '
-        'Runes Symbol Duration DateTime'),
+      'int double num String bool Object List Map Set Iterable Future Stream '
+      'Runes Symbol Duration DateTime',
+    ),
   ),
   'java': _LangSyntax(
     keywords: _words(
-        'abstract assert boolean break byte case catch char class const continue '
-        'default do double else enum extends final finally float for goto if '
-        'implements import instanceof int interface long native new package private '
-        'protected public return short static strictfp super switch synchronized '
-        'this throw throws transient try var void volatile while true false null'),
+      'abstract assert boolean break byte case catch char class const continue '
+      'default do double else enum extends final finally float for goto if '
+      'implements import instanceof int interface long native new package private '
+      'protected public return short static strictfp super switch synchronized '
+      'this throw throws transient try var void volatile while true false null',
+    ),
     types: _words(
-        'String Integer Boolean Object List Map System Double Long Float Character '
-        'Exception StringBuilder Math ArrayList HashMap'),
+      'String Integer Boolean Object List Map System Double Long Float Character '
+      'Exception StringBuilder Math ArrayList HashMap',
+    ),
   ),
   'kotlin': _LangSyntax(
     triple: true,
     keywords: _words(
-        'package import class interface fun val var if else when for while do '
-        'return break continue object companion data sealed enum override open '
-        'abstract final private protected public internal in is as null true false '
-        'this super throw try catch finally constructor init by get set vararg '
-        'inline lateinit typealias out suspend'),
+      'package import class interface fun val var if else when for while do '
+      'return break continue object companion data sealed enum override open '
+      'abstract final private protected public internal in is as null true false '
+      'this super throw try catch finally constructor init by get set vararg '
+      'inline lateinit typealias out suspend',
+    ),
     types: _words(
-        'Int String Boolean Double Long Float Char Any Unit List Map Set Array '
-        'MutableList MutableMap Pair'),
+      'Int String Boolean Double Long Float Char Any Unit List Map Set Array '
+      'MutableList MutableMap Pair',
+    ),
   ),
   'javascript': _LangSyntax(
     backtick: true,
     keywords: _words(
-        'var let const function return if else for while do switch case default '
-        'break continue new delete typeof instanceof in of this class extends super '
-        'import export from as try catch finally throw async await yield null '
-        'undefined true false void static get set'),
-    types:
-        _words('Object Array String Number Boolean Map Set Promise Math JSON'),
+      'var let const function return if else for while do switch case default '
+      'break continue new delete typeof instanceof in of this class extends super '
+      'import export from as try catch finally throw async await yield null '
+      'undefined true false void static get set',
+    ),
+    types: _words(
+      'Object Array String Number Boolean Map Set Promise Math JSON',
+    ),
   ),
   'typescript': _LangSyntax(
     backtick: true,
     keywords: _words(
-        'var let const function return if else for while do switch case default '
-        'break continue new delete typeof instanceof in of this class extends super '
-        'import export from as try catch finally throw async await yield null '
-        'undefined true false interface type enum implements private public '
-        'protected readonly abstract namespace declare keyof static get set'),
+      'var let const function return if else for while do switch case default '
+      'break continue new delete typeof instanceof in of this class extends super '
+      'import export from as try catch finally throw async await yield null '
+      'undefined true false interface type enum implements private public '
+      'protected readonly abstract namespace declare keyof static get set',
+    ),
     types: _words(
-        'number string boolean any unknown never void object Object Array Map Set '
-        'Promise Record'),
+      'number string boolean any unknown never void object Object Array Map Set '
+      'Promise Record',
+    ),
   ),
   'csharp': _LangSyntax(
     keywords: _words(
-        'abstract as base bool break byte case catch char checked class const '
-        'continue decimal default delegate do double else enum event explicit extern '
-        'false finally fixed float for foreach goto if implicit in int interface '
-        'internal is lock long namespace new null object operator out override params '
-        'private protected public readonly ref return sbyte sealed short sizeof '
-        'stackalloc static string struct switch this throw true try typeof uint ulong '
-        'unchecked unsafe ushort using var virtual void volatile while async await '
-        'get set value'),
+      'abstract as base bool break byte case catch char checked class const '
+      'continue decimal default delegate do double else enum event explicit extern '
+      'false finally fixed float for foreach goto if implicit in int interface '
+      'internal is lock long namespace new null object operator out override params '
+      'private protected public readonly ref return sbyte sealed short sizeof '
+      'stackalloc static string struct switch this throw true try typeof uint ulong '
+      'unchecked unsafe ushort using var virtual void volatile while async await '
+      'get set value',
+    ),
     types: _words(
-        'String Int32 Boolean Object List Dictionary Console Math Exception Task '
-        'IEnumerable StringBuilder'),
+      'String Int32 Boolean Object List Dictionary Console Math Exception Task '
+      'IEnumerable StringBuilder',
+    ),
   ),
   'lua': _LangSyntax(
     lineComments: ['--'],
@@ -112,8 +124,9 @@ final Map<String, _LangSyntax> _langSyntaxes = {
     blockClose: ']]',
     luaLongStrings: true,
     keywords: _words(
-        'and break do else elseif end false for function goto if in local nil not '
-        'or repeat return then true until while'),
+      'and break do else elseif end false for function goto if in local nil not '
+      'or repeat return then true until while',
+    ),
     types: _words('string table math io os coroutine'),
   ),
   'python': _LangSyntax(
@@ -122,11 +135,13 @@ final Map<String, _LangSyntax> _langSyntaxes = {
     blockClose: null,
     triple: true,
     keywords: _words(
-        'and as assert async await break class continue def del elif else except '
-        'False finally for from global if import in is lambda None nonlocal not or '
-        'pass raise return True try while with yield'),
+      'and as assert async await break class continue def del elif else except '
+      'False finally for from global if import in is lambda None nonlocal not or '
+      'pass raise return True try while with yield',
+    ),
     types: _words(
-        'int float str bool list dict set tuple bytes object range print len'),
+      'int float str bool list dict set tuple bytes object range print len',
+    ),
   ),
 };
 

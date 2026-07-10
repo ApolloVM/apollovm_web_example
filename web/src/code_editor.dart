@@ -21,8 +21,11 @@ void setupCodeEditor() {
     hideCompletionPopup();
   });
 
-  _listen(codeTextArea, 'keydown',
-      (event) => handleCodeEditorKeyDown(event as KeyboardEvent));
+  _listen(
+    codeTextArea,
+    'keydown',
+    (event) => handleCodeEditorKeyDown(event as KeyboardEvent),
+  );
 
   _listen(codeTextArea, 'keyup', (_) => updateCursorStatus());
   _listen(codeTextArea, 'click', (_) {
@@ -51,8 +54,10 @@ void setCodeEditorText(String text) {
 /// Rebuilds the syntax-highlight layer for the current buffer + language.
 void renderSyntax() {
   var code = selectCodeTextArea().value;
-  selectCodeSyntax().innerHTML =
-      highlightCode(code, _currentBufferLanguage).toJS;
+  selectCodeSyntax().innerHTML = highlightCode(
+    code,
+    _currentBufferLanguage,
+  ).toJS;
 }
 
 /// Rebuilds the gutter: one numbered line each, marked with a colored dot when
@@ -136,7 +141,8 @@ void renderDiagnosticsOverlay() {
       buf.write(_escForPre(run.toString()));
     } else {
       buf.write(
-          '<span class="sq ${_severityClass(s)}">${_escForPre(run.toString())}</span>');
+        '<span class="sq ${_severityClass(s)}">${_escForPre(run.toString())}</span>',
+      );
     }
     i = j;
   }
@@ -331,14 +337,15 @@ void handleCodeEditorKeyDown(KeyboardEvent event) {
         value.substring(0, lineStart) + value.substring(lineStart + removed);
     var newStart = start - removed < lineStart ? lineStart : start - removed;
     codeTextArea.selectionStart = newStart;
-    codeTextArea.selectionEnd =
-        end - removed < lineStart ? lineStart : end - removed;
+    codeTextArea.selectionEnd = end - removed < lineStart
+        ? lineStart
+        : end - removed;
   } else {
     // Insert indentation at the caret.
     codeTextArea.value =
         value.substring(0, start) + _indent + value.substring(end);
-    codeTextArea.selectionStart =
-        codeTextArea.selectionEnd = start + _indent.length;
+    codeTextArea.selectionStart = codeTextArea.selectionEnd =
+        start + _indent.length;
   }
 
   renderSyntax();

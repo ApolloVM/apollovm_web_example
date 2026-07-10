@@ -98,7 +98,8 @@ Future<void> runLspAnalysis() async {
 
 void _setDiagnostics(List<Diagnostic> diags) {
   // Errors first, then by position — matches how editors order the Problems list.
-  _diagnostics = [...diags]..sort((a, b) {
+  _diagnostics = [...diags]
+    ..sort((a, b) {
       var s = a.severity.compareTo(b.severity);
       if (s != 0) return s;
       var l = a.range.start.line.compareTo(b.range.start.line);
@@ -277,7 +278,10 @@ void handleEditorHover(num offsetX, num offsetY, num clientX, num clientY) {
       return;
     }
     showHoverTip(
-        '<pre class="hover-body">${_esc(value)}</pre>', clientX, clientY);
+      '<pre class="hover-body">${_esc(value)}</pre>',
+      clientX,
+      clientY,
+    );
   });
 }
 
@@ -289,9 +293,11 @@ Diagnostic? _diagnosticAt(Position pos) {
 }
 
 bool _rangeContains(Range r, Position p) {
-  bool afterStart = p.line > r.start.line ||
+  bool afterStart =
+      p.line > r.start.line ||
       (p.line == r.start.line && p.character >= r.start.character);
-  bool beforeEnd = p.line < r.end.line ||
+  bool beforeEnd =
+      p.line < r.end.line ||
       (p.line == r.end.line && p.character <= r.end.character);
   // Zero-width ranges: match the single character at the start.
   if (r.start.line == r.end.line && r.start.character == r.end.character) {
