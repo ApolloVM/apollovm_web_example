@@ -247,9 +247,9 @@ String unsupportedSyntaxDetail(UnsupportedSyntaxError e) {
 /// transpilation targets for the "Convert to all languages" feature. Wasm is a
 /// binary compile target (offered via "Download Wasm"), not a source target.
 ///
-/// `go` is a transpile target only: apollovm 1.9.1 made Dart -> Go -> parse ->
-/// run work end to end, but the LSP reports no symbols for a `.go` buffer, so Go
-/// is not offered as an editor language.
+/// Go both parses and generates. Its buffer produces no LSP document symbols
+/// yet, so the Outline panel stays empty for a `.go` file, but it runs and
+/// transpiles like any other source language.
 const conversionLanguages = <String>[
   'dart',
   'java11',

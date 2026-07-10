@@ -1,3 +1,26 @@
+## 1.18.0
+
+### Go is a first-class language (apollovm 1.9.2)
+
+- Updated to `apollovm: ^1.9.2`, which fixes three Go generator defects found
+  while adding the Go transpile tab in 1.17.0: a field-initializing constructor
+  (`Point(this.x, this.y)`) whose arguments were silently dropped, identifiers
+  colliding with Go's reserved words (`map`, `type`) emitting source that does
+  not parse, and structs emitted after the functions that call their factories.
+- **Go joins the language selector**, with syntax highlighting and a `.go`
+  buffer for the language server. It parses, runs and transpiles like any other
+  source language.
+- **Three new Go examples**, each verified to run and to transpile to Dart,
+  Kotlin, JavaScript, TypeScript, Lua and Python (Java and C# need a class to
+  hold a top-level function, as with the Kotlin and Lua examples):
+  - *Go — Function (sums)*: a top-level `main`, `:=` inference and `fmt.Println`.
+  - *Go — Struct & receiver method*: `type Point struct` plus `func (o *Point)`
+    and a `NewPoint(...)` factory — exactly what the generator emits for a Dart
+    class. Transpile it back to Dart and the class reappears.
+  - *Go — For loop*: the three-clause `for i := 1; i <= n; i++`.
+- The Outline panel stays empty for a `.go` buffer: the language server reports
+  no document symbols for Go yet.
+
 ## 1.17.0
 
 ### Go as a transpile target (apollovm 1.9.1)

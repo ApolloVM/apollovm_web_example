@@ -560,6 +560,26 @@ const codeExamples = <CodeExample>[
     'main',
     '21',
   ),
+  // Go (apollovm 1.9.2). Go has no classes: a class is a `type T struct` plus
+  // receiver methods and a `func NewT(...) *T` factory. The entry point is a
+  // top-level `main` (className ''), and printing goes through `fmt.Println`.
+  CodeExample(
+    'Go — Function (sums)',
+    'go',
+    _exGo,
+    '',
+    'main',
+    '"Sums:", 10, 20, 30',
+  ),
+  CodeExample(
+    'Go — Struct & receiver method',
+    'go',
+    _exGoStruct,
+    '',
+    'main',
+    '2, 5',
+  ),
+  CodeExample('Go — For loop', 'go', _exGoLoop, '', 'main', '5'),
   // async/await (interpreted). Only Dart's async/await currently parses in
   // ApolloVM.
   CodeExample(
@@ -1781,6 +1801,65 @@ class Foo {
     int c = a.IncreasedBy(1);
     print("doubled: " + b + " ; increased: " + c);
   }
+}
+''';
+
+// Go (apollovm 1.9.2): a top-level `main`, `:=` inference and `fmt.Println`.
+const _exGo = r'''package main
+
+import "fmt"
+
+func main(title string, a int, b int, c int) {
+  sumAB := a + b
+  sumABC := a + b + c
+  fmt.Println(title)
+  fmt.Println(sumAB)
+  fmt.Println(sumABC)
+}
+''';
+
+// Go has no classes: a class is a `type T struct` plus receiver methods
+// (`func (o *T) ...`) and a factory (`func NewT(...) *T`) — exactly what
+// ApolloVM's Go generator emits for a Dart class. Transpile this back to Dart
+// to see the class reappear.
+const _exGoStruct = r'''package main
+
+import "fmt"
+
+type Point struct {
+  x int
+  y int
+}
+
+func NewPoint(x int, y int) *Point {
+  o := &Point{}
+  o.x = x
+  o.y = y
+  return o
+}
+
+func (o *Point) sum() int {
+  return o.x + o.y
+}
+
+func main(a int, b int) {
+  p := NewPoint(a, b)
+  fmt.Println("sum:")
+  fmt.Println(p.sum())
+}
+''';
+
+const _exGoLoop = r'''package main
+
+import "fmt"
+
+func main(n int) {
+  total := 0
+  for i := 1; i <= n; i++ {
+    total = total + i
+  }
+  fmt.Println("total:")
+  fmt.Println(total)
 }
 ''';
 
