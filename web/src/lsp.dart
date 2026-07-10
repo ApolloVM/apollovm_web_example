@@ -38,6 +38,8 @@ String lspUriForLanguage(String language) {
       return 'file:///main.lua';
     case 'python':
       return 'file:///main.py';
+    case 'go':
+      return 'file:///main.go';
     case 'dart':
     default:
       return 'file:///main.dart';

@@ -45,6 +45,7 @@ void buildUI() {
           <option value="lua">Lua</option>
           <option value="python">Python</option>
           <option value="csharp">C#</option>
+          <option value="go">Go</option>
         </select>
       </div>
       <div id="outline" class="outline"><div class="outline-empty">No symbols.</div></div>

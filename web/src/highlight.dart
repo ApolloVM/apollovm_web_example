@@ -118,6 +118,20 @@ final Map<String, _LangSyntax> _langSyntaxes = {
       'IEnumerable StringBuilder',
     ),
   ),
+  // Go's 25 reserved words, plus its predeclared types and `fmt` (the package
+  // the generator prints through). Raw strings use backticks.
+  'go': _LangSyntax(
+    backtick: true,
+    keywords: _words(
+      'break case chan const continue default defer else fallthrough for func '
+      'go goto if import interface map package range return select struct '
+      'switch type var nil true false',
+    ),
+    types: _words(
+      'int int8 int16 int32 int64 uint uint8 uint16 uint32 uint64 float32 '
+      'float64 complex64 complex128 string bool byte rune error any fmt',
+    ),
+  ),
   'lua': _LangSyntax(
     lineComments: ['--'],
     blockOpen: '--[[',
