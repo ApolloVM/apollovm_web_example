@@ -64,9 +64,12 @@ Future<void> _doCompletion(bool explicit) async {
 
   CompletionList list;
   try {
-    list = await lsp.completion(_currentUri, pos).timeout(
-        const Duration(seconds: 3),
-        onTimeout: () => const CompletionList());
+    list = await lsp
+        .completion(_currentUri, pos)
+        .timeout(
+          const Duration(seconds: 3),
+          onTimeout: () => const CompletionList(),
+        );
   } catch (_) {
     hideCompletionPopup();
     return;
@@ -103,9 +106,11 @@ void _showCompletionPopup(List<CompletionItem> items, Position pos) {
     var detail = (it.detail != null && it.detail!.isNotEmpty)
         ? '<span class="comp-detail">${_esc(it.detail!)}</span>'
         : '';
-    buf.write('<div class="comp-row${i == 0 ? ' sel' : ''}" data-i="$i">'
-        '<span class="comp-icon ${_completionClass(it.kind)}">${_completionIcon(it.kind)}</span>'
-        '<span class="comp-label">${_esc(it.label)}</span>$detail</div>');
+    buf.write(
+      '<div class="comp-row${i == 0 ? ' sel' : ''}" data-i="$i">'
+      '<span class="comp-icon ${_completionClass(it.kind)}">${_completionIcon(it.kind)}</span>'
+      '<span class="comp-label">${_esc(it.label)}</span>$detail</div>',
+    );
   }
   popup.innerHTML = buf.toString().toJS;
   popup.classList.remove('hidden');
@@ -130,11 +135,13 @@ void _positionCompletionPopup(Position pos) {
   var ta = selectCodeTextArea();
   var cs = window.getComputedStyle(ta);
   var rect = ta.getBoundingClientRect();
-  var x = rect.left +
+  var x =
+      rect.left +
       _px(cs.paddingLeft) +
       pos.character * _charWidth(ta, cs) -
       ta.scrollLeft;
-  var y = rect.top +
+  var y =
+      rect.top +
       _px(cs.paddingTop) +
       (pos.line + 1) * _lineHeight(ta) -
       ta.scrollTop;
@@ -192,9 +199,10 @@ void _moveCompletion(int delta) {
   var popup = selectCompletionPopup();
   var rows = popup.querySelectorAll('.comp-row');
   for (var i = 0; i < rows.length; i++) {
-    (rows.item(i) as HTMLElement)
-        .classList
-        .toggle('sel', i == _completionSelected);
+    (rows.item(i) as HTMLElement).classList.toggle(
+      'sel',
+      i == _completionSelected,
+    );
   }
 
   // Keep the selected row visible.
@@ -218,7 +226,8 @@ void acceptCompletion() {
   var text = ta.value;
   var caret = ta.selectionStart.toInt();
 
-  ta.value = text.substring(0, _completionWordStart) +
+  ta.value =
+      text.substring(0, _completionWordStart) +
       item.label +
       text.substring(caret);
   var newCaret = _completionWordStart + item.label.length;

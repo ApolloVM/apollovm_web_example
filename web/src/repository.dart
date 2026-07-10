@@ -210,9 +210,7 @@ Future<void> openRepoFile(String path) async {
 
     await _loadGitBase(path); // draw the git change bar
     renderTree(); // refresh the active-row highlight
-    _setRepoStatus(
-      'Opened $path${file.truncated ? ' (truncated)' : ''}',
-    );
+    _setRepoStatus('Opened $path${file.truncated ? ' (truncated)' : ''}');
   } catch (e) {
     _setRepoStatus('$e', error: true);
   }

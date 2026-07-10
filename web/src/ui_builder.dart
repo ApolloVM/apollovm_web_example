@@ -2,11 +2,13 @@ part of '../main.dart';
 
 void buildUI() {
   var exampleLangOptions = exampleCategories()
-      .map((c) =>
-          '<option value="$c">${_exampleLanguageLabels[c] ?? c}</option>')
+      .map(
+        (c) => '<option value="$c">${_exampleLanguageLabels[c] ?? c}</option>',
+      )
       .join('\n      ');
 
-  document.querySelector('#app')?.innerHTML = '''
+  document.querySelector('#app')?.innerHTML =
+      '''
 <header class="titlebar">
   <div class="brand">
     <span class="brand-mark">◆</span>
@@ -169,7 +171,7 @@ void buildUI() {
 <div id="hoverTip" class="hovertip hidden"></div>
 <div id="completionPopup" class="completion hidden"></div>
 '''
-      .toJS;
+          .toJS;
 
   document.querySelector('#apollovmVersion')?.textContent = ApolloVM.VERSION;
   document.querySelector('#apollovmVersion2')?.textContent = ApolloVM.VERSION;
@@ -189,8 +191,11 @@ void buildUI() {
   });
 
   var exampleSelect = selectExampleSelect();
-  _listen(exampleSelect, 'change',
-      (evt) => loadExample(int.parse(exampleSelect.value)));
+  _listen(
+    exampleSelect,
+    'change',
+    (evt) => loadExample(int.parse(exampleSelect.value)),
+  );
 
   var codeLanguage = selectCodeLanguage();
   _listen(codeLanguage, 'change', (evt) => changeLanguage());
@@ -229,8 +234,10 @@ void switchSidePanel(String name) {
   var tabs = document.querySelectorAll('.side-tab');
   for (var i = 0; i < tabs.length; i++) {
     var tab = tabs.item(i) as HTMLElement;
-    tab.classList
-        .toggle('side-tab-active', tab.getAttribute('data-side') == name);
+    tab.classList.toggle(
+      'side-tab-active',
+      tab.getAttribute('data-side') == name,
+    );
   }
   var panels = document.querySelectorAll('.side-panel');
   for (var i = 0; i < panels.length; i++) {
