@@ -80,65 +80,215 @@ class CodeExample {
 
 /// Examples shown in the "Example" selector. Every entry is verified to run.
 const codeExamples = <CodeExample>[
-  CodeExample('Dart — Class (maps & strings)', 'dart', initialCodeDart, 'Foo',
-      'main', '[ "Sums:", 10, 30, 50 ]'),
-  CodeExample('Dart — Fibonacci (Interpreted + Wasm)', 'dart', _exDartFib, '',
-      'fibonacci', '10'),
-  CodeExample('Java11 — Class', 'java11', _exJava, 'Foo', 'main',
-      '[ "Sums:", 10, 20, 30 ]'),
   CodeExample(
-      'Kotlin — Class', 'kotlin', _exKotlin, '', 'main', '"Sums:", 10, 20, 30'),
-  CodeExample('JavaScript — Class', 'javascript', _exJs, '', 'main',
-      '"Sums:", 10, 20, 30'),
-  CodeExample('TypeScript — Class', 'typescript', _exTs, '', 'main',
-      '"Sums:", 10, 20, 30'),
+    'Dart — Class (maps & strings)',
+    'dart',
+    initialCodeDart,
+    'Foo',
+    'main',
+    '[ "Sums:", 10, 30, 50 ]',
+  ),
+  CodeExample(
+    'Dart — Fibonacci (Interpreted + Wasm)',
+    'dart',
+    _exDartFib,
+    '',
+    'fibonacci',
+    '10',
+  ),
+  CodeExample(
+    'Java11 — Class',
+    'java11',
+    _exJava,
+    'Foo',
+    'main',
+    '[ "Sums:", 10, 20, 30 ]',
+  ),
+  CodeExample(
+    'Kotlin — Class',
+    'kotlin',
+    _exKotlin,
+    '',
+    'main',
+    '"Sums:", 10, 20, 30',
+  ),
+  CodeExample(
+    'JavaScript — Class',
+    'javascript',
+    _exJs,
+    '',
+    'main',
+    '"Sums:", 10, 20, 30',
+  ),
+  CodeExample(
+    'TypeScript — Class',
+    'typescript',
+    _exTs,
+    '',
+    'main',
+    '"Sums:", 10, 20, 30',
+  ),
   CodeExample('Lua — Class', 'lua', _exLua, '', 'main', '"Sums:", 10, 20, 30'),
   // Python language support (apollovm 0.1.35).
   CodeExample(
-      'Python — Class', 'python', _exPython, '', 'main', '"Sums:", 10, 20, 30'),
+    'Python — Class',
+    'python',
+    _exPython,
+    '',
+    'main',
+    '"Sums:", 10, 20, 30',
+  ),
   // C# language support (apollovm 0.1.37).
   CodeExample(
-      'C# — Class', 'csharp', _exCs, 'Foo', 'main', '"Sums:", 10, 20, 30'),
+    'C# — Class',
+    'csharp',
+    _exCs,
+    'Foo',
+    'main',
+    '"Sums:", 10, 20, 30',
+  ),
   // Exception handling (apollovm 0.1.33): try/catch/finally and throw.
   // Run with b = 0 to take the throwing path, or b = 2 for the normal path.
-  CodeExample('Dart — Exceptions (try/catch/finally)', 'dart', _exDartTryCatch,
-      'Foo', 'main', '10, 0'),
-  CodeExample('Java11 — Exceptions (try/catch/finally)', 'java11',
-      _exJavaTryCatch, 'Foo', 'main', '10, 0'),
-  CodeExample('Kotlin — Exceptions (try/catch/finally)', 'kotlin',
-      _exKotlinTryCatch, '', 'main', '10, 0'),
-  CodeExample('JavaScript — Exceptions (try/catch/finally)', 'javascript',
-      _exJsTryCatch, '', 'main', '10, 0'),
-  CodeExample('TypeScript — Exceptions (try/catch/finally)', 'typescript',
-      _exTsTryCatch, '', 'main', '10, 0'),
-  CodeExample('C# — Exceptions (try/catch/finally)', 'csharp', _exCsTryCatch,
-      'Foo', 'main', '10, 0'),
+  CodeExample(
+    'Dart — Exceptions (try/catch/finally)',
+    'dart',
+    _exDartTryCatch,
+    'Foo',
+    'main',
+    '10, 0',
+  ),
+  CodeExample(
+    'Java11 — Exceptions (try/catch/finally)',
+    'java11',
+    _exJavaTryCatch,
+    'Foo',
+    'main',
+    '10, 0',
+  ),
+  CodeExample(
+    'Kotlin — Exceptions (try/catch/finally)',
+    'kotlin',
+    _exKotlinTryCatch,
+    '',
+    'main',
+    '10, 0',
+  ),
+  CodeExample(
+    'JavaScript — Exceptions (try/catch/finally)',
+    'javascript',
+    _exJsTryCatch,
+    '',
+    'main',
+    '10, 0',
+  ),
+  CodeExample(
+    'TypeScript — Exceptions (try/catch/finally)',
+    'typescript',
+    _exTsTryCatch,
+    '',
+    'main',
+    '10, 0',
+  ),
+  CodeExample(
+    'C# — Exceptions (try/catch/finally)',
+    'csharp',
+    _exCsTryCatch,
+    'Foo',
+    'main',
+    '10, 0',
+  ),
   // Conditional / ternary expressions (apollovm 0.1.36). Each language uses its
   // own idiom (`?:`, Kotlin/`if`/`else`, Python `a if c else b`).
-  CodeExample('Dart — Conditional (a > b ? a : b)', 'dart', _exDartTernary,
-      'Foo', 'main', '40, 130'),
-  CodeExample('Java11 — Conditional (a > b ? a : b)', 'java11', _exJavaTernary,
-      'Foo', 'main', '40, 130'),
-  CodeExample('Kotlin — Conditional (if/else expression)', 'kotlin',
-      _exKotlinTernary, '', 'main', '40, 130'),
-  CodeExample('JavaScript — Conditional (a > b ? a : b)', 'javascript',
-      _exJsTernary, '', 'main', '40, 130'),
-  CodeExample('TypeScript — Conditional (a > b ? a : b)', 'typescript',
-      _exTsTernary, '', 'main', '40, 130'),
-  CodeExample('Python — Conditional (a if c else b)', 'python',
-      _exPythonTernary, '', 'main', '40, 130'),
-  CodeExample('C# — Conditional (a > b ? a : b)', 'csharp', _exCsTernary, 'Foo',
-      'main', '40, 130'),
+  CodeExample(
+    'Dart — Conditional (a > b ? a : b)',
+    'dart',
+    _exDartTernary,
+    'Foo',
+    'main',
+    '40, 130',
+  ),
+  CodeExample(
+    'Java11 — Conditional (a > b ? a : b)',
+    'java11',
+    _exJavaTernary,
+    'Foo',
+    'main',
+    '40, 130',
+  ),
+  CodeExample(
+    'Kotlin — Conditional (if/else expression)',
+    'kotlin',
+    _exKotlinTernary,
+    '',
+    'main',
+    '40, 130',
+  ),
+  CodeExample(
+    'JavaScript — Conditional (a > b ? a : b)',
+    'javascript',
+    _exJsTernary,
+    '',
+    'main',
+    '40, 130',
+  ),
+  CodeExample(
+    'TypeScript — Conditional (a > b ? a : b)',
+    'typescript',
+    _exTsTernary,
+    '',
+    'main',
+    '40, 130',
+  ),
+  CodeExample(
+    'Python — Conditional (a if c else b)',
+    'python',
+    _exPythonTernary,
+    '',
+    'main',
+    '40, 130',
+  ),
+  CodeExample(
+    'C# — Conditional (a > b ? a : b)',
+    'csharp',
+    _exCsTernary,
+    'Foo',
+    'main',
+    '40, 130',
+  ),
   // Anonymous functions / lambdas / closures (apollovm 0.1.36, plus Java/Kotlin/
   // Lua lambda parsing in 0.1.37).
   CodeExample(
-      'Dart — Lambdas (closures)', 'dart', _exDartLambda, 'Foo', 'main', '5'),
-  CodeExample('JavaScript — Lambdas (closures)', 'javascript', _exJsLambda, '',
-      'main', '5'),
-  CodeExample('TypeScript — Lambdas (closures)', 'typescript', _exTsLambda, '',
-      'main', '5'),
-  CodeExample('Python — Lambdas (closures)', 'python', _exPythonLambda, '',
-      'main', '5'),
+    'Dart — Lambdas (closures)',
+    'dart',
+    _exDartLambda,
+    'Foo',
+    'main',
+    '5',
+  ),
+  CodeExample(
+    'JavaScript — Lambdas (closures)',
+    'javascript',
+    _exJsLambda,
+    '',
+    'main',
+    '5',
+  ),
+  CodeExample(
+    'TypeScript — Lambdas (closures)',
+    'typescript',
+    _exTsLambda,
+    '',
+    'main',
+    '5',
+  ),
+  CodeExample(
+    'Python — Lambdas (closures)',
+    'python',
+    _exPythonLambda,
+    '',
+    'main',
+    '5',
+  ),
   CodeExample('Java11 — Lambdas', 'java11', _exJavaLambda, 'Foo', 'main', '5'),
   CodeExample('Kotlin — Lambdas', 'kotlin', _exKotlinLambda, '', 'main', '5'),
   CodeExample('Lua — Lambdas', 'lua', _exLuaLambda, '', 'main', '5'),
@@ -149,150 +299,468 @@ const codeExamples = <CodeExample>[
   // mapped to Kotlin `when` and Python `match`. Run with n = 2.
   CodeExample('Dart — Switch/case', 'dart', _exDartSwitch, 'Foo', 'main', '2'),
   CodeExample(
-      'Java11 — Switch/case', 'java11', _exJavaSwitch, 'Foo', 'main', '2'),
+    'Java11 — Switch/case',
+    'java11',
+    _exJavaSwitch,
+    'Foo',
+    'main',
+    '2',
+  ),
   CodeExample(
-      'Kotlin — When (switch)', 'kotlin', _exKotlinWhen, '', 'main', '2'),
+    'Kotlin — When (switch)',
+    'kotlin',
+    _exKotlinWhen,
+    '',
+    'main',
+    '2',
+  ),
   CodeExample(
-      'JavaScript — Switch/case', 'javascript', _exJsSwitch, '', 'main', '2'),
+    'JavaScript — Switch/case',
+    'javascript',
+    _exJsSwitch,
+    '',
+    'main',
+    '2',
+  ),
   CodeExample(
-      'TypeScript — Switch/case', 'typescript', _exTsSwitch, '', 'main', '2'),
+    'TypeScript — Switch/case',
+    'typescript',
+    _exTsSwitch,
+    '',
+    'main',
+    '2',
+  ),
   CodeExample('Python — Match/case', 'python', _exPythonMatch, '', 'main', '2'),
   CodeExample('C# — Switch/case', 'csharp', _exCsSwitch, 'Foo', 'main', '2'),
   // do/while and Lua's `repeat ... until` (apollovm 0.1.38). Run with n = 3.
   CodeExample(
-      'Dart — Do/while loop', 'dart', _exDartDoWhile, 'Foo', 'main', '3'),
+    'Dart — Do/while loop',
+    'dart',
+    _exDartDoWhile,
+    'Foo',
+    'main',
+    '3',
+  ),
   CodeExample(
-      'Kotlin — Do/while loop', 'kotlin', _exKotlinDoWhile, '', 'main', '3'),
+    'Kotlin — Do/while loop',
+    'kotlin',
+    _exKotlinDoWhile,
+    '',
+    'main',
+    '3',
+  ),
   CodeExample('Lua — Repeat/until loop', 'lua', _exLuaRepeat, '', 'main', '3'),
   // Bitwise operators (apollovm 0.1.38; Kotlin/Lua added 0.1.40). Run with
   // a = 12, b = 10 (Lua uses literals, no parameters).
-  CodeExample('Dart — Bitwise (& | ^ << >> ~)', 'dart', _exDartBitwise, 'Foo',
-      'main', '12, 10'),
-  CodeExample('Java11 — Bitwise (& | ^ << >> ~)', 'java11', _exJavaBitwise,
-      'Foo', 'main', '12, 10'),
-  CodeExample('Kotlin — Bitwise (and/or/xor/shl/shr)', 'kotlin',
-      _exKotlinBitwise, '', 'main', '12, 10'),
   CodeExample(
-      'Lua — Bitwise (& | ~ << >>)', 'lua', _exLuaBitwise, '', 'main', ''),
-  CodeExample('C# — Bitwise (& | ^ << >> ~)', 'csharp', _exCsBitwise, 'Foo',
-      'main', '12, 10'),
+    'Dart — Bitwise (& | ^ << >> ~)',
+    'dart',
+    _exDartBitwise,
+    'Foo',
+    'main',
+    '12, 10',
+  ),
+  CodeExample(
+    'Java11 — Bitwise (& | ^ << >> ~)',
+    'java11',
+    _exJavaBitwise,
+    'Foo',
+    'main',
+    '12, 10',
+  ),
+  CodeExample(
+    'Kotlin — Bitwise (and/or/xor/shl/shr)',
+    'kotlin',
+    _exKotlinBitwise,
+    '',
+    'main',
+    '12, 10',
+  ),
+  CodeExample(
+    'Lua — Bitwise (& | ~ << >>)',
+    'lua',
+    _exLuaBitwise,
+    '',
+    'main',
+    '',
+  ),
+  CodeExample(
+    'C# — Bitwise (& | ^ << >> ~)',
+    'csharp',
+    _exCsBitwise,
+    'Foo',
+    'main',
+    '12, 10',
+  ),
   // Named / keyword arguments (apollovm 0.1.42): a call binds arguments by name,
   // so the call-site order is free. Native in Dart and C# (Java has no
   // named-argument concept). Run with no parameters.
   CodeExample(
-      'Dart — Named arguments', 'dart', _exDartNamedArgs, 'Foo', 'main', ''),
+    'Dart — Named arguments',
+    'dart',
+    _exDartNamedArgs,
+    'Foo',
+    'main',
+    '',
+  ),
   CodeExample(
-      'C# — Named arguments', 'csharp', _exCsNamedArgs, 'Foo', 'main', ''),
+    'C# — Named arguments',
+    'csharp',
+    _exCsNamedArgs,
+    'Foo',
+    'main',
+    '',
+  ),
   // Default values for optional / named parameters (apollovm 0.1.42): an omitted
   // argument uses the parameter's declared default. Run with no parameters.
-  CodeExample('Dart — Default parameters', 'dart', _exDartDefaultArgs, 'Foo',
-      'main', ''),
   CodeExample(
-      'C# — Default parameters', 'csharp', _exCsDefaultArgs, 'Foo', 'main', ''),
+    'Dart — Default parameters',
+    'dart',
+    _exDartDefaultArgs,
+    'Foo',
+    'main',
+    '',
+  ),
+  CodeExample(
+    'C# — Default parameters',
+    'csharp',
+    _exCsDefaultArgs,
+    'Foo',
+    'main',
+    '',
+  ),
   // Rich enums (apollovm 0.1.41): an enum entry is a cached `const` class
   // instance carrying `index` (ordinal) and `name`; Dart/Java/Kotlin parse
   // entry constructor arguments + members, so an entry can hold a field
   // (`gravity`). C# enums expose an explicit `value`; Python entries carry
   // `index`/`name`. Access members via a variable (`var e = Planet.earth;
   // e.gravity`). Run with no parameters.
-  CodeExample('Dart — Rich enum (fields & methods)', 'dart', _exDartEnum, 'Foo',
-      'main', ''),
   CodeExample(
-      'Java11 — Rich enum (field)', 'java11', _exJavaEnum, 'Foo', 'main', ''),
+    'Dart — Rich enum (fields & methods)',
+    'dart',
+    _exDartEnum,
+    'Foo',
+    'main',
+    '',
+  ),
   CodeExample(
-      'Kotlin — Rich enum (field)', 'kotlin', _exKotlinEnum, '', 'main', ''),
+    'Java11 — Rich enum (field)',
+    'java11',
+    _exJavaEnum,
+    'Foo',
+    'main',
+    '',
+  ),
   CodeExample(
-      'Python — Enum (index/name)', 'python', _exPythonEnum, '', 'main', ''),
+    'Kotlin — Rich enum (field)',
+    'kotlin',
+    _exKotlinEnum,
+    '',
+    'main',
+    '',
+  ),
   CodeExample(
-      'C# — Enum (explicit values)', 'csharp', _exCsEnum, 'Foo', 'main', ''),
+    'Python — Enum (index/name)',
+    'python',
+    _exPythonEnum,
+    '',
+    'main',
+    '',
+  ),
+  CodeExample(
+    'C# — Enum (explicit values)',
+    'csharp',
+    _exCsEnum,
+    'Foo',
+    'main',
+    '',
+  ),
   // Generic classes (apollovm 0.1.39): `Box<T>` declared, instantiated and
   // used. Run with x = 10.
   CodeExample(
-      'Dart — Generics (Box<T>)', 'dart', _exDartGenerics, 'Foo', 'main', '10'),
-  CodeExample('Java11 — Generics (Box<T>)', 'java11', _exJavaGenerics, 'Foo',
-      'main', '10'),
-  CodeExample('Kotlin — Generics (Box<T>)', 'kotlin', _exKotlinGenerics, '',
-      'main', '10'),
-  CodeExample('TypeScript — Generics (Box<T>)', 'typescript', _exTsGenerics, '',
-      'main', '10'),
+    'Dart — Generics (Box<T>)',
+    'dart',
+    _exDartGenerics,
+    'Foo',
+    'main',
+    '10',
+  ),
   CodeExample(
-      'C# — Generics (Box<T>)', 'csharp', _exCsGenerics, 'Foo', 'main', '10'),
+    'Java11 — Generics (Box<T>)',
+    'java11',
+    _exJavaGenerics,
+    'Foo',
+    'main',
+    '10',
+  ),
+  CodeExample(
+    'Kotlin — Generics (Box<T>)',
+    'kotlin',
+    _exKotlinGenerics,
+    '',
+    'main',
+    '10',
+  ),
+  CodeExample(
+    'TypeScript — Generics (Box<T>)',
+    'typescript',
+    _exTsGenerics,
+    '',
+    'main',
+    '10',
+  ),
+  CodeExample(
+    'C# — Generics (Box<T>)',
+    'csharp',
+    _exCsGenerics,
+    'Foo',
+    'main',
+    '10',
+  ),
+  // Extension methods & getters (apollovm 1.9.0). Native in Dart, Kotlin and C#;
+  // ⇄ Transpile between those three. The other targets report UNSUPPORTED
+  // rather than emitting a shim that would mean something else. Run with a = 21.
+  CodeExample(
+    'Dart — Extension methods (on int)',
+    'dart',
+    _exDartExtension,
+    'Foo',
+    'main',
+    '21',
+  ),
+  CodeExample(
+    'Dart — Extension getter (on a class)',
+    'dart',
+    _exDartExtensionGetter,
+    'Foo',
+    'main',
+    '2, 5',
+  ),
+  CodeExample(
+    'Dart — Class getters (area / perimeter)',
+    'dart',
+    _exDartClassGetter,
+    'Foo',
+    'main',
+    '3, 4',
+  ),
+  CodeExample(
+    'Kotlin — Extension function & property',
+    'kotlin',
+    _exKotlinExtension,
+    '',
+    'main',
+    '21',
+  ),
+  CodeExample(
+    'C# — Extension methods (this self)',
+    'csharp',
+    _exCsExtension,
+    'Foo',
+    'main',
+    '21',
+  ),
   // async/await (interpreted). Only Dart's async/await currently parses in
   // ApolloVM.
   CodeExample(
-      'Dart — Async/await (Future)', 'dart', _exDartAsync, 'Foo', 'main', '5'),
-  CodeExample('Dart — Async function (returns Future)', 'dart', _exDartAsyncFn,
-      '', 'sumAsync', '10, 20'),
+    'Dart — Async/await (Future)',
+    'dart',
+    _exDartAsync,
+    'Foo',
+    'main',
+    '5',
+  ),
+  CodeExample(
+    'Dart — Async function (returns Future)',
+    'dart',
+    _exDartAsyncFn,
+    '',
+    'sumAsync',
+    '10, 20',
+  ),
   // Wasm-compatible examples (apollovm Wasm backend, alpha). Each is a Dart
   // top-level function (or a single class instantiated from one) that compiles
   // to and runs on Wasm; loading one enables the "Wasm compiled" run mode.
   // All are verified end-to-end in the browser via the Wasm-compiled path.
-  CodeExample('Wasm — Fibonacci', 'dart', _exDartFib, '', 'fibonacci', '10',
-      wasm: true),
   CodeExample(
-      'Wasm — Factorial', 'dart', _exWasmFactorial, '', 'factorial', '5',
-      wasm: true),
-  CodeExample('Wasm — GCD (Euclid)', 'dart', _exWasmGcd, '', 'gcd', '48, 36',
-      wasm: true),
-  CodeExample('Wasm — Power', 'dart', _exWasmPower, '', 'power', '2, 10',
-      wasm: true),
-  CodeExample('Wasm — Sum 1..N', 'dart', _exWasmSumTo, '', 'sumTo', '100',
-      wasm: true),
+    'Wasm — Fibonacci',
+    'dart',
+    _exDartFib,
+    '',
+    'fibonacci',
+    '10',
+    wasm: true,
+  ),
   CodeExample(
-      'Wasm — Collatz steps', 'dart', _exWasmCollatz, '', 'collatzSteps', '27',
-      wasm: true),
+    'Wasm — Factorial',
+    'dart',
+    _exWasmFactorial,
+    '',
+    'factorial',
+    '5',
+    wasm: true,
+  ),
   CodeExample(
-      'Wasm — Prime check (print)', 'dart', _exWasmPrime, '', 'isPrime', '13',
-      wasm: true),
+    'Wasm — GCD (Euclid)',
+    'dart',
+    _exWasmGcd,
+    '',
+    'gcd',
+    '48, 36',
+    wasm: true,
+  ),
   CodeExample(
-      'Wasm — Class instance method', 'dart', _exWasmClass, '', 'run', '5',
-      wasm: true),
+    'Wasm — Power',
+    'dart',
+    _exWasmPower,
+    '',
+    'power',
+    '2, 10',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Sum 1..N',
+    'dart',
+    _exWasmSumTo,
+    '',
+    'sumTo',
+    '100',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Collatz steps',
+    'dart',
+    _exWasmCollatz,
+    '',
+    'collatzSteps',
+    '27',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Prime check (print)',
+    'dart',
+    _exWasmPrime,
+    '',
+    'isPrime',
+    '13',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Class instance method',
+    'dart',
+    _exWasmClass,
+    '',
+    'run',
+    '5',
+    wasm: true,
+  ),
   // Wasm control flow + bitwise (apollovm 0.1.40): `switch`/`case`, `do`/`while`
   // and the bitwise operators now compile to and run on Wasm.
   CodeExample(
-      'Wasm — Switch/case (n % 3)', 'dart', _exWasmSwitch, '', 'classify', '7',
-      wasm: true),
+    'Wasm — Switch/case (n % 3)',
+    'dart',
+    _exWasmSwitch,
+    '',
+    'classify',
+    '7',
+    wasm: true,
+  ),
   CodeExample(
-      'Wasm — Bit count (& >>)', 'dart', _exWasmBitCount, '', 'bitCount', '13',
-      wasm: true),
+    'Wasm — Bit count (& >>)',
+    'dart',
+    _exWasmBitCount,
+    '',
+    'bitCount',
+    '13',
+    wasm: true,
+  ),
   CodeExample(
-      'Wasm — Do/while sum 1..N', 'dart', _exWasmDoWhile, '', 'sumTo', '5',
-      wasm: true),
+    'Wasm — Do/while sum 1..N',
+    'dart',
+    _exWasmDoWhile,
+    '',
+    'sumTo',
+    '5',
+    wasm: true,
+  ),
   // Wasm class-method calls (apollovm 0.1.43): a class method calling a sibling
   // `static` method now resolves in the Wasm function index table, including
   // with named arguments and omitted default parameters.
-  CodeExample('Wasm — Named arguments (class method)', 'dart', _exWasmNamedArgs,
-      'Calc', 'run', '',
-      wasm: true),
-  CodeExample('Wasm — Default parameters (class method)', 'dart',
-      _exWasmDefaultArgs, 'Calc', 'run', '',
-      wasm: true),
+  CodeExample(
+    'Wasm — Named arguments (class method)',
+    'dart',
+    _exWasmNamedArgs,
+    'Calc',
+    'run',
+    '',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Default parameters (class method)',
+    'dart',
+    _exWasmDefaultArgs,
+    'Calc',
+    'run',
+    '',
+    wasm: true,
+  ),
   // Wasm rich-enum field/method reads in a `print` context (apollovm 0.1.44):
   // `print(p.gravity)` / `print('${p.mult(2)}')` now produce correct values.
   CodeExample(
-      'Wasm — Rich enum (field in print)', 'dart', _exWasmEnum, '', 'run', '',
-      wasm: true),
+    'Wasm — Rich enum (field in print)',
+    'dart',
+    _exWasmEnum,
+    '',
+    'run',
+    '',
+    wasm: true,
+  ),
   // Wasm Map/List → String coercion + boxed `List<Object>` arithmetic (apollovm
   // 0.1.45): `'$map'` renders `{k: v, …}` and boxed elements (`args[1] ~/ 2`)
   // are unboxed before the operation. Run with `[ 10, 30, 5 ]`.
-  CodeExample('Wasm — Maps & boxed args', 'dart', _exWasmMaps, '', 'run',
-      '[ 10, 30, 5 ]',
-      wasm: true),
+  CodeExample(
+    'Wasm — Maps & boxed args',
+    'dart',
+    _exWasmMaps,
+    '',
+    'run',
+    '[ 10, 30, 5 ]',
+    wasm: true,
+  ),
   // Wasm lambdas stored in a `var` and called by name (apollovm 0.1.45).
-  CodeExample('Wasm — Lambdas', 'dart', _exWasmLambda, '', 'run', '5',
-      wasm: true),
+  CodeExample(
+    'Wasm — Lambdas',
+    'dart',
+    _exWasmLambda,
+    '',
+    'run',
+    '5',
+    wasm: true,
+  ),
   // Wasm generic class `Box<T>` (apollovm 0.1.46): a value flows through a
   // generic `T` field (a boxed `Object`) and is unboxed for arithmetic. Returns
   // a.value + b.value.
   CodeExample(
-      'Wasm — Generics (Box<T>)', 'dart', _exWasmGenerics, '', 'run', '7',
-      wasm: true),
+    'Wasm — Generics (Box<T>)',
+    'dart',
+    _exWasmGenerics,
+    '',
+    'run',
+    '7',
+    wasm: true,
+  ),
   // Wasm integer division by zero (apollovm 0.1.47): `~/` raises a catchable
   // exception (and integer `/` in Java/Kotlin/C# truncates). Run with `10, 0`
   // to take the caught path (returns -1), or `10, 3` for the normal path (3).
-  CodeExample('Wasm — Integer division (by zero)', 'dart', _exWasmIntDiv, '',
-      'run', '10, 0',
-      wasm: true),
+  CodeExample(
+    'Wasm — Integer division (by zero)',
+    'dart',
+    _exWasmIntDiv,
+    '',
+    'run',
+    '10, 0',
+    wasm: true,
+  ),
 ];
 
 const _exDartFib =
@@ -1196,6 +1664,126 @@ class Foo {
 }
 ''';
 
+// Extensions (apollovm 1.9.0): add methods/getters to an existing type. Dart,
+// Kotlin and C# each have a native construct and share one AST node, so an
+// extension parsed in any of them runs and translates to the other two.
+//
+// A receiver must be a variable or parameter: extension calls do not resolve on
+// a call's result (`a.doubled().increasedBy(1)`) or on a literal (`2.doubled()`).
+const _exDartExtension = r'''extension NumExt on int {
+  int doubled() {
+    return this * 2;
+  }
+
+  int increasedBy(int by) {
+    return this + by;
+  }
+}
+
+class Foo {
+  static void main(int a) {
+    var b = a.doubled();
+    var c = a.increasedBy(1);
+    print('doubled: $b ; increased: $c');
+    print('inline: ${a.doubled()}');
+  }
+}
+''';
+
+// An extension on a user class, with a getter. Translates to Kotlin (`val
+// Point.sum: Int get() = ...`), but NOT to C#, which has no extension property.
+const _exDartExtensionGetter = r'''class Point {
+  int x;
+  int y;
+
+  Point(this.x, this.y);
+}
+
+extension PointExt on Point {
+  int get sum {
+    return this.x + this.y;
+  }
+
+  Point scaled(int by) {
+    return Point(this.x * by, this.y * by);
+  }
+}
+
+class Foo {
+  static void main(int x, int y) {
+    var p = Point(x, y);
+    var s = p.scaled(3);
+    print('sum: ${p.sum}');
+    print('scaled sum: ${s.sum}');
+  }
+}
+''';
+
+// Instance getters in a class body — a block body and an expression body
+// (`=> ...`). Dart only started parsing these in apollovm 1.9.0.
+const _exDartClassGetter = r'''class Rect {
+  int w;
+  int h;
+
+  Rect(this.w, this.h);
+
+  int get area {
+    return this.w * this.h;
+  }
+
+  int get perimeter => 2 * (this.w + this.h);
+}
+
+class Foo {
+  static void main(int w, int h) {
+    var r = Rect(w, h);
+    print('area: ${r.area}');
+    print('perimeter: ${r.perimeter}');
+  }
+}
+''';
+
+// Kotlin spells an extension as a top-level `fun Int.doubled()` / `val
+// Int.twice`; members are grouped by receiver into one extension.
+const _exKotlinExtension = r'''fun Int.doubled(): Int {
+  return this * 2
+}
+
+fun Int.increasedBy(by: Int): Int {
+  return this + by
+}
+
+val Int.twice: Int get() = this * 2
+
+fun main(a: Int) {
+  val b = a.doubled()
+  val c = a.increasedBy(1)
+  println("doubled: $b ; increased: $c")
+  println("twice: ${a.twice}")
+}
+''';
+
+// C# spells an extension as a `static class` whose methods take a `this`
+// self-parameter; both the self-parameter and `this` translate in and out.
+const _exCsExtension = r'''static class NumExt {
+  public static int Doubled(this int self) {
+    return self * 2;
+  }
+
+  public static int IncreasedBy(this int self, int by) {
+    return self + by;
+  }
+}
+
+class Foo {
+  public static void main(int a) {
+    int b = a.Doubled();
+    int c = a.IncreasedBy(1);
+    print("doubled: " + b + " ; increased: " + c);
+  }
+}
+''';
+
 // Wasm control flow + bitwise (apollovm 0.1.40): `switch`/`case`, `do`/`while`
 // and the bitwise operators compile to and run on Wasm. Each returns an int
 // shown in the OUTPUT "result" panel.
@@ -1386,9 +1974,11 @@ String exampleOptionLabel(CodeExample e) {
 /// option's value is the example's index in [codeExamples].
 void populateExampleSelect(String category) {
   var options = codeExamples
-      .mapIndexed((i, e) => exampleCategory(e) == category
-          ? '<option value="$i">${exampleOptionLabel(e)}</option>'
-          : null)
+      .mapIndexed(
+        (i, e) => exampleCategory(e) == category
+            ? '<option value="$i">${exampleOptionLabel(e)}</option>'
+            : null,
+      )
       .nonNulls
       .join('\n    ');
   selectExampleSelect().innerHTML = options.toJS;

@@ -1,3 +1,30 @@
+## 1.16.0
+
+### Extensions — add methods and getters to an existing type (apollovm 1.9.0)
+
+- Updated to `apollovm: ^1.9.0`, which adds a shared extension construct to the
+  three languages that have one natively: an extension parsed as Dart, Kotlin or
+  C# runs and translates to the other two.
+- **Five new examples**, each verified to run and to transpile:
+  - *Dart — Extension methods (on int)*: `extension NumExt on int { ... }`,
+    transpiles to Kotlin and C#.
+  - *Dart — Extension getter (on a class)*: an extension on a user class with a
+    getter; transpiles to Kotlin only, since C# has no extension property.
+  - *Dart — Class getters (area / perimeter)*: instance getters in a class body,
+    block-bodied and `=> ...`, which Dart only started parsing in apollovm 1.9.0.
+  - *Kotlin — Extension function & property*: top-level `fun Int.doubled()` and
+    `val Int.twice`, grouped by receiver into one extension.
+  - *C# — Extension methods (this self)*: a `static class` whose methods take a
+    `this` self-parameter.
+- **Unsupported transpile targets now read as such.** Generating an extension
+  into a language that has no equivalent (Java, JavaScript, TypeScript, Python,
+  Go, Lua — and C# for an extension *getter*) throws `UnsupportedSyntaxError`
+  rather than emitting a misleading shim. The Transpile panel now labels those
+  targets `UNSUPPORTED: ...` instead of showing a raw error, and switching the
+  editor's language to an unsupported target reports the reason and keeps the
+  language selector on the source language.
+- Raised the SDK constraint to `>=3.10.0`, as required by apollovm 1.9.0.
+
 ## 1.15.1
 
 - Make the Outline panel the default active panel during initialization.

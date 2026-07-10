@@ -64,8 +64,12 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 
     var vmWasm = ApolloVM();
 
-    var wasmCodeUnit = BinaryCodeUnit('wasm', wasmOutput.output(),
-        id: 'test.wasm', namespace: '');
+    var wasmCodeUnit = BinaryCodeUnit(
+      'wasm',
+      wasmOutput.output(),
+      id: 'test.wasm',
+      namespace: '',
+    );
 
     var wasmLoad = await vmWasm.loadCodeUnit(wasmCodeUnit);
     if (!wasmLoad) {
@@ -79,8 +83,9 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 
     var parameters = [...?positionalParameters, ...?namedParameters?.values];
 
-    var entryPoint =
-        className.isNotEmpty ? '$className.$functionName' : functionName;
+    var entryPoint = className.isNotEmpty
+        ? '$className.$functionName'
+        : functionName;
 
     // Mirror the interpreted path: a class method runs via `executeClassMethod`,
     // a top-level function via `executeFunction`. The Wasm runner resolves a
@@ -90,20 +95,27 @@ Future<({Object? result, String output, String executedCode})> executeVM(
     try {
       if (className.isNotEmpty) {
         astValue = await wasmRunner.executeClassMethod(
-            '', className, functionName,
-            positionalParameters: parameters);
+          '',
+          className,
+          functionName,
+          positionalParameters: parameters,
+        );
       } else {
-        astValue = await wasmRunner.executeFunction('', functionName,
-            positionalParameters: parameters);
+        astValue = await wasmRunner.executeFunction(
+          '',
+          functionName,
+          positionalParameters: parameters,
+        );
       }
     } on StateError catch (e) {
       if (e.message.contains('find function')) {
         throw StateError(
-            "Wasm entry point `$entryPoint` not found in the compiled module.\n"
-            "ApolloVM's Wasm backend (alpha) currently compiles only top-level "
-            "functions, so class methods like `$entryPoint` may not be compiled "
-            "to Wasm yet.\nTip: use a top-level `$functionName(...)` function "
-            "(clear the class field), or run in interpreted mode.");
+          "Wasm entry point `$entryPoint` not found in the compiled module.\n"
+          "ApolloVM's Wasm backend (alpha) currently compiles only top-level "
+          "functions, so class methods like `$entryPoint` may not be compiled "
+          "to Wasm yet.\nTip: use a top-level `$functionName(...)` function "
+          "(clear the class field), or run in interpreted mode.",
+        );
       }
       rethrow;
     }
@@ -116,13 +128,19 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 
     if (className.isNotEmpty) {
       astValue = await dartRunner.executeClassMethod(
-          '', className, functionName,
-          positionalParameters: positionalParameters,
-          namedParameters: namedParameters);
+        '',
+        className,
+        functionName,
+        positionalParameters: positionalParameters,
+        namedParameters: namedParameters,
+      );
     } else {
-      astValue = await dartRunner.executeFunction('', functionName,
-          positionalParameters: positionalParameters,
-          namedParameters: namedParameters);
+      astValue = await dartRunner.executeFunction(
+        '',
+        functionName,
+        positionalParameters: positionalParameters,
+        namedParameters: namedParameters,
+      );
     }
   }
 
@@ -139,7 +157,9 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 }
 
 Future<({bool ok, BytesOutput output})> compileToWasm(
-    String language, String code) async {
+  String language,
+  String code,
+) async {
   print('-----------------------------------------------------');
   print('>> Compile to Wasm:');
   print('language: $language');
@@ -175,7 +195,10 @@ Future<({bool ok, BytesOutput output})> compileToWasm(
 }
 
 Future<String?> convertCode(
-    String fromLanguage, String code, String toLanguage) async {
+  String fromLanguage,
+  String code,
+  String toLanguage,
+) async {
   print('Converting from `$fromLanguage` to `$toLanguage`');
 
   print(code);
@@ -208,6 +231,18 @@ Future<String?> convertCode(
   return code2;
 }
 
+/// The message of an [UnsupportedSyntaxError], without the `[Unsupported
+/// Syntax]` tag that its `toString()` prepends.
+///
+/// ApolloVM 1.9.0 throws this at *generation* time when the target language has
+/// no equivalent construct — e.g. an `extension` into Java/JS/TS/Python/Go/Lua,
+/// or an extension *getter* into C# (which has no extension property).
+String unsupportedSyntaxDetail(UnsupportedSyntaxError e) {
+  var message = '${e.message}';
+  const tag = '[Unsupported Syntax] ';
+  return message.startsWith(tag) ? message.substring(tag.length) : message;
+}
+
 /// Source languages ApolloVM can both parse and generate. These are the
 /// transpilation targets for the "Convert to all languages" feature. Wasm is a
 /// binary compile target (offered via "Download Wasm"), not a source target.
@@ -227,14 +262,17 @@ const conversionLanguages = <String>[
 /// target. Returns a map of target language -> generated source, with an
 /// `ERROR: ...` message for any target (or the parse step) that fails.
 Future<Map<String, String>> convertCodeToAllLanguages(
-    String fromLanguage, String code) async {
+  String fromLanguage,
+  String code,
+) async {
   var vm = ApolloVM();
 
   Object? loadError;
   var loaded = false;
   try {
-    loaded = await vm
-        .loadCodeUnit(SourceCodeUnit(fromLanguage, code, id: 'convert'));
+    loaded = await vm.loadCodeUnit(
+      SourceCodeUnit(fromLanguage, code, id: 'convert'),
+    );
   } catch (e, s) {
     loadError = e;
     printError('$e');
@@ -254,9 +292,15 @@ Future<Map<String, String>> convertCodeToAllLanguages(
     try {
       var codeStorage = vm.generateAllCodeIn(target);
       var allSources = await codeStorage.writeAllSources();
-      var generated =
-          allSources.toString().replaceAll(RegExp(r'<<<<[^>]+>>>>'), '').trim();
+      var generated = allSources
+          .toString()
+          .replaceAll(RegExp(r'<<<<[^>]+>>>>'), '')
+          .trim();
       results[target] = generated.isEmpty ? '(no output)' : generated;
+    } on UnsupportedSyntaxError catch (e) {
+      results[target] =
+          "UNSUPPORTED: `$target` has no equivalent construct.\n\n"
+          '${unsupportedSyntaxDetail(e)}';
     } catch (e) {
       results[target] = 'ERROR converting to `$target`:\n\n$e';
     }

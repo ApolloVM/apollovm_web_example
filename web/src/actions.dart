@@ -58,13 +58,30 @@ void changeLanguage() async {
       codeTextArea.setAttribute('language', codeLanguage);
 
       setVMOutput(
-          'INFO: Code successfully converted from `$currentCodeLanguage` to `$codeLanguage`.',
-          info: true);
+        'INFO: Code successfully converted from `$currentCodeLanguage` to `$codeLanguage`.',
+        info: true,
+      );
     } else {
       setVMOutput(
-          "ERROR: Can't convert code from `$currentCodeLanguage` to `$codeLanguage`!",
-          error: true);
+        "ERROR: Can't convert code from `$currentCodeLanguage` to `$codeLanguage`!",
+        error: true,
+      );
     }
+  } on UnsupportedSyntaxError catch (e) {
+    printError('$e');
+
+    // The code parsed fine, but `codeLanguage` has no equivalent construct
+    // (e.g. an `extension` into Java). Keep the editor on the source language.
+    if (currentCodeLanguage.isNotEmpty) {
+      selectCodeLanguage().value = currentCodeLanguage;
+    }
+
+    setVMOutput(
+      "UNSUPPORTED: `$codeLanguage` has no equivalent construct, so the code "
+      "can't be converted from `$currentCodeLanguage`.\n\n"
+      '${unsupportedSyntaxDetail(e)}',
+      error: true,
+    );
   } catch (e, s) {
     printError('$e');
     printError('$s');
@@ -73,7 +90,8 @@ void changeLanguage() async {
   }
 
   selectFileName().textContent = fileNameForLanguage(
-      codeTextArea.getAttribute('language') ?? codeLanguage);
+    codeTextArea.getAttribute('language') ?? codeLanguage,
+  );
   switchBottomPanel('output');
   runLspAnalysis();
 }
@@ -88,8 +106,10 @@ void downloadWasm() async {
 
   setVMResult('[not executed]');
 
-  setVMOutput('`$codeLanguage` to Wasm Compilation: ${wasm.ok ? 'OK' : 'FAIL'}',
-      info: true);
+  setVMOutput(
+    '`$codeLanguage` to Wasm Compilation: ${wasm.ok ? 'OK' : 'FAIL'}',
+    info: true,
+  );
 
   setVMExecutedCode(wasm.output.toString());
 
@@ -129,8 +149,15 @@ void runCode() async {
   switchBottomPanel('output');
 
   try {
-    var result = await executeVM(codeLanguage, code, className, functionName,
-        positionalParametersJson, namedParametersJson, wasmCompiled);
+    var result = await executeVM(
+      codeLanguage,
+      code,
+      className,
+      functionName,
+      positionalParametersJson,
+      namedParametersJson,
+      wasmCompiled,
+    );
 
     setVMResult(result.result);
     setVMOutput(result.output);
@@ -150,7 +177,8 @@ Map<String, String> _conversions = {};
 /// the results in the conversions panel (one tab per language).
 void runConvert() async {
   var code = selectCodeTextArea().value;
-  var fromLanguage = selectCodeTextArea().getAttribute('language') ??
+  var fromLanguage =
+      selectCodeTextArea().getAttribute('language') ??
       selectCodeLanguage().value;
 
   switchBottomPanel('translation');
@@ -175,8 +203,10 @@ void showConversions(String fromLanguage, Map<String, String> results) {
 
   var fromLabel = _exampleLanguageLabels[fromLanguage] ?? fromLanguage;
   var tabs = results.keys
-      .map((l) =>
-          '<button class="conv-tab" data-lang="$l">${_exampleLanguageLabels[l] ?? l}</button>')
+      .map(
+        (l) =>
+            '<button class="conv-tab" data-lang="$l">${_exampleLanguageLabels[l] ?? l}</button>',
+      )
       .join();
   selectConversionTabs().innerHTML =
       '<span class="conv-from">$fromLabel →</span>$tabs'.toJS;
