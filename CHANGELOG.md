@@ -1,3 +1,20 @@
+## 1.19.0
+
+### Parse errors point at the real mistake (apollovm 1.10.0)
+
+- Updated to `apollovm: ^1.10.0`, whose parsers now record the farthest point the
+  grammar actually reached and report a failure there, instead of collapsing
+  every deep syntax error to a generic *`end of input expected`* at line 1. The
+  fast happy path is untouched — the tracking re-parse only runs on failure.
+- **The editor's squiggles, gutter markers and Problems panel land on the actual
+  error.** The language server's `analyze` drives all three from apollovm's
+  `locateParseError`, so a bad token mid-file now underlines that token on its
+  own line rather than the top of the buffer. This holds for Dart, Java, Kotlin,
+  Go, C#, JavaScript, TypeScript and Lua.
+- **Python diagnostics are unchanged**: its source is rewritten by the
+  indentation preprocessor before the grammar sees it, so apollovm intentionally
+  leaves Python out of the farthest-failure tracking for now.
+
 ## 1.18.0
 
 ### Go is a first-class language (apollovm 1.9.2)
