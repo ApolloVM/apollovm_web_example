@@ -1,3 +1,30 @@
+## 1.20.0
+
+### apollovm 2.0.0: the native Wasm engine moves out of core
+
+- Updated to `apollovm: ^2.0.0`. Executing a compiled Wasm module *on the Dart
+  VM* used to require `package:wasm_run`, which dragged an FFI/Rust toolchain and
+  a long-abandoned `flutter_rust_bridge` 1.x into every consumer — even the ones
+  that only parse, translate or generate code. That engine now lives in a
+  separate package, `apollovm_wasm`, and `apollovm` no longer pins the old
+  `shelf`/`web_socket_channel` stack that came with it.
+- **This playground is unaffected, and neither of its Wasm features changed.**
+  Wasm *compilation* never left core, so *Compile & download `.wasm`* is
+  untouched; and the browser already ships a Wasm engine, so apollovm keeps its
+  browser runtime in core — `WasmRuntime`'s conditional import still resolves to
+  the `js_interop` web implementation under dart2js, which is exactly how this
+  app is built. The **▶ Run · Wasm** path and the Wasm examples run as before.
+- The breaking change only bites a Dart VM (non-browser) consumer that *executes*
+  Wasm: it now has to add `apollovm_wasm` and call
+  `registerApolloVMWasmRuntime()` once, otherwise `WasmRuntime()` reports
+  `isSupported == false`.
+
+### Dependency refresh
+
+- `collection` `^1.19.1`, `web` `^1.1.1`, `dom_tools` `^3.0.1`,
+  `swiss_knife` `^3.3.14`, `data_serializer` `^1.2.2`.
+- Dev: `build_runner` `^2.15.1`, `build_web_compilers` `^4.8.0`.
+
 ## 1.19.0
 
 ### Parse errors point at the real mistake (apollovm 1.10.0)
