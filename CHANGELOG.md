@@ -1,3 +1,44 @@
+## 1.20.1
+
+### The deployed site can run Wasm again
+
+- **▶ Run · Wasm** was broken on the deployed GitHub Pages site in Chrome/Edge,
+  while working fine under `webdev serve`. The cause was our own
+  Content-Security-Policy, not GitHub Pages: the deploy workflow injects a CSP
+  `<meta>` tag into the *built* `index.html`, and its `script-src 'self'` had no
+  `'wasm-unsafe-eval'`. Once `script-src` is set, Chromium gates the Wasm
+  compilation APIs under it too — so `WebAssembly.instantiate()` on the module
+  bytes we generate at runtime was refused with a `CompileError`, and the run
+  died before executing a single instruction.
+- Added `'wasm-unsafe-eval'` to `script-src`. It is the *minimum* grant that
+  unblocks this: it permits WebAssembly compilation only, and still refuses
+  `eval()` and `new Function()` on JavaScript strings — unlike the much broader
+  `'unsafe-eval'`, which we deliberately do not use. Compiling user-authored
+  Wasm is this playground's whole purpose, and the module runs inside the Wasm
+  sandbox with only the imports ApolloVM gives it (the `print` bridge), with no
+  DOM access. Every other directive stays as strict as before.
+- It was invisible in development by design: the CSP is injected at deploy time
+  only, never into `web/index.html`, so `webdev serve` (DDC, which needs
+  `'unsafe-eval'`) keeps working. That split is still right — it had just
+  overshot for Wasm.
+- **This was never a CORS or GitHub Pages configuration issue.** Pages already
+  serves the site with `access-control-allow-origin: *` and sends no CSP header
+  of its own — and it cannot be made to send custom headers at all. The Wasm
+  module never crosses the network: it is generated in memory and handed
+  straight to the browser engine as a buffer, so no CORS is involved.
+- *Compile & download `.wasm`* was never affected — a `blob:` in an
+  `<a download>` is not gated by `script-src`.
+
+### A CSP refusal now explains itself
+
+- A blocked Wasm run used to surface as a raw
+  `WasmModuleLoadError: Can't load wasm module: test.wasm / Cause: CompileError:
+  …`, which named the symptom but not the cause. The Wasm run path now detects a
+  CSP-refused compile and reports what is actually wrong — the page's
+  `script-src` needs `'wasm-unsafe-eval'` — plus the workaround (run
+  interpreted), alongside the original engine message. This mirrors the existing
+  missing-entry-point hint.
+
 ## 1.20.0
 
 ### apollovm 2.0.0: the native Wasm engine moves out of core
