@@ -1,3 +1,20 @@
+## 1.21.0
+
+### apollovm 2.1.0: Wasm loop fix and initial String methods
+
+- Updated to `apollovm: ^2.1.0`, which improves the on-the-fly **Wasm** backend
+  that the *Compile to Wasm* action uses:
+  - **A `++`/`--` inside a `while`/`do-while` loop no longer breaks Wasm
+    compilation.** A bare increment/decrement statement in a loop body used to
+    emit an invalid module (it failed WebAssembly validation), so an example
+    like `while (i < n) { i++; }` compiled but wouldn't run. It now works.
+  - **String `.length`, `.isEmpty`, `.isNotEmpty` compile to Wasm**, and
+    **`.toUpperCase()` / `.toLowerCase()`** compile for ASCII text — so examples
+    that manipulate strings can now be run through the Wasm path, not just the
+    interpreter.
+- **No change to this playground's own code** — the improvements are entirely
+  inside `apollovm`'s Wasm code generator.
+
 ## 1.20.2
 
 ### apollovm 2.0.1: the Outline no longer mangles a Dart enum
