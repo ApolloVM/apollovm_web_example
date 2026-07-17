@@ -73,13 +73,22 @@ jobs:
       # This app pulls its font from Google Fonts, so the stylesheet origin
       # (fonts.googleapis.com) is allowed in style-src and the font origin
       # (fonts.gstatic.com) in font-src; everything else is 'self'.
+      #
+      # script-src needs 'wasm-unsafe-eval': once script-src is set, Chromium
+      # gates the Wasm compilation APIs under it too, and ▶ Run · Wasm hands
+      # runtime-generated module bytes straight to `WebAssembly.instantiate()`.
+      # Without the token that call throws a CompileError and the feature is
+      # dead on the deployed site (it still works under `webdev serve`, which
+      # never gets this tag — so don't drop it just because dev looks fine).
+      # It is *not* 'unsafe-eval': it permits Wasm compilation only, and still
+      # refuses eval()/new Function() on JS strings.
       - name: Inject Content-Security-Policy
         run: |
           python3 - <<'PY'
           import pathlib
           csp = (
               "default-src 'self'; base-uri 'self'; object-src 'none'; "
-              "frame-ancestors 'none'; script-src 'self'; "
+              "frame-ancestors 'none'; script-src 'self' 'wasm-unsafe-eval'; "
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
               "img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; "
               "connect-src 'self'; manifest-src 'self'; worker-src 'self'"
