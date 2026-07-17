@@ -1,3 +1,22 @@
+## 1.20.2
+
+### apollovm 2.0.1: the Outline no longer mangles a Dart enum
+
+- Updated to `apollovm: ^2.0.1`, which fixes how the in-process LSP records the
+  source range of a Dart enum constant. Both symptoms were visible right here in
+  the **Outline** sidebar:
+  - **A constant with arguments now selects its whole entry.** An enum constant
+    is a constructor invocation, but its range was recorded as the name alone —
+    clicking `earth` in the Outline of `enum Planet { earth(5.97, 6371) }`
+    selected just `earth`, not its arguments. It now covers the entry,
+    including a `.named` constructor, `<T>` type arguments and an `= value`.
+  - **Named arguments no longer appear as phantom constants.** The scan past a
+    constant stopped at the first `,` even inside the argument list, so an
+    argument label was read as another constant: `earth(mass: 5.97, radius:
+    6371)` listed a bogus `radius` member in the Outline. It's gone.
+- **No change to this playground's own code** — the fix is entirely inside
+  `apollovm`'s LSP.
+
 ## 1.20.1
 
 ### The deployed site can run Wasm again
