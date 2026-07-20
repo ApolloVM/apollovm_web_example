@@ -1,3 +1,45 @@
+## 1.22.0
+
+### apollovm 2.15.0: Wasm grows up, and the Outline gets another fix
+
+Updated to `apollovm: ^2.15.0`, fourteen releases on from `2.1.0`. The bulk of
+the work landed in the on-the-fly **Wasm** backend behind the *Compile to Wasm*
+action, which went from "simple functions" to running most of what the
+interpreter runs.
+
+- **The Outline sidebar selects a whole field declaration.** A field/variable's
+  `documentSymbol` range used to stop at the name, so clicking `count` in the
+  Outline of `int count = 0;` selected just `count`. It now runs to the
+  terminating `;`, including an initializer with `(`/`[`/`{ }` in it — matching
+  how methods and enum members already behaved (see 1.20.2).
+- **Classes now compile to Wasm.** `static` fields (as module globals),
+  single inheritance with `extends`/`super` (a subclass lays its superclass's
+  fields out first, so an inherited method reads the right slot), custom
+  instance getters (`int get x => ...`), and a generic field (`class Box<T>`,
+  stored boxed and unboxed at the instantiation type).
+- **Strings are broadly complete in Wasm.** On top of the case/length methods
+  from 2.1.0: `substring`, `codeUnitAt`, `startsWith`/`endsWith`, `indexOf`,
+  `contains`, `trim`/`trimLeft`/`trimRight`, `padLeft`/`padRight`,
+  `replaceAll`/`replaceFirst`, `split`, `compareTo`, index `s[i]`, and `==`/`!=`
+  as *content* equality rather than pointer identity. Byte-indexed, so exact for
+  ASCII text.
+- **Nested collections and chained indexing work on both backends.**
+  `[[1, 2], [3, 4]]`, `{'a': {'b': 5}}`, and reads/writes through every level
+  (`m[0][1]`, `m['a']['b']`, `m[0][1] += 5`) — in the interpreter (2.2.0) and in
+  Wasm (2.6.0). Returning a `List`/`Map` across the module boundary is covered
+  too.
+- **Inheritance and `static` fields work in the interpreter**, across the Dart,
+  Java, C#, JavaScript, TypeScript and Python grammars — the Java/C#/JS grammars
+  had been silently dropping the superclass and the `static` modifier.
+- **Transpile-target fixes.** Go `&^` (bit clear) now emits `a & (~b)` instead of
+  a plain `&`; Lua gets `..` for string-variable concatenation, 1-based list
+  indexing, and parenthesized interpolation subexpressions.
+- **Parser fixes.** `~/=` (Dart) and `//=` (Python) no longer crash the parser,
+  and an unsupported compound operator surfaces as a clean `SyntaxError`.
+  `Enum.values` can be assigned to a typed or inferred list.
+- **No change to this playground's own code** — everything above is inside
+  `apollovm`.
+
 ## 1.21.0
 
 ### apollovm 2.1.0: Wasm loop fix and initial String methods
