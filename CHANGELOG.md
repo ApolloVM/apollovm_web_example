@@ -1,3 +1,40 @@
+## 1.23.0
+
+### Eight new Wasm examples for the 2.15.0 feature surface
+
+1.22.0 pulled in `apollovm 2.15.0`, but the *Compile to Wasm* action still
+demoed roughly the surface it did at 2.1.0 — none of the newly-supported syntax
+was reachable from the **Example** selector. Eight examples now cover it, under
+the **Wasm** category:
+
+- **Static class fields** — a `static int total` persisting across calls.
+- **Inheritance (extends/super)** — an override that calls `super`, reading both
+  an inherited and an own field.
+- **Custom getters** — `int get area` / `int get perimeter`, accessed via a
+  receiver.
+- **Nested collections (`m[0][1]`)** — read, write and `+=` through a nested
+  `List` and `Map`.
+- **String methods** — `length`, case, `substring`, `indexOf`, `startsWith`,
+  `contains`, `replaceAll`, index `s[i]`.
+- **String trim & pad** — `trim`, `padLeft`, `padRight`.
+- **String split** — `split(',')` returning a `List<String>` that crosses the
+  module boundary.
+- **String equality & compareTo** — `==` as content equality, plus `compareTo`.
+
+Every one was verified end-to-end on **both** backends — interpreted and
+Wasm-compiled — with matching results and identical `print` output, keeping the
+promise in the examples file that each Wasm entry is a verified runner.
+
+Two upstream gaps were found while verifying, and the examples are written to
+avoid them (each is noted in a comment next to the example):
+
+- A **`static` field inside a string interpolation** isn't compiled to Wasm yet
+  (`print('$total')` throws ``Can't find local variable `total` ``), though
+  reading it in an expression or a `return` works. The example prints the call
+  results instead.
+- **Interpolating a whole nested collection** (`print('$grid')`) raises
+  `UnimplementedError` on Wasm. The example prints the elements individually.
+
 ## 1.22.0
 
 ### apollovm 2.15.0: Wasm grows up, and the Outline gets another fix

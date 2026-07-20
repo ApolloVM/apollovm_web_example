@@ -781,6 +781,83 @@ const codeExamples = <CodeExample>[
     '10, 0',
     wasm: true,
   ),
+  // Wasm classes (apollovm 2.3.0 - 2.5.0): `static` fields as module globals,
+  // single inheritance with `extends`/`super`, and custom instance getters.
+  CodeExample(
+    'Wasm — Static class fields',
+    'dart',
+    _exWasmStaticFields,
+    'Counter',
+    'run',
+    '5',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Inheritance (extends/super)',
+    'dart',
+    _exWasmInheritance,
+    '',
+    'run',
+    '3',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — Custom getters',
+    'dart',
+    _exWasmGetters,
+    '',
+    'run',
+    '4',
+    wasm: true,
+  ),
+  // Wasm nested collections + chained indexing (apollovm 2.6.0).
+  CodeExample(
+    'Wasm — Nested collections (m[0][1])',
+    'dart',
+    _exWasmNested,
+    '',
+    'run',
+    '10',
+    wasm: true,
+  ),
+  // Wasm String methods (apollovm 2.7.0 - 2.14.0): slice/search, trim/pad,
+  // replace, `split`, index `s[i]`, `compareTo`, and `==` content equality.
+  CodeExample(
+    'Wasm — String methods',
+    'dart',
+    _exWasmStrings,
+    '',
+    'run',
+    '"hello"',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — String trim & pad',
+    'dart',
+    _exWasmStringTrimPad,
+    '',
+    'run',
+    '"  hi  "',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — String split',
+    'dart',
+    _exWasmStringSplit,
+    '',
+    'run',
+    '"alpha,beta,gamma"',
+    wasm: true,
+  ),
+  CodeExample(
+    'Wasm — String equality & compareTo',
+    'dart',
+    _exWasmStringEquality,
+    '',
+    'run',
+    '"apple", "banana"',
+    wasm: true,
+  ),
 ];
 
 const _exDartFib =
@@ -2006,6 +2083,156 @@ const _exWasmIntDiv = r'''int run(int a, int b) {
     print('caught: $e');
     return -1;
   }
+}
+''';
+
+// Wasm `static` class fields (apollovm 2.3.0): each becomes a mutable module
+// global, so the value persists across calls. Note the `print`s read the call
+// results rather than interpolating `total` directly: a static field inside a
+// string interpolation isn't compiled yet (it throws "Can't find local variable
+// `total`"), though reading it in an expression or a `return` works.
+const _exWasmStaticFields = r'''class Counter {
+  static int total = 0;
+
+  static int add(int n) {
+    total += n;
+    return total;
+  }
+
+  static int run(int x) {
+    var first = add(x);
+    var second = add(x * 2);
+    print('after 1st add: $first');
+    print('after 2nd add: $second');
+    return total;
+  }
+}
+''';
+
+// Wasm single inheritance (apollovm 2.4.0): a subclass carries its superclass's
+// fields first in its heap layout, so the inherited method reads the right slot
+// when invoked on a subclass instance. The override wins, and `super` reaches
+// the inherited implementation. Returns legs*count + wings*count (= 12).
+const _exWasmInheritance = r'''class Animal {
+  int legs = 4;
+
+  int totalLegs(int count) {
+    return legs * count;
+  }
+}
+
+class Bird extends Animal {
+  int wings = 2;
+
+  int totalLegs(int count) {
+    return super.totalLegs(count) + wings * count;
+  }
+}
+
+int run(int count) {
+  var b = Bird();
+  b.legs = 2;
+  print('legs: ${b.legs} ; wings: ${b.wings}');
+  return b.totalLegs(count);
+}
+''';
+
+// Wasm custom instance getters (apollovm 2.5.0): a getter is synthesized as a
+// zero-argument instance method, so `r.area` lowers to a 0-arg method call.
+// Accessed via a receiver — a bare `area` inside a method body isn't resolved
+// yet (on either backend). Returns area + perimeter (= 38).
+const _exWasmGetters = r'''class Rect {
+  int w;
+  int h;
+
+  int get area {
+    return w * h;
+  }
+
+  int get perimeter {
+    return (w + h) * 2;
+  }
+}
+
+int run(int x) {
+  var r = Rect();
+  r.w = x;
+  r.h = x + 1;
+  print('area: ${r.area} ; perimeter: ${r.perimeter}');
+  return r.area + r.perimeter;
+}
+''';
+
+// Wasm nested collections and chained indexing (apollovm 2.6.0): an inner
+// List/Map is stored as a pointer to its header, so subscripts read and write
+// through every level, including compound assignment. The elements are printed
+// individually — interpolating a whole *nested* collection (`'$grid'`) isn't
+// supported in Wasm yet. Returns 10 + 7 + 2 (= 19).
+const _exWasmNested = r'''int run(int x) {
+  var grid = [[1, 2], [3, 4]];
+  grid[1][0] = x;
+  grid[0][1] += 5;
+
+  var scores = {'a': {'x': 1, 'y': 2}};
+  print('grid[0][1]: ${grid[0][1]} ; grid[1][0]: ${grid[1][0]}');
+  print('scores[a][x]: ${scores['a']['x']} ; scores[a][y]: ${scores['a']['y']}');
+
+  return grid[1][0] + grid[0][1] + scores['a']['y'];
+}
+''';
+
+// The Wasm String surface (apollovm 2.7.0 - 2.12.0): slice/search methods,
+// case, `replaceAll`, and index `s[i]`. Compiled over the `[len][utf8]` layout
+// and byte-indexed, so results are exact for ASCII text.
+const _exWasmStrings = r'''String run(String s) {
+  print('length     : ${s.length}');
+  print('upper      : ${s.toUpperCase()}');
+  print('substring  : ${s.substring(0, 3)}');
+  print('indexOf o  : ${s.indexOf('o')}');
+  print('startsWith : ${s.startsWith('he')}');
+  print('contains   : ${s.contains('lo')}');
+  print('replaceAll : ${s.replaceAll('l', 'L')}');
+  print('first char : ${s[0]}');
+  return s.toUpperCase();
+}
+''';
+
+// Wasm String trim & pad (apollovm 2.8.0): ASCII whitespace stripping and
+// single-byte padding, over the same `[len][utf8]` layout.
+const _exWasmStringTrimPad = r'''String run(String s) {
+  var t = s.trim();
+  print('trimmed : "$t"');
+  print('padLeft : "${t.padLeft(8, '.')}"');
+  print('padRight: "${t.padRight(8, '-')}"');
+  return t.padLeft(8, '.');
+}
+''';
+
+// Wasm `String.split` (apollovm 2.11.0): two passes over the `[len][utf8]`
+// layout — count the separators to size the list, then allocate each piece.
+// The returned `List<String>` also crosses the module boundary (2.13.0).
+const _exWasmStringSplit = r'''int run(String csv) {
+  var parts = csv.split(',');
+  print('parts: $parts');
+  print('count: ${parts.length}');
+  print('first: ${parts[0]} ; last: ${parts[parts.length - 1]}');
+  return parts.length;
+}
+''';
+
+// Wasm String `==` / `!=` as *content* equality (apollovm 2.14.0) rather than
+// pointer identity, plus `compareTo` (apollovm 2.10.0) — a lexicographic byte
+// comparison returning -1 / 0 / 1, where a shorter prefix sorts first.
+const _exWasmStringEquality = r'''int run(String a, String b) {
+  if (a == b) {
+    print('$a == $b');
+  } else {
+    print('$a != $b');
+  }
+
+  var cmp = a.compareTo(b);
+  print('compareTo: $cmp');
+  return cmp;
 }
 ''';
 
