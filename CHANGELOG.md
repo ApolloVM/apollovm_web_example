@@ -1,3 +1,63 @@
+## 1.24.0
+
+### apollovm 2.17.0: Dart null safety in the playground
+
+Updated to `apollovm: ^2.17.0`, picking up **Dart null safety** (2.16.0) —
+nullable types (`T?`), the null-coalescing operators `??` / `??=`, null-aware
+access `?.` / `?[`, the null assertion `!`, and a flow-aware static analyzer —
+plus the 2.17.0 fixes described below. None of it was reachable from the
+**Example** selector, so five examples now cover it.
+
+Under **Dart** (interpreted):
+
+- **Null safety (`??` and `??=`)** — `String?` / `int?` parameters, `??`
+  supplying a fallback for a null, `??=` assigning only into a null target, and
+  a non-null value passing straight through.
+- **Null-aware access (`?.` and `?[]`)** — `?[` on a null and a non-null list,
+  `?.` on both a getter and a method invocation, each short-circuiting to null
+  rather than throwing, then totalled with `??`.
+- **Null assertion (`!`)** — the value on a non-null target, and the
+  `ApolloVMNullPointerException` on a null one, caught so one run shows both.
+- **Access chains (`a.b.c` and `a.b?.c`)** — walking a linked `Node` list
+  through chains of any depth, mixing `.`, `?.` and `!`, including a write
+  through a chain (`head.next.value = 20`).
+
+Under **Wasm**:
+
+- **Null safety (`!` and `??`)** — the same syntax lowered into the Wasm
+  backend's non-null numeric domain, where `x!` is a no-op and `a ?? b` takes
+  its left operand. Runs on both backends with identical output.
+
+Every one of the **100** examples was re-verified — each on the interpreted
+backend, and each of the 27 Wasm entries on the Wasm-compiled backend too, with
+matching results and identical `print` output. All 100 are also clean under the
+null-safety analyzer, so the Problems panel stays empty on a freshly loaded
+example.
+
+Writing these surfaced four upstream gaps, all **fixed in apollovm 2.17.0**, so
+the examples use the natural form of each construct rather than a workaround:
+
+- A **`String?` parameter rejected a non-null `String` argument**
+  (`parameters signature not compatible`), though `null` worked. Argument
+  passing is an assignment, so the parameter check now uses `acceptsAssignment`.
+- **Storing a null-short-circuited `?.` / `?[` result in a local failed** —
+  `var v = s?.length` on a null receiver threw ``Class not set for type: Null``.
+  A null-aware access now reports a nullable static type.
+- **`?.` didn't parse when chained onto a field access.** `a.next?.value` was a
+  `SyntaxError: digit expected`, and even plain `a.next.value` failed — the
+  grammar accepted only a single-identifier receiver. Member-access chains of
+  any depth now parse, which is what the new *Access chains* example shows.
+- **`??` and `??=` leaked verbatim into targets that have no equivalent.**
+  Java, Python and Lua now desugar into a conditional and Kotlin emits `?:` /
+  `t = t ?: v`; Dart, C#, JavaScript and TypeScript keep the native operators.
+  Go now reports UNSUPPORTED in *Translate to all languages* — it has no
+  null-coalescing operator and no conditional expression, and its generator maps
+  `T?` onto a non-nullable Go `T`, so any rendering would be code that does not
+  compile.
+
+The postfix `!` is fine everywhere: Kotlin `!!`, TypeScript `!`, dropped in the
+rest.
+
 ## 1.23.0
 
 ### Eight new Wasm examples for the 2.15.0 feature surface
