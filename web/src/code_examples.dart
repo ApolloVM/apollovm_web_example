@@ -598,6 +598,42 @@ const codeExamples = <CodeExample>[
     'sumAsync',
     '10, 20',
   ),
+  // Null safety (apollovm 2.16.0): nullable types `T?`, the null-coalescing
+  // operators `??` / `??=`, null-aware access `?.` / `?[`, and the null
+  // assertion `!`. Dart is the only language whose grammar parses them today.
+  CodeExample(
+    'Dart — Null safety (?? and ??=)',
+    'dart',
+    _exDartNullCoalesce,
+    'Config',
+    'connect',
+    '"example.com", 9090, null',
+  ),
+  CodeExample(
+    'Dart — Null-aware access (?. and ?[])',
+    'dart',
+    _exDartNullAware,
+    'Lookup',
+    'run',
+    '[ 10, 20 ], "hello"',
+  ),
+  CodeExample(
+    'Dart — Null assertion (!)',
+    'dart',
+    _exDartNullAssert,
+    'Assert',
+    'run',
+    '5',
+  ),
+  // Member-access chains (apollovm 2.17.0).
+  CodeExample(
+    'Dart — Access chains (a.b.c and a.b?.c)',
+    'dart',
+    _exDartAccessChain,
+    'Chain',
+    'run',
+    '',
+  ),
   // Wasm-compatible examples (apollovm Wasm backend, alpha). Each is a Dart
   // top-level function (or a single class instantiated from one) that compiles
   // to and runs on Wasm; loading one enables the "Wasm compiled" run mode.
@@ -856,6 +892,17 @@ const codeExamples = <CodeExample>[
     '',
     'run',
     '"apple", "banana"',
+    wasm: true,
+  ),
+  // Wasm null safety (apollovm 2.16.0): the null-safety syntax lowered into the
+  // backend's non-null numeric domain.
+  CodeExample(
+    'Wasm — Null safety (! and ??)',
+    'dart',
+    _exWasmNullSafety,
+    '',
+    'run',
+    '7, 5',
     wasm: true,
   ),
 ];
@@ -2233,6 +2280,169 @@ const _exWasmStringEquality = r'''int run(String a, String b) {
   var cmp = a.compareTo(b);
   print('compareTo: $cmp');
   return cmp;
+}
+''';
+
+// Dart null-safety (apollovm 2.16.0): `??` yields its right side only when the
+// left one is null, and `??=` assigns only into a null target.
+//
+// Every target renders these faithfully (apollovm 2.17.0): Dart, C#, JavaScript
+// and TypeScript keep `??`/`??=`; Kotlin uses the Elvis operator `?:`; Java,
+// Python and Lua desugar into a conditional. Go is the exception — it has no
+// null-coalescing operator *and* no conditional expression, so the "Translate
+// to all languages" panel reports it as UNSUPPORTED rather than emitting Go
+// that would not compile.
+const _exDartNullCoalesce = r'''class Config {
+
+  // A `T?` parameter takes a value *or* null: `host` and `port` are supplied by
+  // the caller, while `timeout` is left null to show the fallback path.
+  static String connect(String? host, int? port, int? timeout) {
+    // `??` — use the right side only if the left one is null:
+    var h = host ?? 'localhost';
+    var p = port ?? 8080;
+
+    // `??=` — assign only if the target is currently null:
+    int? t = timeout;
+    t ??= 30;
+
+    print('host: $h');
+    print('port: $p');
+    print('timeout: ${t}s');
+
+    // A non-null left side passes straight through:
+    int? retries = 3;
+    print('retries: ${retries ?? 5}');
+
+    return '$h:$p';
+  }
+
+}
+''';
+
+// Dart null-aware access (apollovm 2.16.0): `?.` (getter and method) and `?[`
+// short-circuit to null on a null receiver instead of throwing, so a fallback
+// needs no `if`. Each result is nullable and can be stored in a local
+// (apollovm 2.17.0).
+const _exDartNullAware = r'''class Lookup {
+
+  static int run(List<int>? values, String? label) {
+    // `?[` — null-aware index. Null in, null out:
+    var first = values?[0];
+    print('values?[0]: $first');
+
+    // `?.` — null-aware getter, on a null and on a non-null receiver:
+    String? missing = null;
+    var missingLen = missing?.length;
+    var labelLen = label?.length;
+    print('missing?.length: $missingLen');
+    print('label?.length: $labelLen');
+
+    // `?.` — null-aware method invocation:
+    print('missing?.toUpperCase(): ${missing?.toUpperCase()}');
+    print('label?.toUpperCase(): ${label?.toUpperCase()}');
+
+    // Every `?.`/`?[` result is nullable, so `??` supplies the fallback:
+    return (first ?? -1) + (labelLen ?? 0);
+  }
+
+}
+''';
+
+// Dart null assertion (apollovm 2.16.0): postfix `!` returns the value when
+// non-null and throws `ApolloVMNullPointerException` when null — caught here to
+// show both paths in one run. Kotlin generates `!!`; TypeScript generates `!`;
+// the other targets drop the assertion (their closest equivalent).
+const _exDartNullAssert = r'''class Assert {
+
+  static int run(int? value) {
+    // `!` asserts "this is not null" and yields the underlying value:
+    var v = value!;
+    print('value! = $v');
+
+    // On a null target it throws instead of returning null:
+    int? missing = null;
+    try {
+      var bad = missing!;
+      print('unreachable: $bad');
+    } catch (e) {
+      print('missing! threw: $e');
+    }
+
+    return v;
+  }
+
+}
+''';
+
+// Dart member-access chains (apollovm 2.17.0): a chain of field/method
+// accesses of any depth, in any mix of `.`, `?.` and `!`. Before 2.17.0 the
+// grammar accepted only a single-identifier receiver, so `a.next.value` — and
+// `a.next?.value`, the natural way to walk a nullable link — did not parse.
+const _exDartAccessChain = r'''class Node {
+  String name;
+  int value;
+  Node? next;
+
+  Node(this.name, this.value);
+
+  Node link(Node n) {
+    next = n;
+    return n;
+  }
+}
+
+class Chain {
+
+  static int run() {
+    var head = Node('head', 1);
+    var mid = Node('mid', 2);
+    var tail = Node('tail', 3);
+
+    head.link(mid);
+    mid.link(tail);
+
+    // A chain of plain field accesses, any depth:
+    print('head.next.name      : ${head.next.name}');
+    print('head.next.next.name : ${head.next.next.name}');
+
+    // `?.` walks a nullable link and short-circuits at the first null one.
+    // `tail.next` is null, so the whole chain yields null:
+    print('tail.next?.name     : ${tail.next?.name}');
+    print('head.next?.next?.name: ${head.next?.next?.name}');
+
+    // A chain can also be assigned through:
+    head.next.value = 20;
+    print('head.next.value     : ${head.next.value}');
+
+    // `!` asserts a link is present before continuing:
+    print('head.next!.value    : ${head.next!.value}');
+
+    return head.value + head.next.value + head.next.next.value;
+  }
+
+}
+''';
+
+// Wasm null-safety (apollovm 2.16.0). Wasm has no null value, so the backend
+// lowers the syntax into its non-null numeric domain: `x!` compiles to `x`,
+// `a ?? b` to its left operand, and a nullable `T?` to the underlying numeric
+// type. Both backends therefore run this source and agree. A `null` *literal*
+// stays an explicit unsupported-construct error rather than a miscompilation,
+// so this example uses nullable types without ever assigning null.
+const _exWasmNullSafety = r'''int run(int a, int b) {
+  int? x = a;
+  int? y = b;
+
+  // `!` is a no-op here; `??` takes its left operand:
+  var base = x! + (y ?? 0);
+
+  int? scale = 2;
+  var total = base * (scale ?? 1);
+
+  print('base: $base');
+  print('total: $total');
+
+  return total;
 }
 ''';
 
