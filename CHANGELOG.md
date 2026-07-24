@@ -1,3 +1,39 @@
+## 1.25.0
+
+### apollovm 2.18.0: `null` compiles to Wasm
+
+Updated to `apollovm: ^2.18.0`. No example changed — this release is the
+upstream fixes reaching the playground.
+
+Compiling a `null` literal through **Compile to Wasm** used to throw
+`UnimplementedError: generateASTExpressionNullValue`, so an ordinary Dart idiom
+could not be compiled at all:
+
+```dart
+var a = args.length > 0 ? args[0] : null;
+```
+
+`null` is now a real value in the Wasm backend's *boxed* domain (the
+boxed-`Object` pointer 0), so it works in a `var` / `Object?` slot, as a ternary
+arm, as a `List<Object>` element, through `??`, and inside a string
+interpolation — printing `null` rather than a raw pointer. Where it genuinely
+has no representation, such as `int x = null` (an `int` is an i64 in Wasm), the
+compiler now reports a clear unsupported-construct error naming the type
+instead of producing a module the browser refuses to instantiate.
+
+The **Problems** panel also gained two checks, both of which previously passed
+silently:
+
+- a nullable operand used in an operation — `x + (y ?? 0)` where `x` is `int?`
+  (`??`, `==` and `!=` stay exempt, and `!` or a null check still suppress it);
+- a nullable *value* assigned to a non-nullable slot — `int x = a;` where `a`
+  is `int?`, which is the existing "can't assign `null`" error one step removed.
+
+All **100** examples were re-verified against 2.18.0 — each on the interpreted
+backend, each of the 27 Wasm entries on the Wasm-compiled backend too — and all
+100 remain clean under the analyzer, so the new checks produce no false
+positives on any shipped example.
+
 ## 1.24.0
 
 ### apollovm 2.17.0: Dart null safety in the playground
