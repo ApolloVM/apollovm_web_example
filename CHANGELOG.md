@@ -1,3 +1,20 @@
+## 1.30.0
+
+### apollovm 2.23.0 (maintenance)
+
+Updated to `apollovm: ^2.23.0`. **No example changed, and nothing changes in the
+playground** — 2.23.0 exposes the opt-in null-safety check through the `apollovm`
+CLI (`--null-safety`) and the MCP tools (a `nullSafety` argument), neither of
+which the browser playground uses.
+
+The playground continues to construct its VM with the default (checks off), so
+**Run** executes and shows the runtime error while the **Problems** panel flags
+the issue as you type — the behaviour introduced in 1.29.0.
+
+All **101** examples were re-verified against the published 2.23.0 — each
+interpreted, each of the 28 Wasm entries on the Wasm-compiled backend too — and
+all 101 remain clean under the analyzer.
+
 ## 1.29.0
 
 ### apollovm 2.22.0: the Problems panel now checks class methods
