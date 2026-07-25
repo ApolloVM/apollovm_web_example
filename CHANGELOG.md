@@ -1,3 +1,35 @@
+## 1.26.0
+
+### apollovm 2.19.0: `x == null` works, and a new Wasm null example
+
+Updated to `apollovm: ^2.19.0`.
+
+The headline upstream fix is that **`x == null` no longer throws**. It failed for
+any typed operand — `int? a = 1; if (a == null)` raised
+``type 'Null' is not a subtype of type 'FutureOr<int>'`` — so the most common
+null check in Dart was unusable in the playground unless written backwards as
+`null == x`. Equality now compares uncast, so a mismatched type is `false`
+rather than an error.
+
+That unblocked a new example, under **Wasm**:
+
+- **Null value (ternary and `== null`)** — walks a `List<Object>`, takes a
+  `null` ternary arm when the list is empty, prints it through an
+  interpolation, and branches on `== null`. Run it as-is, then clear the
+  arguments to `[ ]` to take the null path. Verified on both backends with
+  identical output.
+
+Also in this release, from upstream: on Wasm, `== null` against a boxed value
+now compares against the null box instead of taking the String content-equality
+route (which reported a non-null `List<Object>` element as null), and
+`String s; s == null` compiles to a valid module instead of one the browser
+refuses. In *Translate to all languages*, Go no longer emits
+`var s string = nil` — source that does not compile — reporting UNSUPPORTED
+instead. And `(expr).m().field` now parses.
+
+All **101** examples verified — each interpreted, each of the 28 Wasm entries on
+the Wasm-compiled backend too — and all 101 remain clean under the analyzer.
+
 ## 1.25.0
 
 ### apollovm 2.18.0: `null` compiles to Wasm
