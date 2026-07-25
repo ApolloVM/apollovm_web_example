@@ -905,6 +905,17 @@ const codeExamples = <CodeExample>[
     '7, 5',
     wasm: true,
   ),
+  // `null` as a real Wasm value (apollovm 2.18.0 / 2.19.0). Try it with an
+  // empty list — `[ ]` — to take the `null` arm.
+  CodeExample(
+    'Wasm — Null value (ternary and == null)',
+    'dart',
+    _exWasmNull,
+    '',
+    'run',
+    '[ "alpha", "beta" ]',
+    wasm: true,
+  ),
 ];
 
 const _exDartFib =
@@ -2371,6 +2382,32 @@ const _exDartNullAssert = r'''class Assert {
     return v;
   }
 
+}
+''';
+
+// Wasm `null` (apollovm 2.18.0 / 2.19.0). Wasm has no null value of its own, so
+// the backend represents `null` as the boxed-`Object` pointer 0. That makes it
+// work wherever the value stays boxed: a `var` local, a ternary arm, a
+// `List<Object>` element, `??`, `== null`, and string interpolation.
+//
+// A slot with a concrete Wasm type has no encoding for it — `int x = null` is
+// an i64 — and is reported as a clean unsupported-construct error rather than
+// compiled into a broken module.
+const _exWasmNull = r'''int run(List<Object> args) {
+  print('args: $args');
+
+  // The `null` arm boxes the other arm, so both agree on one type:
+  var first = args.length > 0 ? args[0] : null;
+  print('first: $first');
+
+  // `== null` compares against the null box, not the value's contents:
+  if (first == null) {
+    print('empty: true');
+  } else {
+    print('empty: false');
+  }
+
+  return args.length;
 }
 ''';
 
