@@ -51,7 +51,12 @@ void changeLanguage() async {
   var code = codeTextArea.value;
 
   try {
-    var code2 = await convertCode(currentCodeLanguage, code, codeLanguage);
+    var code2 = await convertCode(
+      currentCodeLanguage,
+      code,
+      codeLanguage,
+      nullSafetyCheck,
+    );
 
     if (code2 != null) {
       setCodeEditorText(code2);
@@ -102,7 +107,7 @@ void downloadWasm() async {
 
   resetVMOutputs();
 
-  var wasm = await compileToWasm(codeLanguage, code);
+  var wasm = await compileToWasm(codeLanguage, code, nullSafetyCheck);
 
   setVMResult('[not executed]');
 
@@ -157,6 +162,7 @@ void runCode() async {
       positionalParametersJson,
       namedParametersJson,
       wasmCompiled,
+      nullSafetyCheck,
     );
 
     setVMResult(result.result);
@@ -187,7 +193,11 @@ void runConvert() async {
   selectConversionOutput().textContent = 'Transpiling…';
 
   try {
-    var results = await convertCodeToAllLanguages(fromLanguage, code);
+    var results = await convertCodeToAllLanguages(
+      fromLanguage,
+      code,
+      nullSafetyCheck,
+    );
     showConversions(fromLanguage, results);
   } catch (e, s) {
     printError('$e');

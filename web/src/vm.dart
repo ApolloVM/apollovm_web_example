@@ -8,13 +8,14 @@ Future<({Object? result, String output, String executedCode})> executeVM(
   String positionalParametersJson,
   String namedParametersJson,
   bool wasmCompiled,
+  bool nullSafetyChecks,
 ) async {
   print('-----------------------------------------------------');
   print('>> Execute VM:');
   print('language: $language');
   print('code: <<<\n$code\n>>>');
 
-  var vm = ApolloVM();
+  var vm = ApolloVM(nullSafetyChecks: nullSafetyChecks);
 
   var codeUnit = SourceCodeUnit(language, code, id: 'web');
 
@@ -23,6 +24,9 @@ Future<({Object? result, String output, String executedCode})> executeVM(
   try {
     loadOK = await vm.loadCodeUnit(codeUnit);
   } catch (e, s) {
+    // A null-safety rejection is already a complete report; wrapping it in
+    // `Can't load source!` would bury the findings.
+    if (e is NullSafetyError) rethrow;
     loadError = e;
     printError('$e');
     printError('$s');
@@ -176,13 +180,14 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 Future<({bool ok, BytesOutput output})> compileToWasm(
   String language,
   String code,
+  bool nullSafetyChecks,
 ) async {
   print('-----------------------------------------------------');
   print('>> Compile to Wasm:');
   print('language: $language');
   print('code: <<<\n$code\n>>>');
 
-  var vm = ApolloVM();
+  var vm = ApolloVM(nullSafetyChecks: nullSafetyChecks);
 
   var codeUnit = SourceCodeUnit(language, code, id: 'web');
 
@@ -191,6 +196,9 @@ Future<({bool ok, BytesOutput output})> compileToWasm(
   try {
     loadOK = await vm.loadCodeUnit(codeUnit);
   } catch (e, s) {
+    // A null-safety rejection is already a complete report; wrapping it in
+    // `Can't load source!` would bury the findings.
+    if (e is NullSafetyError) rethrow;
     loadError = e;
     printError('$e');
     printError('$s');
@@ -215,12 +223,13 @@ Future<String?> convertCode(
   String fromLanguage,
   String code,
   String toLanguage,
+  bool nullSafetyChecks,
 ) async {
   print('Converting from `$fromLanguage` to `$toLanguage`');
 
   print(code);
 
-  var vm = ApolloVM();
+  var vm = ApolloVM(nullSafetyChecks: nullSafetyChecks);
 
   var codeUnit = SourceCodeUnit(fromLanguage, code, id: 'convert');
 
@@ -228,6 +237,7 @@ Future<String?> convertCode(
   try {
     loadOK = await vm.loadCodeUnit(codeUnit);
   } catch (e, s) {
+    if (e is NullSafetyError) rethrow;
     printError('$e');
     printError('$s');
   }
@@ -286,8 +296,9 @@ const conversionLanguages = <String>[
 Future<Map<String, String>> convertCodeToAllLanguages(
   String fromLanguage,
   String code,
+  bool nullSafetyChecks,
 ) async {
-  var vm = ApolloVM();
+  var vm = ApolloVM(nullSafetyChecks: nullSafetyChecks);
 
   Object? loadError;
   var loaded = false;
@@ -296,6 +307,9 @@ Future<Map<String, String>> convertCodeToAllLanguages(
       SourceCodeUnit(fromLanguage, code, id: 'convert'),
     );
   } catch (e, s) {
+    // A null-safety rejection is already a complete report; wrapping it in
+    // `Can't load source!` would bury the findings.
+    if (e is NullSafetyError) rethrow;
     loadError = e;
     printError('$e');
     printError('$s');

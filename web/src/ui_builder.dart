@@ -57,6 +57,9 @@ void buildUI() {
           <label class="tb-check" title="Compile to WebAssembly and run that (alpha)">
             <input type="checkbox" id="wasm-compiled"> Wasm
           </label>
+          <label class="tb-check" title="Reject code with null-safety errors before running it, instead of failing partway through (Dart)">
+            <input type="checkbox" id="null-safety"> Null safety
+          </label>
         </div>
         <label>Class<input id="className" type="text" value="Foo" spellcheck="false"></label>
         <label>Function<input id="functionName" type="text" value="main" spellcheck="false"></label>
