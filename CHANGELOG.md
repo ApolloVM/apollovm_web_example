@@ -1,3 +1,45 @@
+## 1.31.0
+
+### A "Null safety" checkbox in the Run Configuration
+
+apollovm 2.22.0 added an opt-in check that rejects source with null-safety
+**errors** while loading it, and 2.23.0 exposed it to the CLI and MCP. The
+playground can now switch it on too, next to the existing **Wasm** checkbox.
+
+With it ticked, this fails *before* anything runs:
+
+```dart
+class Foo {
+  static void main(int a, int? b) {
+    print(a);
+    print(b);
+    var c = a + b;
+  }
+}
+```
+
+```
+[Null Safety] Can't load `web` (dart): 1 null-safety error(s).
+  - The operand 'b' can be 'null', so it can't be used in an operation
+    unconditionally. Use '??', '!' or a null check.
+```
+
+Unticked (the default), the behaviour is unchanged: it prints `5` and `null`
+first, then fails at the `+` with an `ApolloVMNullPointerException`. That
+contrast is the point of the checkbox — the same program, failing at load rather
+than mid-run.
+
+The setting applies to every action that loads source — **Run**, **Translate to
+all languages** and **Download Wasm** — so a rejected program is rejected
+consistently. It does not affect loading an already-compiled Wasm module, which
+carries no AST to analyze.
+
+A rejection is shown as its own report rather than being wrapped in the generic
+`Can't load source!` message, which would have buried the findings.
+
+All **101** examples were re-verified, and all 101 also load cleanly **with the
+checkbox on** — ticking it never breaks a shipped example.
+
 ## 1.30.0
 
 ### apollovm 2.23.0 (maintenance)

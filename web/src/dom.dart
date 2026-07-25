@@ -46,6 +46,13 @@ HTMLInputElement selectWasmCompiledCheckbox() =>
 
 bool get wasmCompiledCheck => selectWasmCompiledCheckbox().checked;
 
+HTMLInputElement selectNullSafetyCheckbox() =>
+    document.querySelector('#null-safety') as HTMLInputElement;
+
+/// Whether the VM should reject source with null-safety errors while loading it,
+/// instead of failing partway through the run.
+bool get nullSafetyCheck => selectNullSafetyCheckbox().checked;
+
 HTMLTextAreaElement selectCodeTextArea() =>
     document.querySelector('#code') as HTMLTextAreaElement;
 
