@@ -10,6 +10,16 @@ Future<({Object? result, String output, String executedCode})> executeVM(
   bool wasmCompiled,
   bool nullSafetyChecks,
 ) async {
+  // Normalize the entry-point fields the way apollovm 2.23.1 normalizes them
+  // for its CLI/MCP callers: trim both, and treat a blank name as "not
+  // specified" — an empty class means a top-level function, an empty function
+  // means `main`. The runner APIs called below do no trimming of their own, so
+  // a stray space typed (or pasted) into a field would otherwise become part
+  // of the name and only surface as `Can't find class to execute:  Foo `.
+  className = className.trim();
+  functionName = functionName.trim();
+  if (functionName.isEmpty) functionName = 'main';
+
   print('-----------------------------------------------------');
   print('>> Execute VM:');
   print('language: $language');

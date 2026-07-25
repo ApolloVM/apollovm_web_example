@@ -1,3 +1,35 @@
+## 1.32.0
+
+### apollovm 2.23.1: the entry-point fields are trimmed
+
+Updated to `apollovm: ^2.23.1`. Upstream fixes a caller that fills in every
+field rather than omitting the optional ones: `ApolloRuntime.execute` — the CLI
+and MCP entry path — now trims `className`/`function` and reads a blank name as
+"not specified", falling back to the full discovery order (or to `main`). The
+rest of the release is Dart tooling around the LSP fixtures.
+
+**Neither reaches the playground**, which loads and runs source directly. The
+101 shipped examples produce byte-identical results on 2.23.0 and 2.23.1 —
+interpreted runs, Wasm runs, null-safety loads and every translation.
+
+The playground picks up the same normalization for its own fields, though,
+because it calls `ApolloRunner.executeClassMethod`/`executeFunction` rather than
+`ApolloRuntime.execute`, and those do no trimming. A **Class** field holding
+`" Foo "` — easy to end up with after a paste — failed with:
+
+```
+Can't find class to execute:  Foo ->main
+```
+
+**Run** now trims both entry-point fields before resolving the entry point, and
+an empty **Function** field means `main`, matching the CLI's default. A blank
+**Class** field still selects a top-level function, as before, and a class that
+genuinely isn't in the source is still reported as not found.
+
+All **101** examples were re-verified — each interpreted, each of the 28 Wasm
+entries on the Wasm-compiled backend too, all 101 loading clean with the **Null
+safety** checkbox ticked, and all 101 translated to every other language.
+
 ## 1.31.0
 
 ### A "Null safety" checkbox in the Run Configuration
