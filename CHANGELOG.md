@@ -1,3 +1,25 @@
+## 1.28.0
+
+### apollovm 2.21.0: two Translate-panel fixes
+
+Updated to `apollovm: ^2.21.0`. No example changed — this release is two upstream
+fixes reaching the **Translate to all languages** panel, both found while
+documenting the null-safety surface in the ApolloVM README.
+
+- **Kotlin's null-aware index was `xs?[0]`**, which is not valid Kotlin — it has
+  no `?[` operator. The Kotlin tab now shows the call form, `xs?.get(0)`.
+- **Lua's null literal was `null`**, which is not a Lua value. The generated code
+  referenced an undefined global, so `a == null` was *always false* instead of a
+  nil test. The Lua tab now shows `nil`.
+
+Both are visible on the Dart null-safety examples: switch to the Kotlin or Lua
+tab on **Null-aware access (`?.` and `?[]`)** and the output is now code the
+target language actually accepts.
+
+All **101** examples were re-verified — each interpreted, each of the 28 Wasm
+entries on the Wasm-compiled backend too — and all 101 remain clean under the
+analyzer.
+
 ## 1.27.0
 
 ### apollovm 2.20.0: Go finally has nullable types
