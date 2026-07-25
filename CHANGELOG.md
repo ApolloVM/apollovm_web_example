@@ -1,3 +1,38 @@
+## 1.29.0
+
+### apollovm 2.22.0: the Problems panel now checks class methods
+
+Updated to `apollovm: ^2.22.0`. No example changed — this release is an upstream
+fix that changes what the **Problems** panel can see.
+
+The null-safety analyzer walked only top-level functions: `ASTRoot` keeps its
+classes outside `children`, so the traversal never entered a class body (and
+`ASTClass` kept constructors and getters out too). **Every method, constructor
+and getter of every class went unanalyzed.**
+
+Since almost everything in the playground is written as a class, that was most
+of the editor. Typing this into a class method used to produce no diagnostic at
+all:
+
+```dart
+class Foo {
+  static void main(int a, int? b) {
+    var c = a + b;   // 'b' can be 'null' — now reported
+  }
+}
+```
+
+All **101** shipped examples remain analyzer-clean, so the newly-reachable class
+bodies produce no false positives — the panel only lights up on code you write.
+
+Upstream also added an opt-in `ApolloVM(nullSafetyChecks: true)` that rejects a
+null-safety error at *load* time instead of failing partway through a run. The
+playground keeps the default (off), so **Run** still executes and shows the
+runtime error, with the Problems panel flagging the issue as you type.
+
+All 101 examples were re-verified — each interpreted, each of the 28 Wasm entries
+on the Wasm-compiled backend too.
+
 ## 1.28.0
 
 ### apollovm 2.21.0: two Translate-panel fixes
