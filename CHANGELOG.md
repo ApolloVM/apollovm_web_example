@@ -1,3 +1,39 @@
+## 1.27.0
+
+### apollovm 2.20.0: Go finally has nullable types
+
+Updated to `apollovm: ^2.20.0`. No example changed — this release is the
+upstream Go work reaching the playground.
+
+Until now, **Translate to all languages** could not produce usable Go for
+anything nullable. A `String? s = null` came out as `var s string = nil`, which
+is not valid Go, and `??` was reported as unsupported outright — Go simply had
+no representation for nullability.
+
+A nullable `T?` is now generated as a Go pointer `*T`, the one form that can
+hold `nil`. In the Go tab you will now see:
+
+- `int? a` as `a *int`, and a `String? name` field as `name *string`;
+- reads deref — `(*a)` — while `x == null` compares the pointer as `x == nil`;
+- `int? x = 5` as `goPtr(5)`, using a small generated helper, since Go cannot
+  write `&5`;
+- `a ?? b` as `func() int { if a != nil { return *a }; return b }()`, because Go
+  has no conditional expression;
+- `List<int>?` left as `[]int`, since a Go slice is already nilable.
+
+Upstream verifies each of those by compiling the generated source with a real
+Go toolchain rather than matching strings — which is what had let
+`var s string = nil` through.
+
+The **Dart — Null assertion (!)** example is the one that shows this off: its Go
+tab is now a real, compilable program. Two constructs still report UNSUPPORTED
+in the Go tab — `?.` and `??=` — because degrading them would emit code that
+skips a nil check or does not type-check. Plain `??` is unaffected.
+
+All **101** examples were re-verified — each interpreted, each of the 28 Wasm
+entries on the Wasm-compiled backend too — and all 101 remain clean under the
+analyzer.
+
 ## 1.26.0
 
 ### apollovm 2.19.0: `x == null` works, and a new Wasm null example
