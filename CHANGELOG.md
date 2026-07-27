@@ -1,3 +1,54 @@
+## 1.33.0
+
+### apollovm 2.23.3: an unresolved entry point says what the source declares
+
+Updated to `apollovm: ^2.23.3` (2.23.2 was an `apollovm_wasm` release and
+changes nothing here). Upstream, `ApolloRuntime.execute` — the CLI and MCP entry
+path — stopped reporting `Entry function not found` for a call whose arguments
+match no declaration, and lists the declared signatures instead.
+
+**That exact fix doesn't reach the playground**, which resolves its entry point
+through `ApolloRunner.executeFunction`/`executeClassMethod`. Those bind
+permissively rather than matching a signature — extra arguments are dropped and
+missing ones arrive as `null` — so a mismatch here runs, it doesn't fail.
+
+What the playground did share is the unhelpful half of the message. Its three
+unresolved-entry errors each repeated the name that was looked for and nothing
+else:
+
+```
+Bad state: Can't find function to execute> functionName: mian ; language: dart
+Bad state: Can't find class to execute: Bar->main
+ApolloVMRuntimeError: Can't find entry function: mian
+```
+
+**Run** now answers with what the source actually declares:
+
+```
+Entry function `mian` not found in the source. Declared: `int main(int a, String b)`,
+`int Foo.run(int a)`, `String Foo.greet(String n)`.
+Tip: the Function field selects the entry point (blank means `main`), and the
+Class field scopes it to a class method.
+```
+
+A **Class** field naming a class that isn't there lists the classes that are,
+and suggests clearing the field to run a top-level function. Every other error —
+including one thrown by the executed program — surfaces unchanged.
+
+### A non-`static` class entry method now runs
+
+The **Class** field used to require a `static` method: a plain `int run(int a)`
+failed with `Can't call non-static method 'Foo.run' without a class instance`,
+because the playground called `executeClassMethod` without one. It now passes a
+fresh, field-less instance the way `ApolloRuntime` (the CLI/MCP path) does, so
+both forms run — field initializers included. A `static` entry method is
+unaffected by the empty instance.
+
+All **101** shipped examples were re-run through both the old and the new call
+path and produce byte-identical results and output, and all 28 Wasm examples
+still compile to a module. They keep their `static` entry methods; `static` is
+now a convention in the examples rather than a requirement.
+
 ## 1.32.0
 
 ### apollovm 2.23.1: the entry-point fields are trimmed

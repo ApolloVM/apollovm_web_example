@@ -157,21 +157,41 @@ Future<({Object? result, String output, String executedCode})> executeVM(
 
     dartRunner.externalPrintFunction = (o) => output.writeln(o);
 
-    if (className.isNotEmpty) {
-      astValue = await dartRunner.executeClassMethod(
-        '',
+    try {
+      if (className.isNotEmpty) {
+        // `classInstanceFields: {}` provides a fresh, field-less instance, the
+        // way `ApolloRuntime` (the CLI/MCP entry path) does — without it only a
+        // `static` method can run, and a plain `int run(...)` fails with
+        // `Can't call non-static method 'Foo.run' without a class instance`.
+        // A static method is unaffected by the empty instance.
+        astValue = await dartRunner.executeClassMethod(
+          '',
+          className,
+          functionName,
+          positionalParameters: positionalParameters,
+          namedParameters: namedParameters,
+          classInstanceFields: const {},
+        );
+      } else {
+        astValue = await dartRunner.executeFunction(
+          '',
+          functionName,
+          positionalParameters: positionalParameters,
+          namedParameters: namedParameters,
+        );
+      }
+    } catch (e) {
+      // The runner reports an unresolved entry point with the name it looked
+      // for and nothing else. Say what the source actually declares instead —
+      // the same shape apollovm 2.23.3 gives the MCP tools.
+      var detailed = entryPointNotFoundMessage(
+        '$e',
+        codeUnit.root,
         className,
         functionName,
-        positionalParameters: positionalParameters,
-        namedParameters: namedParameters,
       );
-    } else {
-      astValue = await dartRunner.executeFunction(
-        '',
-        functionName,
-        positionalParameters: positionalParameters,
-        namedParameters: namedParameters,
-      );
+      if (detailed != null) throw StateError(detailed);
+      rethrow;
     }
   }
 
@@ -185,6 +205,81 @@ Future<({Object? result, String output, String executedCode})> executeVM(
   print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 
   return (result: result, output: outputStr, executedCode: executedCode);
+}
+
+/// Rewrites an "entry point not resolved" runner error ([error], the caught
+/// error's `toString()`) into a message naming what [root] actually declares.
+/// Returns `null` for any other error, which must surface unchanged.
+///
+/// The runner has three of these, all of which only repeat the name that was
+/// looked for: a missing class (`Can't find class to execute: Bar->main`), a
+/// missing top-level function (`Can't find function to execute> functionName:
+/// nope`) and a missing method in a class that does exist (`Can't find entry
+/// function: nope`). The last one is raised by the entry-point call itself, not
+/// by a call inside the program, so matching it here cannot swallow a genuine
+/// runtime error from the executed code.
+String? entryPointNotFoundMessage(
+  String error,
+  ASTRoot? root,
+  String className,
+  String functionName,
+) {
+  if (root == null) return null;
+
+  var missingClass = error.contains("Can't find class to execute");
+  var missingFunction =
+      error.contains("Can't find function to execute") ||
+      (className.isNotEmpty &&
+          error.contains("Can't find entry function: $functionName"));
+
+  if (!missingClass && !missingFunction) return null;
+
+  var entryPoints = declaredEntryPoints(root);
+  var declared = entryPoints.isEmpty
+      ? 'The source declares no functions.'
+      : 'Declared: ${entryPoints.map((e) => '`$e`').join(', ')}.';
+
+  if (missingClass) {
+    var classes = root.classesNames;
+    var known = classes.isEmpty
+        ? 'The source declares no classes.'
+        : 'Declared classes: ${classes.map((c) => '`$c`').join(', ')}.';
+    return 'Entry class `$className` not found in the source. $known\n'
+        '$declared\n'
+        'Tip: clear the Class field to run a top-level `$functionName(…)`.';
+  }
+
+  var scope = className.isNotEmpty
+      ? 'Entry method `$className.$functionName`'
+      : 'Entry function `$functionName`';
+
+  return '$scope not found in the source. $declared\n'
+      'Tip: the Function field selects the entry point (blank means `main`), '
+      'and the Class field scopes it to a class method.';
+}
+
+/// Every callable [root] declares, as `Ret name(T a)` signatures — top-level
+/// functions first, then class methods qualified with their class.
+List<String> declaredEntryPoints(ASTRoot root) => [
+  for (var set in root.functions)
+    for (var f in set.functions) _entrySignature(f),
+  for (var clazz in root.classes)
+    for (var set in clazz.functions)
+      for (var f in set.functions) _entrySignature(f, className: clazz.name),
+];
+
+/// Formats a declaration as `Ret name(T1 a, T2 b)`, qualified with [className]
+/// when it is a class method.
+String _entrySignature(ASTInvocableDeclaration f, {String? className}) {
+  var params = [
+    for (var p in f.parameters.allParameters) '${p.type.name} ${p.name}',
+  ].join(', ');
+
+  var name = className != null ? '$className.${f.name}' : f.name;
+  var returnType = f.returnType.name;
+  var prefix = returnType.isEmpty ? '' : '$returnType ';
+
+  return '$prefix$name($params)';
 }
 
 Future<({bool ok, BytesOutput output})> compileToWasm(

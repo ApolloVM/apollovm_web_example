@@ -48,11 +48,15 @@ final initialNamedParameters = '';
 /// multi-arg entry point uses `'"Sums:", 10, 20, 30'`.
 ///
 /// ApolloVM 0.1.42 made the entry-point convention stricter: only a `static`
-/// class method (or a top-level function) can run without a class instance.
-/// So Dart/Java/C# examples mark the entry method `static` and keep
-/// `className: 'Foo'`, while Kotlin/JavaScript/TypeScript/Lua/Python — which
-/// have no static-class-method form the parser accepts — use a top-level
+/// class method (or a top-level function) runs without a class instance. The
+/// examples still follow it — Dart/Java/C# mark the entry method `static` and
+/// keep `className: 'Foo'`, while Kotlin/JavaScript/TypeScript/Lua/Python —
+/// which have no static-class-method form the parser accepts — use a top-level
 /// `main(...)` function instead (`className: ''`).
+///
+/// Since 1.33.0 the playground supplies a fresh instance when running a class
+/// method (as the CLI/MCP do), so a non-`static` entry method typed into the
+/// editor runs too; `static` is a convention here, no longer a requirement.
 class CodeExample {
   final String name;
   final String language;
