@@ -1,3 +1,77 @@
+## 1.34.0
+
+### apollovm 2.24.0: the null-aware examples now translate to working code
+
+Updated to `apollovm: ^2.24.0`. Upstream, `a?.b` stopped being emitted as a
+plain `a.b` on the targets with no null-aware operator — the null check used to
+be dropped, so the translated code threw on exactly the input `?.` exists to
+handle.
+
+**This one lands squarely in the playground**, because two shipped examples
+exist to demonstrate that operator. Loading **Dart — Null-aware access (?. and
+?[])** and translating to Java produced code that could not run:
+
+```java
+// before
+var first = values[0];
+var missingLen = missing.length;
+```
+
+`missing` is `null` two lines earlier in that example — reading `.length` off it
+is a `NullPointerException`, and `values[0]` the same whenever the argument is
+null. It now translates to a guard:
+
+```java
+// now
+var first = (values != null ? values[0] : null);
+var missingLen = (missing != null ? missing.length : null);
+```
+
+Python guards with `is not None`, and Lua with an immediately-invoked `nil`
+test. C# and JavaScript turned out to have had the operator all along (C# 6,
+ES2020) and simply never declared it, so they now emit `values?[0]` and
+`values?.[0]` natively rather than dropping the check.
+
+Go still reports the construct as unsupported — it represents a nullable `T?` as
+`*T`, so a degraded access would skip the nil check *and* yield the wrong type —
+but the message now names the fix.
+
+### What else changed, and what didn't
+
+Python's null comparison is now the identity test it should always have been,
+which shows up in **Wasm — Null value (ternary and == null)**:
+
+```python
+if first == None:   # before
+if first is None:   # now
+```
+
+`==` dispatches through `__eq__`, which a class can redefine to return `True`
+for `None`. The Python grammar learned to read `is None` / `is not None` back,
+so a translation the playground produces can be pasted straight into its own
+editor as Python and re-run — which was not true of `is None` before.
+
+The rest of the release is an AST refactor (`??`, `&&`, `||` and `x == null`
+became nodes of their own instead of operators special-cased inside the generic
+binary-operation node). That is internal and reaches nothing here.
+
+Measured across the shipped corpus, translating all **101** examples into all
+**9** target languages — 909 pairs — **13 changed**, and every one is a
+null-safety example:
+
+```
+Dart — Null-aware access (?. and ?[])   java11, python, lua, csharp, javascript, go
+Dart — Access chains (a.b.c and a.b?.c) java11, python, lua, csharp, javascript
+Dart — Null assertion (!)               csharp
+Wasm — Null value (ternary and == null) python
+```
+
+All **101** examples were also re-run interpreted on 2.23.3 and 2.24.0 and
+produce **byte-identical** results and output, and all **28** Wasm examples
+compile to **byte-identical** modules. The upstream `run` paths for `??`, `&&`
+and `||` moved to new AST nodes in this release, so that was worth confirming
+rather than assuming.
+
 ## 1.33.0
 
 ### apollovm 2.23.3: an unresolved entry point says what the source declares
