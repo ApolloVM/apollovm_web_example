@@ -51,6 +51,31 @@ for `None`. The Python grammar learned to read `is None` / `is not None` back,
 so a translation the playground produces can be pasted straight into its own
 editor as Python and re-run — which was not true of `is None` before.
 
+### New example: Python — Null check (is None)
+
+Reading that form is new *input* capability, and nothing shipped exercised it —
+until now every null-safety example was written in Dart, because Dart was the
+only grammar that parsed any of it. **Python — Null check (is None)** is the
+first null-safety example authored in another language, and it translates out to
+Dart, Kotlin, JS, TS, Go and Lua, each in its own spelling:
+
+```python
+if value is None:        # Python (source)
+if (value == null) {     # Dart, Kotlin
+if (value === null) {    # JavaScript, TypeScript
+if value == nil {        # Go, Lua
+```
+
+Java and C# reject it, for the same reason they reject every other Python
+example here: both require functions to live in a class, and Python's are
+top-level. That is unchanged by this release.
+
+General `a is b` is still not parsed — it is identity, and reading it as `==`
+would silently turn it into equality.
+
+The example count goes from 101 to **102**; the existing 101 are byte-identical
+with and without the addition.
+
 The rest of the release is an AST refactor (`??`, `&&`, `||` and `x == null`
 became nodes of their own instead of operators special-cased inside the generic
 binary-operation node). That is internal and reaches nothing here.

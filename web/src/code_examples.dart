@@ -638,6 +638,19 @@ const codeExamples = <CodeExample>[
     'run',
     '',
   ),
+  // Python's identity check against None (apollovm 2.24.0). This is the one
+  // null-safety form written in a language other than Dart: the Python grammar
+  // reads `is None` / `is not None`, so a null check can be authored in Python
+  // here and translated out. General `a is b` is still identity-only in Python
+  // and is not parsed.
+  CodeExample(
+    'Python — Null check (is None)',
+    'python',
+    _exPythonIsNone,
+    '',
+    'main',
+    '"hello"',
+  ),
   // Wasm-compatible examples (apollovm Wasm backend, alpha). Each is a Dart
   // top-level function (or a single class instantiated from one) that compiles
   // to and runs on Wasm; loading one enables the "Wasm compiled" run mode.
@@ -1497,6 +1510,30 @@ const _exPythonMatch = r'''def main(n):
             print("two")
         case _:
             print("many")
+''';
+
+// Python null check (apollovm 2.24.0): `is None` / `is not None`. Python
+// compares against None by identity rather than `==`, because `==` dispatches
+// through `__eq__`, which a class can redefine to return True for None.
+// Translate this to see each target's own spelling: `== null` in Dart/Kotlin,
+// `=== null` in JS/TS, `== nil` in Go/Lua. (Java and C# reject it for the same
+// reason as every other Python example here — both require functions to live in
+// a class, and this one is top-level.)
+const _exPythonIsNone = r'''def describe(label, value):
+    if value is None:
+        print(label + ': missing')
+        return 0
+    if value is not None:
+        print(label + ': ' + value)
+        return 1
+    return -1
+
+
+def main(value):
+    missing = describe('a', None)
+    present = describe('b', value)
+    print(f'found: {present} of 2')
+    return missing + present
 ''';
 
 const _exCsSwitch = r'''class Foo {
