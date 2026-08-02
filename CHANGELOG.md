@@ -1,10 +1,12 @@
 ## 1.35.0
 
-### apollovm 2.25.0 (maintenance): `?.` on a boxed Wasm slot
+### apollovm 2.25.1 (maintenance): `?.` on a boxed Wasm slot
 
-Updated to `apollovm: ^2.25.0`. **No example changed, and nothing changes in the
-playground today** — 2.25.0 is a Wasm-backend fix, and it lands in a corner none
-of the shipped examples reach.
+Updated to `apollovm: ^2.25.1`. **No example changed, and nothing changes in the
+playground today** — 2.25.0 is a Wasm-backend fix that lands in a corner none of
+the shipped examples reach, and 2.25.1 carries an `apollovm_wasm` release the
+playground does not use at all (it is the *native* Wasm engine; a browser
+already has one, so this app never depends on it).
 
 It came out of ticking the **Wasm** checkbox on **Dart — Null-aware access (?.
 and ?[])**, which is an interpreted-only example (`wasm: false`). That reports:
@@ -36,7 +38,7 @@ example — which is fine: the example targets the interpreter, and weakening
 `missing?.length` on a genuinely-null receiver to suit a backend it does not
 target would cost more than it gains.
 
-All **102** examples were re-verified against the published 2.25.0 — each
+All **102** examples were re-verified against the published 2.25.1 — each
 interpreted, producing **byte-identical** results and output to 1.34.0, and all
 **28** Wasm entries compiling to **byte-identical** modules.
 

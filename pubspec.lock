@@ -21,10 +21,10 @@ packages:
     dependency: "direct main"
     description:
       name: apollovm
-      sha256: d4fc274a2cd62f9e467ab5c14266dfb1e92dcbac1d41ea91a987c6394e476437
+      sha256: "4adf07123f475d48500b55535cdf4ef04df87bb53881b2080f80ec272523c9da"
       url: "https://pub.dev"
     source: hosted
-    version: "2.25.0"
+    version: "2.25.1"
   archive:
     dependency: transitive
     description:
