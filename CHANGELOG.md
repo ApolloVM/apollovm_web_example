@@ -1,3 +1,47 @@
+## 1.35.0
+
+### apollovm 2.25.1 (maintenance): `?.` on a boxed Wasm slot
+
+Updated to `apollovm: ^2.25.1`. **No example changed, and nothing changes in the
+playground today** — 2.25.0 is a Wasm-backend fix that lands in a corner none of
+the shipped examples reach, and 2.25.1 carries an `apollovm_wasm` release the
+playground does not use at all (it is the *native* Wasm engine; a browser
+already has one, so this app never depends on it).
+
+It came out of ticking the **Wasm** checkbox on **Dart — Null-aware access (?.
+and ?[])**, which is an interpreted-only example (`wasm: false`). That reports:
+
+```
+Wasm has no null value for `String`: can't compile `String missing = null`.
+... declare the variable as `var` / `Object?` / `dynamic`, or give it a
+non-null initial value.
+```
+
+That refusal is by design — a concrete Wasm slot has no encoding for `null`, so
+it errors rather than emitting a module that fails validation — and it behaves
+the same on 2.24.0. What 2.25.0 fixes is that *following the advice* used to hit
+a second wall: `var missing = null; missing?.length` was an
+`UnimplementedError`. Getters (`.length` / `.isEmpty` / `.isNotEmpty`) on a
+boxed slot now compile and short-circuit properly.
+
+**The example still does not compile to Wasm**, and it is worth being precise
+about why. With `var`, it now gets one step further and stops on the *method*:
+
+```
+UnimplementedError: Wasm method `.toUpperCase` on Null is not supported yet.
+```
+
+Methods on a boxed slot are a separate path from getters and are still
+unimplemented, and the example's `String? missing = null` is a concrete slot
+either way. So this is progress on the underlying gap, not a fix for the
+example — which is fine: the example targets the interpreter, and weakening
+`missing?.length` on a genuinely-null receiver to suit a backend it does not
+target would cost more than it gains.
+
+All **102** examples were re-verified against the published 2.25.1 — each
+interpreted, producing **byte-identical** results and output to 1.34.0, and all
+**28** Wasm entries compiling to **byte-identical** modules.
+
 ## 1.34.0
 
 ### apollovm 2.24.0: the null-aware examples now translate to working code
