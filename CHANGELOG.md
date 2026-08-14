@@ -1,3 +1,105 @@
+## 1.36.0
+
+### apollovm 2.27.0: setters, and syntax the editor used to reject
+
+Updated to `apollovm: ^2.27.0`, which lands two releases at once — 2.26.0
+(unbraced control-flow bodies plus a batch of Dart syntax gaps) and 2.27.0
+(setters). 1.35.0 tracked 2.25.1 but was never released, so this supersedes it;
+its notes are kept below.
+
+**New example: "Dart — Class setters (celsius / fahrenheit)".** Setters did not
+parse at all before 2.27.0, so this is the first time the playground can show
+one. It sits next to the existing *Class getters* example and uses a
+getter/setter pair over one backing field, which is the part worth seeing:
+writing either property runs its setter and updates the same state, and reading
+the other recomputes from it.
+
+```dart
+t.celsius = 100;      // -> 100.0C = 212.0F
+t.fahrenheit = 32;    // -> 32.0F = 0.0C
+```
+
+Both accessor body forms are covered (a block and an `=> …` expression), and the
+example round-trips: translating it back to Dart keeps both accessors and the
+regenerated source still runs. Setters are Dart-only on the generator side —
+picking another target in the **Translate** panel now reports
+`Language 'X' has no setter declaration` instead of silently dropping the
+accessor and emitting a body that references a property no longer there.
+
+That silent drop was real and hit *getters* too, so it also fixes the existing
+**Dart — Class getters** example: translating it to Python, Go or Lua used to
+emit a class with the getter gone and `r.area` still referenced — broken output
+that looked fine. Those three now refuse, the same way Java/C#/JS/TS already
+did. (The **Extension getter** example was never affected: all four targets
+refuse an `extension` outright, and always have.)
+
+**No example changed for 2.26.0, but the editor got more forgiving.** Code typed
+into the playground can now use syntax that previously failed to parse:
+
+```dart
+for (var e in list) print('- $e');   // unbraced control-flow bodies
+if (a) print('x'); else print('y');
+assert(n >= 0, 'must be non-negative');
+Point({required this.x, required this.y});
+late int n = compute();
+const p = const Point(1, 2);
+@override int value() { … }          // annotations, parsed and discarded
+'''Hello $name'''                    // interpolation in triple-quoted strings
+```
+
+Python gained the inline suite (`if x: return 1`, `def f(): pass`). None of the
+shipped examples used any of it — they were all written to what the parser
+accepted — so nothing in the selector changes. The difference shows up when you
+*type* into the editor, which is what the playground is for.
+
+The examples were re-run against 2.27.0 and behave as before.
+
+## 1.35.0
+
+*Superseded by 1.36.0 — this version was prepared but never released.*
+
+### apollovm 2.25.1 (maintenance): `?.` on a boxed Wasm slot
+
+Updated to `apollovm: ^2.25.1`. **No example changed, and nothing changes in the
+playground today** — 2.25.0 is a Wasm-backend fix that lands in a corner none of
+the shipped examples reach, and 2.25.1 carries an `apollovm_wasm` release the
+playground does not use at all (it is the *native* Wasm engine; a browser
+already has one, so this app never depends on it).
+
+It came out of ticking the **Wasm** checkbox on **Dart — Null-aware access (?.
+and ?[])**, which is an interpreted-only example (`wasm: false`). That reports:
+
+```
+Wasm has no null value for `String`: can't compile `String missing = null`.
+... declare the variable as `var` / `Object?` / `dynamic`, or give it a
+non-null initial value.
+```
+
+That refusal is by design — a concrete Wasm slot has no encoding for `null`, so
+it errors rather than emitting a module that fails validation — and it behaves
+the same on 2.24.0. What 2.25.0 fixes is that *following the advice* used to hit
+a second wall: `var missing = null; missing?.length` was an
+`UnimplementedError`. Getters (`.length` / `.isEmpty` / `.isNotEmpty`) on a
+boxed slot now compile and short-circuit properly.
+
+**The example still does not compile to Wasm**, and it is worth being precise
+about why. With `var`, it now gets one step further and stops on the *method*:
+
+```
+UnimplementedError: Wasm method `.toUpperCase` on Null is not supported yet.
+```
+
+Methods on a boxed slot are a separate path from getters and are still
+unimplemented, and the example's `String? missing = null` is a concrete slot
+either way. So this is progress on the underlying gap, not a fix for the
+example — which is fine: the example targets the interpreter, and weakening
+`missing?.length` on a genuinely-null receiver to suit a backend it does not
+target would cost more than it gains.
+
+All **102** examples were re-verified against the published 2.25.1 — each
+interpreted, producing **byte-identical** results and output to 1.34.0, and all
+**28** Wasm entries compiling to **byte-identical** modules.
+
 ## 1.34.0
 
 ### apollovm 2.24.0: the null-aware examples now translate to working code

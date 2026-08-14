@@ -549,6 +549,14 @@ const codeExamples = <CodeExample>[
     '3, 4',
   ),
   CodeExample(
+    'Dart — Class setters (celsius / fahrenheit)',
+    'dart',
+    _exDartClassSetter,
+    'Foo',
+    'main',
+    '100, 32',
+  ),
+  CodeExample(
     'Kotlin — Extension function & property',
     'kotlin',
     _exKotlinExtension,
@@ -1935,6 +1943,41 @@ class Foo {
     var r = Rect(w, h);
     print('area: ${r.area}');
     print('perimeter: ${r.perimeter}');
+  }
+}
+''';
+
+// Setters landed in apollovm 2.27.0. A getter/setter pair over one backing
+// field is the clearest demo: writing either property updates the same state,
+// and reading the other recomputes from it. Both accessor body forms are shown
+// (a block and an `=> ...` expression).
+const _exDartClassSetter = r'''class Temperature {
+  double _celsius = 0;
+
+  double get celsius {
+    return this._celsius;
+  }
+
+  set celsius(double v) {
+    this._celsius = v;
+  }
+
+  double get fahrenheit => this._celsius * 9 / 5 + 32;
+
+  set fahrenheit(double v) => this._celsius = (v - 32) * 5 / 9;
+}
+
+class Foo {
+  static void main(double c, double f) {
+    var t = Temperature();
+
+    t.celsius = c;
+    print('${t.celsius}C = ${t.fahrenheit}F');
+
+    // Writing the computed property runs its setter, which updates the same
+    // backing field the other property reads.
+    t.fahrenheit = f;
+    print('${t.fahrenheit}F = ${t.celsius}C');
   }
 }
 ''';
