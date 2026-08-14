@@ -1,4 +1,62 @@
+## 1.36.0
+
+### apollovm 2.27.0: setters, and syntax the editor used to reject
+
+Updated to `apollovm: ^2.27.0`, which lands two releases at once — 2.26.0
+(unbraced control-flow bodies plus a batch of Dart syntax gaps) and 2.27.0
+(setters). 1.35.0 tracked 2.25.1 but was never released, so this supersedes it;
+its notes are kept below.
+
+**New example: "Dart — Class setters (celsius / fahrenheit)".** Setters did not
+parse at all before 2.27.0, so this is the first time the playground can show
+one. It sits next to the existing *Class getters* example and uses a
+getter/setter pair over one backing field, which is the part worth seeing:
+writing either property runs its setter and updates the same state, and reading
+the other recomputes from it.
+
+```dart
+t.celsius = 100;      // -> 100.0C = 212.0F
+t.fahrenheit = 32;    // -> 32.0F = 0.0C
+```
+
+Both accessor body forms are covered (a block and an `=> …` expression), and the
+example round-trips: translating it back to Dart keeps both accessors and the
+regenerated source still runs. Setters are Dart-only on the generator side —
+picking another target in the **Translate** panel now reports
+`Language 'X' has no setter declaration` instead of silently dropping the
+accessor and emitting a body that references a property no longer there.
+
+That silent drop was real and hit *getters* too, so it also fixes the existing
+**Dart — Class getters** example: translating it to Python, Go or Lua used to
+emit a class with the getter gone and `r.area` still referenced — broken output
+that looked fine. Those three now refuse, the same way Java/C#/JS/TS already
+did. (The **Extension getter** example was never affected: all four targets
+refuse an `extension` outright, and always have.)
+
+**No example changed for 2.26.0, but the editor got more forgiving.** Code typed
+into the playground can now use syntax that previously failed to parse:
+
+```dart
+for (var e in list) print('- $e');   // unbraced control-flow bodies
+if (a) print('x'); else print('y');
+assert(n >= 0, 'must be non-negative');
+Point({required this.x, required this.y});
+late int n = compute();
+const p = const Point(1, 2);
+@override int value() { … }          // annotations, parsed and discarded
+'''Hello $name'''                    // interpolation in triple-quoted strings
+```
+
+Python gained the inline suite (`if x: return 1`, `def f(): pass`). None of the
+shipped examples used any of it — they were all written to what the parser
+accepted — so nothing in the selector changes. The difference shows up when you
+*type* into the editor, which is what the playground is for.
+
+The examples were re-run against 2.27.0 and behave as before.
+
 ## 1.35.0
+
+*Superseded by 1.36.0 — this version was prepared but never released.*
 
 ### apollovm 2.25.1 (maintenance): `?.` on a boxed Wasm slot
 
