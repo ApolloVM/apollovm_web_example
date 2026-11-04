@@ -938,8 +938,7 @@ const codeExamples = <CodeExample>[
     '"apple", "banana"',
     wasm: true,
   ),
-  // Wasm null safety (apollovm 2.16.0): the null-safety syntax lowered into the
-  // backend's non-null numeric domain.
+  // Wasm null safety (apollovm 2.16.0; real nullable values since 2.35.0).
   CodeExample(
     'Wasm — Null safety (! and ??)',
     'dart',
@@ -2546,13 +2545,13 @@ const _exDartNullAssert = r'''class Assert {
 ''';
 
 // Wasm `null` (apollovm 2.18.0 / 2.19.0). Wasm has no null value of its own, so
-// the backend represents `null` as the boxed-`Object` pointer 0. That makes it
-// work wherever the value stays boxed: a `var` local, a ternary arm, a
-// `List<Object>` element, `??`, `== null`, and string interpolation.
+// the backend represents `null` as the pointer 0: here, a boxed `Object` in a
+// `var` local, a ternary arm and a `List<Object>` element, tested by `== null`
+// and printed by string interpolation.
 //
-// A slot with a concrete Wasm type has no encoding for it — `int x = null` is
-// an i64 — and is reported as a clean unsupported-construct error rather than
-// compiled into a broken module.
+// Since apollovm 2.35.0 every nullable slot works the same way: an `int?` is
+// boxed, a `String?` or `Node?` is a pointer. Only a non-nullable slot
+// (`int x = null`) is refused, with a clean unsupported-construct error.
 const _exWasmNull = r'''int run(List<Object> args) {
   print('args: $args');
 
@@ -2620,12 +2619,11 @@ class Chain {
 }
 ''';
 
-// Wasm null-safety (apollovm 2.16.0). Wasm has no null value, so the backend
-// lowers the syntax into its non-null numeric domain: `x!` compiles to `x`,
-// `a ?? b` to its left operand, and a nullable `T?` to the underlying numeric
-// type. Both backends therefore run this source and agree. A `null` *literal*
-// stays an explicit unsupported-construct error rather than a miscompilation,
-// so this example uses nullable types without ever assigning null.
+// Wasm null-safety (apollovm 2.16.0). Since apollovm 2.35.0 an `int?` is a
+// real nullable value in Wasm too (boxed, with 0 as `null`): `x!` unboxes it
+// and throws on `null`, and `a ?? b` falls back to `b` only when `a` is null.
+// The Dart examples "Null safety", "Null-aware access" and "Null assertion"
+// also run on Wasm, with `null` values.
 const _exWasmNullSafety = r'''int run(int a, int b) {
   int? x = a;
   int? y = b;
