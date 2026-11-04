@@ -142,10 +142,11 @@ Future<({Object? result, String output, String executedCode})> executeVM(
       if (e.message.contains('find function')) {
         throw StateError(
           "Wasm entry point `$entryPoint` not found in the compiled module.\n"
-          "ApolloVM's Wasm backend (alpha) currently compiles only top-level "
-          "functions, so class methods like `$entryPoint` may not be compiled "
-          "to Wasm yet.\nTip: use a top-level `$functionName(...)` function "
-          "(clear the class field), or run in interpreted mode.",
+          "A compiled module exports top-level functions and `static` class "
+          "methods; an instance method can't be an entry point, since it "
+          "needs an instance.\nTip: make `$entryPoint` `static`, use a "
+          "top-level `$functionName(...)` function (clear the class field), "
+          "or run in interpreted mode.",
         );
       }
       rethrow;

@@ -1,3 +1,37 @@
+## 1.38.0
+
+### apollovm 2.35.0: every Dart example runs on Wasm
+
+Updated to `apollovm: ^2.35.0`. With **Wasm compiled** checked, the ten Dart
+examples that failed to compile now run:
+
+- Null safety (`??` and `??=`)
+- Null-aware access (`?.` and `?[]`)
+- Null assertion (`!`)
+- Access chains (`a.b.c` and `a.b?.c`)
+- Async/await (Future)
+- Top-level variables
+- Class setters
+- Extension methods (on `int`)
+- Extension getter (on a class)
+- Records
+
+Before, the three null examples didn't compile. The probes behind this release
+also found that a `null` `String?` came back as `""` and `s?.length` on `null`
+as `0`. Both now give `null`, as in the interpreter.
+
+A few outputs still differ between the two modes. In each case Wasm matches
+native Dart, and the interpreter running as JavaScript differs:
+
+- `~12` prints `-13` on Wasm.
+- Whole doubles print as `100.0` on Wasm (Class setters).
+- The division-by-zero message differs (Exceptions, and "Wasm — Integer
+  division").
+
+The comments on the two Wasm null examples are updated for the new
+representation. The "entry point not found" error no longer says that only
+top-level functions compile, since `static` methods have compiled for a while.
+
 ## 1.37.0
 
 ### apollovm 2.34.0: records and top-level variables
