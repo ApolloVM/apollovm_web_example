@@ -556,6 +556,25 @@ const codeExamples = <CodeExample>[
     'main',
     '100, 32',
   ),
+  // Records (apollovm 2.34.0): Dart-only, so translating to another language
+  // reports that the target has no record type.
+  CodeExample(
+    'Dart — Records (min/max, named fields)',
+    'dart',
+    _exDartRecords,
+    'Foo',
+    'main',
+    '10, 2',
+  ),
+  // Top-level variables resolve lexically (apollovm 2.34.0).
+  CodeExample(
+    'Dart — Top-level variables (lexical scope)',
+    'dart',
+    _exDartTopLevelVariables,
+    'Foo',
+    'main',
+    '3',
+  ),
   CodeExample(
     'Kotlin — Extension function & property',
     'kotlin',
@@ -1978,6 +1997,63 @@ class Foo {
     // backing field the other property reads.
     t.fahrenheit = f;
     print('${t.fahrenheit}F = ${t.celsius}C');
+  }
+}
+''';
+
+const _exDartRecords = r'''(int, int) minMax(List<int> values) {
+  var min = values[0];
+  var max = values[0];
+  for (var v in values) {
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+  return (min, max);
+}
+
+({String name, int age}) person(String name, int age) {
+  return (name: name, age: age);
+}
+
+class Foo {
+  static void main(int a, int b) {
+    // A record bundles values without declaring a class:
+    var range = minMax([a, b, 7, -3, 12]);
+    print('min: ${range.$1} ; max: ${range.$2}');
+
+    var p = person('Ada', 36);
+    print('${p.name} is ${p.age}');
+    print('record: $p');
+
+    // Records compare by value, so equal records are one set element:
+    print((1, x: 2) == (1, x: 2));
+    var pairs = {(a, b), (a, b), (b, a)};
+    print('distinct pairs: ${pairs.length}');
+  }
+}
+''';
+
+const _exDartTopLevelVariables = r'''int counter = 0;
+final List<String> log = [];
+
+int next(String who) {
+  counter++;
+  log.add('$who#$counter');
+  return counter;
+}
+
+class Foo {
+  static void main(int times) {
+    // A local named `counter` doesn't hide the top-level one from `next`:
+    // a function sees the scope it's declared in, not its caller's.
+    var counter = 1000;
+    for (var i = 0; i < times; i++) {
+      next('loop');
+    }
+    var last = next('last');
+    print('local counter: $counter');
+    print('calls: $last');
+    print('log: $log');
   }
 }
 ''';

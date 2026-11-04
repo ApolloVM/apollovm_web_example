@@ -1,3 +1,52 @@
+## 1.37.0
+
+### apollovm 2.34.0: records and top-level variables
+
+Updated to `apollovm: ^2.34.0`, which needs Dart 3.13 (the SDK floor moves
+with it).
+
+**New example: "Dart — Records (min/max, named fields)".** Records did not
+parse before 2.34.0. The example returns a positional record from one function
+and a named one from another, then reads the fields back:
+
+```dart
+var range = minMax([a, b, 7, -3, 12]);
+print('min: ${range.$1} ; max: ${range.$2}');  // min: -3 ; max: 12
+print('record: $p');                           // record: (age: 36, name: Ada)
+```
+
+Records compare by value, so `(1, x: 2) == (1, x: 2)` is `true` and equal
+records collapse to one set element. They are Dart-only: picking another
+language in the **Translate** panel reports that the target has no record type,
+instead of emitting a tuple or list with different equality.
+
+**New example: "Dart — Top-level variables (lexical scope)".** A top-level
+`counter` and `log` updated from a top-level function that the entry point
+calls in a loop. The entry point also declares a local named `counter`, which
+no longer leaks into the function: before 2.34.0 a call saw its caller's
+locals, so `next()` would have incremented the local `1000` instead.
+
+```
+local counter: 1000
+calls: 4
+log: [loop#1, loop#2, loop#3, last#4]
+```
+
+This one translates to every language with top-level variables (Kotlin, Go,
+JavaScript, TypeScript, Lua, Python). The Python output declares `global`,
+which Python requires.
+
+**The editor accepts more Dart:**
+
+```dart
+(int, String) pair() => (1, 'a');      // records and record types
+var p = pairs[i].$2;                   // a field read after an index access
+var n = f([a, 2]);                     // no longer fails when `a` is untyped
+```
+
+A top-level variable can also be read from a class-method entry point (the
+**Class** field set). Before, that failed with `Can't find variable`.
+
 ## 1.36.0
 
 ### apollovm 2.27.0: setters, and syntax the editor used to reject
