@@ -575,6 +575,17 @@ const codeExamples = <CodeExample>[
     'main',
     '3',
   ),
+  // User operators and mixins (apollovm 2.36.0), run interpreted or with
+  // "Wasm compiled". Only Dart output keeps user operators; the other targets
+  // refuse them.
+  CodeExample(
+    'Dart — Operators & mixins (Vector)',
+    'dart',
+    _exDartOperatorsMixins,
+    'Foo',
+    'main',
+    '3, 4',
+  ),
   CodeExample(
     'Kotlin — Extension function & property',
     'kotlin',
@@ -2053,6 +2064,41 @@ class Foo {
     print('local counter: $counter');
     print('calls: $last');
     print('log: $log');
+  }
+}
+''';
+
+const _exDartOperatorsMixins = r'''mixin Describe {
+  String describe() => 'a 2D vector';
+}
+
+class V with Describe {
+  int x;
+  int y;
+  V(this.x, this.y);
+
+  V operator +(V o) => V(x + o.x, y + o.y);
+  V operator -(V o) => V(x - o.x, y - o.y);
+  V operator *(int k) => V(x * k, y * k);
+  bool operator <(V o) => x * x + y * y < o.x * o.x + o.y * o.y;
+
+  String toString() => '($x, $y)';
+}
+
+class Foo {
+  static void main(int a, int b) {
+    var p = V(a, b);
+    var q = V(1, 2);
+
+    // User operators dispatch on the left operand's class:
+    print('p + q = ${p + q}');
+    print('p - q = ${p - q}');
+    print('q * 3 = ${q * 3}');
+    print('q < p: ${q < p}');
+    print('(p + q * 2).x = ${(p + q * 2).x}');
+
+    // `describe()` comes from the mixin:
+    print('p is ${p.describe()}');
   }
 }
 ''';
