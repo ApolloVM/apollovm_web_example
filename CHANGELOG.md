@@ -1,3 +1,25 @@
+## 1.39.0
+
+### apollovm 2.36.0: user operators and mixins
+
+Updated to `apollovm: ^2.36.0`, which adds labeled loops, collection
+`if` / `for` / spread, user operators, generic functions, `static` and
+top-level getters, mixins and member chains to the Dart grammar, and compiles
+more of it to Wasm.
+
+**New example: "Dart — Operators & mixins (Vector)".** A `V` class overloads
+`+`, `-`, `*` and `<` and takes a `describe()` method from a mixin. It prints
+the same output interpreted and with **Wasm compiled** checked:
+
+```dart
+print('p + q = ${p + q}');                 // p + q = (4, 6)
+print('(p + q * 2).x = ${(p + q * 2).x}'); // (p + q * 2).x = 5
+print('p is ${p.describe()}');             // p is a 2D vector
+```
+
+In the browser the interpreter now prints a whole `double` as `100.0`, as Wasm
+does, so "Class setters" gives the same output in both modes.
+
 ## 1.38.0
 
 ### apollovm 2.35.0: every Dart example runs on Wasm
