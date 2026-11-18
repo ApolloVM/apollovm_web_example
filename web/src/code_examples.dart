@@ -586,6 +586,18 @@ const codeExamples = <CodeExample>[
     'main',
     '3, 4',
   ),
+  // An initializing formal (`User(this.email)`) and bare field reads in
+  // methods (apollovm 2.36.1): translated, the constructor assigns the field
+  // (`this.email = email`, `self.email = email`) and JS/TS/Python read it
+  // through the receiver.
+  CodeExample(
+    'Dart — Initializing formals (User)',
+    'dart',
+    _exDartInitializingFormals,
+    'Foo',
+    'main',
+    '"foo@mail.com"',
+  ),
   CodeExample(
     'Kotlin — Extension function & property',
     'kotlin',
@@ -2099,6 +2111,31 @@ class Foo {
 
     // `describe()` comes from the mixin:
     print('p is ${p.describe()}');
+  }
+}
+''';
+
+const _exDartInitializingFormals = r'''class User {
+  final String email;
+  int logins = 0;
+
+  // An initializing formal: assigns the `email` field.
+  User(this.email);
+
+  int login() {
+    logins += 1;
+    return logins;
+  }
+
+  String toString() => "User[$email, logins: $logins]";
+}
+
+class Foo {
+  static void main(String email) {
+    var u = User(email);
+    u.login();
+    u.login();
+    print(u);
   }
 }
 ''';

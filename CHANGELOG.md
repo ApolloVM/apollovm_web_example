@@ -1,3 +1,40 @@
+## 1.40.0
+
+### apollovm 2.36.1: translated initializing formals
+
+Updated to `apollovm: ^2.36.1`. A Dart constructor that initializes its fields
+with initializing formals (`User(this.email);`) now translates correctly:
+- **Constructors:** the generated constructor assigns the field
+  (`this.email = email`, or `self.email = email` in Python). Before, it was
+  emitted empty in Kotlin, JS, TS and Python, and as the Dart-only
+  `User(this.email)` in Java and C#.
+- **Field reads in methods:** JS, TS and Python now read the field through the
+  receiver (`this.email`, `self.email`) instead of as a bare, unbound `email`.
+
+**New example: "Dart — Initializing formals (User)".** Run it, then look at the
+conversions panel:
+
+```dart
+class User {
+  final String email;
+  int logins = 0;
+  User(this.email);
+  int login() { logins += 1; return logins; }
+  String toString() => "User[$email, logins: $logins]";
+}
+// prints: User[foo@mail.com, logins: 2]
+```
+
+```js
+constructor(email) {
+  this.email = email;
+}
+login() {
+  this.logins += 1;
+  return this.logins;
+}
+```
+
 ## 1.39.0
 
 ### apollovm 2.36.0: user operators and mixins
