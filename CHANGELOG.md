@@ -1,3 +1,20 @@
+## 1.40.1
+
+### apollovm 2.36.2: a failed constructor call says why
+
+Updated to `apollovm: ^2.36.2`. A constructor call that matches no
+constructor used to fail with `Can't find function "User" …`, as if the class
+had no constructor. It now names the cause. A typo in a field type behind an
+initializing formal (`final Sring email; User(this.email);`) reports:
+
+```
+Type 'Sring' not found: it is the type of the parameter `email` of the
+constructor `User(Sring email)` (the type of the field `User.email`), …
+```
+
+Otherwise it shows the declared constructor and the arguments that didn't
+match it.
+
 ## 1.40.0
 
 ### apollovm 2.36.1: translated initializing formals
